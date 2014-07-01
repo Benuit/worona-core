@@ -23,119 +23,128 @@ local function newScene( scene_name )
 		
 		--: BACKGROUND
 		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
-		
+		sceneGroup:insert( background )
+
 		local content = worona.content:getContentList("posts")
 
-		--. Create a list with posts IDs ordered by date:
-		local post_list_ordered = {}
+		if content == -1 then
+			local no_posts = display.newText( { 
+				text = "Sorry, no posts available", 
+				x = display.contentWidth/2, 
+				y = display.contentHeight/2  } )
+			no_posts:setFillColor( black )
+			sceneGroup:insert( no_posts )
+		else
 
-		local function insertPostInOrder( current_post, index )
+			--. Create a list with posts IDs ordered by date:
+			local post_list_ordered = {}
 
-			if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
-				if index < #post_list_ordered then
-					insertPostInOrder(current_post, index + 1)
-				elseif index == #post_list_ordered then
-					post_list_ordered[index + 1] = current_post
+			local function insertPostInOrder( current_post, index )
+
+				if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
+					if index < #post_list_ordered then
+						insertPostInOrder(current_post, index + 1)
+					elseif index == #post_list_ordered then
+						post_list_ordered[index + 1] = current_post
+					else
+						worona.log:error("scene-list.lua/insertPostInOrder - Error")
+					end
 				else
-					worona.log:error("scene-list.lua/insertPostInOrder - Error")
-				end
-			else
-				for i=#post_list_ordered, index, -1 do
-					post_list_ordered[i+1] = post_list_ordered[i]
-				end
-				post_list_ordered[index] = current_post
-			end
-		end
-
-		for k,v in pairs(content) do
-			
-			v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
-			
-			if v.status == "publish" then
-				if #post_list_ordered ~= 0 then
-					insertPostInOrder(v, 1)
-				else
-					post_list_ordered[1] = v
+					for i=#post_list_ordered, index, -1 do
+						post_list_ordered[i+1] = post_list_ordered[i]
+					end
+					post_list_ordered[index] = current_post
 				end
 			end
-		end
 
-		local hola
-		
+			for k,v in pairs(content) do
+				
+				v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
+				
+				if v.status == "publish" then
+					if #post_list_ordered ~= 0 then
+						insertPostInOrder(v, 1)
+					else
+						post_list_ordered[1] = v
+					end
+				end
+			end
+			
 
-		-- The "onRowRender" function may go here (see example under "Inserting Rows", above)
-		local function onRowRender( event )
+			-- The "onRowRender" function may go here (see example under "Inserting Rows", above)
+			local function onRowRender( event )
 
-		    -- Get reference to the row group
-		    local row = event.row
+			    -- Get reference to the row group
+			    local row = event.row
 
-		    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
-		    local rowHeight = row.contentHeight
-		    local rowWidth = row.contentWidth
+			    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
+			    local rowHeight = row.contentHeight
+			    local rowWidth = row.contentWidth
 
-		    --. POST TITLE
-		    local rowTitle = display.newText( row, row.params.content.title, 0, 0, nil, 14 )
-		    rowTitle:setFillColor( 0 )
+			    --. POST TITLE
+			    local rowTitle = display.newText( row, row.params.content.title, 0, 0, nil, 14 )
+			    rowTitle:setFillColor( 0 )
 
-		    -- Align the label left and vertically centered
-		    rowTitle.anchorX = 0
-		    rowTitle.x = 50
-		    rowTitle.anchorY = 0
-		    rowTitle.y = 0
-
-
-		    --. POST CONTENT SUMMARY
-		    local rowContent = display.newText( row, row.params.content.content, 0, 0, nil, 14 )
-		    rowContent:setFillColor( 0 )
-
-		    -- Align the label left and vertically centered
-		    rowContent.anchorX = 0
-		    rowContent.x = 0
-		    rowContent.anchorY = 0
-		    rowContent.y = rowTitle.height
-
-		end
-
-		local function onRowTouch( event )
-
-			local params = event.target.params
-
-		end
-
-		-- Create the widget
-		local tableView = widget.newTableView
-		{
-		    left = 0,
-		    top = 50,
-		    height = display.contentHeight - 50,
-		    width = display.contentWidth,
-		    onRowRender = onRowRender,
-		    onRowTouch = onRowTouch,
-		    listener = scrollListener
-		}
-
-		-- Insert rows
-		for i = 1, #content do
-
-		    local isCategory = false
-		    local rowHeight  = 60
-		    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
-		    local lineColor  = { 0.5, 0.5, 0.5 }
-		    local params     = {
-		    						content = content[i]
-								}
+			    -- Align the label left and vertically centered
+			    rowTitle.anchorX = 0
+			    rowTitle.x = 50
+			    rowTitle.anchorY = 0
+			    rowTitle.y = 0
 
 
-		    -- Insert a row into the tableView
-		    tableView:insertRow(
-		        {
-		            isCategory = isCategory,
-		            rowHeight  = rowHeight,
-		            rowColor   = rowColor,
-		            lineColor  = lineColor,
-		            params     = params
-		        }
-		    )
+			    --. POST CONTENT SUMMARY
+			    local rowContent = display.newText( row, row.params.content.content, 0, 0, nil, 14 )
+			    rowContent:setFillColor( 0 )
+
+			    -- Align the label left and vertically centered
+			    rowContent.anchorX = 0
+			    rowContent.x = 0
+			    rowContent.anchorY = 0
+			    rowContent.y = rowTitle.height
+
+			end
+
+			local function onRowTouch( event )
+
+				local params = event.target.params
+
+			end
+
+			-- Create the widget
+			local tableView = widget.newTableView
+			{
+			    left = 0,
+			    top = 50,
+			    height = display.contentHeight - 50,
+			    width = display.contentWidth,
+			    onRowRender = onRowRender,
+			    onRowTouch = onRowTouch,
+			    listener = scrollListener
+			}
+
+			-- Insert rows
+			for i = 1, #content do
+
+			    local isCategory = false
+			    local rowHeight  = 60
+			    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
+			    local lineColor  = { 0.5, 0.5, 0.5 }
+			    local params     = {
+			    						content = content[i]
+									}
+
+
+			    -- Insert a row into the tableView
+			    tableView:insertRow(
+			        {
+			            isCategory = isCategory,
+			            rowHeight  = rowHeight,
+			            rowColor   = rowColor,
+			            lineColor  = lineColor,
+			            params     = params
+			        }
+			    )
+			end
 		end
 
 	end
