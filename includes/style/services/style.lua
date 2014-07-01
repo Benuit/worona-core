@@ -15,6 +15,8 @@ local function newStyleService()
 	end
 	worona:add_action( "register_style", registerStyle )
 
+	
+
 	--: public methods
 	function style:set( new_style )
 		current_style = new_style

@@ -99,6 +99,9 @@ local function newScene( scene_name )
   scene:addEventListener( "destroy", scene )
 
   -- -------------------------------------------------------------------------------
+
+  return scene
+
 end
 
 return newScene

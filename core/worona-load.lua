@@ -92,7 +92,7 @@ local function worona_load( blood_name )
 	--------------------------------------------------------------
 	--------------------------------------------------------------
 
-	function worona:init()	
+	function worona:initializeWoronaExtensions()	
 
 		-- Initialize includes and extensions
 		initializeExtensions( "worona.includes" )
