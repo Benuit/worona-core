@@ -6,8 +6,9 @@ local function newContentService()
 	local content = {}
 
 	--. PRIVATE VARIABLES .--
-	local content_tables = {}
-
+	local content_table = {}  --. content table stores all the content from any kind of the app: content_table = { customcontent = {} , posts = [] }
+	local content_urls_table = {} --. array with the urls that are pages or posts included in content. Its intended to be a url cache, so is can be checked whether a url belongs to content or not.
+								  --. structure: { "url1" = content_type1 , "url2" = content_type2 , ... }
 	--. PRIVATE FUNCTIONS .--
 	local function checkConnection()
 
@@ -37,11 +38,26 @@ local function newContentService()
 		return connection_available
 	end
 
+	local function checkContentUrls( content_type )
 
-
+		for k,v in pairs( content_table[ content_type ] ) do
+			content_urls_table[v.link] = content_type
+		end
+	
+	end
 
 
 	--. PUBLIC METHODS .--
+
+	function content:urlExist( url ) 
+		for k,v in pairs (content_urls_table) do
+			if k == url then
+				return true
+			end
+		end
+		return false
+	end
+
 
 	function content:readContentFile( content_file_path )
 
@@ -97,9 +113,10 @@ local function newContentService()
 				worona.log:debug( "content/content.lua - fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
 				worona.log:debug ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
-				content_tables = {}
+				--. content_table = {} --. not quite sure why this is here...
+				content_table[content_type] = worona.content:readContentFile( content_file_path ) --. read content file once downloaded.
+				checkContentUrls(content_type)
 				worona:do_action("content_file_updated", {content_file_path = content_file_path} )
-				--. A read is done everytime a page is got, so the file is updated all the time (see content:getPage)
 			end
 		end
 		
@@ -113,28 +130,77 @@ local function newContentService()
 		worona.file:download( download_options )
 	end
 
-	function content:getPage( page_type, page_id )
 
-		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
+-------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------- OLD getPage (WITH ID) -----------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+
+	-- --. Returns array with acf values of a page_id of type page_type .--
+	-- 	--. RETURN: description
+	-- 	--. ARGUMENTS: 
+	-- 	--. 	page_type: ex: "customcontent"
+	-- 	--. 	page_id: page id.
+	-- function content:getPage( page_type, page_id )
+
+	-- 	--. Function arguments compatible with table (worona.content:getPage( {page_type = "customcontent", page_id = 1234} ))
+	-- 	if type(page_type) == "table" then
+	-- 		page_id = page_type.page_id
+	-- 		page_type = page_type.page_type
+	-- 	end
+
+	-- 	local content_file_path = "content/json/".. page_type .. ".json"
+
+	-- 	if content_table[ page_type ] == nil then
+	-- 		content_table[ page_type ] = worona.content:readContentFile( content_file_path ) --. not sure if this is needed...
+	-- 	end
+		
+	-- 	for k,v in pairs( content_table[ page_type ] ) do
+	-- 		if v.ID == page_id then
+	-- 			return v.acf
+	-- 		end
+	-- 	end
+
+	-- 	return nil
+	-- end
+-------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------- NEW getPage (WITH URL) ----------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+	
+	--. Returns array with acf values of a page_url of type page_type .--
+		--. RETURN: description
+		--. ARGUMENTS: 
+		--. 	page_type: ex: "customcontent"
+		--. 	page_url: page url.
+	function content:getPage( page_type, page_url )
+
+		--. Function arguments compatible with table (worona.content:getPage( {page_type = "customcontent", page_url = "http://example.com"} ))
 		if type(page_type) == "table" then
-			page_id = page_type.page_id
+			page_url = page_type.page_url
 			page_type = page_type.page_type
 		end
 
 		local content_file_path = "content/json/".. page_type .. ".json"
 
-		if content_tables[ page_type ] == nil then
-			content_tables[ page_type ] = worona.content:readContentFile( content_file_path )
+		if content_table[ page_type ] == nil then
+			content_table[ page_type ] = worona.content:readContentFile( content_file_path ) --. not sure if this is needed...
 		end
 		
-		for k,v in pairs( content_tables[ page_type ] ) do
-			if v.ID == page_id then
-				return v.acf
+		for k,v in pairs( content_table[ page_type ] ) do
+			if v.link == page_url then
+				return v --. ¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts 
 			end
 		end
 
 		return nil
 	end
+-------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 	--. Returns an array with all the content from content_type json .--
 		--. RETURN: description
@@ -142,21 +208,23 @@ local function newContentService()
 		--. 	Argument1: description
 	function content:getContentList( content_type )
 		
-		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
+		--. Function arguments compatible with table (worona.content:getContentList( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(content_type) == "table" then
 			content_type = content_type.content_type
 		end
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		if content_tables[ content_type ] == nil then
-			content_tables[ content_type ] = worona.content:readContentFile( content_file_path )
+		if content_table[ content_type ] == nil then
+			content_table[ content_type ] = worona.content:readContentFile( content_file_path )
 		end
 		
-		return content_tables[ content_type ]
+		return content_table[ content_type ]
 	end
 
 	return content
+
+
 end
 
 return newContentService
