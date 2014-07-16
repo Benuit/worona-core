@@ -37,8 +37,6 @@ local function newSceneService()
 	worona:add_action( "go_to_scene", gotoScene )
 
 
-	
-
 	function loadUrl( params )
 
 		local url = params.url
@@ -52,6 +50,8 @@ local function newSceneService()
 		end
 	end
 	worona:add_action( "load_url", loadUrl )
+
+	
 
 
 	local function loadPreviousScene( params )
