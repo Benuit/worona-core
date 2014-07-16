@@ -2,29 +2,72 @@ local function worona_load( blood_name )
     
     local worona = {}    -- the new instance
 
+    local includes = {
+    					-- worona core
+    					"services",
+    					"scene",
+    					"log",
+    					"style",
+
+    					-- libraries
+    					"date",
+    					"device",
+    					"file",
+    					"image",
+    					"string",
+
+    					-- proxies
+    					"content",
+    					"local_options",
+
+    					-- actions
+    					"load_url",
+    					
+    					-- scenes
+    					"scene-list",
+    					"scene-post",
+    					"scene-webview",
+    					
+    					-- styles
+    					"style-flat-ui",
+    					"style-ios7",
+    					  		
+    					-- items
+    					"basic-navbar"
+					 }
+
 	--------------------------------------------------------------
 	--------------------------------------------------------------
 	---------------------- EXTENSIONS ----------------------------
 	--------------------------------------------------------------
 	--------------------------------------------------------------
 
-	
-	local function initializeExtensions( extension_type )
-		
-		local file = io.open( system.pathForFile( "package.json", system.ResourceDirectory ), "r" )
-		if file then
-		   --: read all contents of file into a string :--
-		   local file_content = file:read( "*a" )
-		   local json = require "json"
-		   local package = json.decode( file_content )
-		   io.close( file )	--: close the file after using it :--
-		   
-		   local extensions_array = package[extension_type]
+	local function initializeIncludes()
 
-		   for i = 1, #extensions_array do
-		   	local require_path = extension_type .. "." .. extensions_array[i] .. ".main"
-		   	require (require_path)
-		   end
+		for i = 1, #includes do
+			local require_path = "worona.includes." .. includes[i] .. "." .. includes[i]
+			require ( require_path )
+		end
+	end
+	
+	local function initializeExtensions( extensions )
+		
+
+		local file = io.open( system.pathForFile( "package.json", system.ResourceDirectory ), "r" )
+
+		if file then
+			--: read all contents of file into a string :--
+			local file_content = file:read( "*a" )
+			local json = require "json"
+			local package = json.decode( file_content )
+			io.close( file )	--: close the file after using it :--
+
+			local extensions_array = package[ extensions ]
+			
+			for i = 1, #extensions_array do
+				local require_path = extensions .. "." .. extensions_array[i] .. "." .. extensions_array[i]
+				require (require_path)
+			end
 		end
 	end
 
@@ -99,7 +142,7 @@ local function worona_load( blood_name )
 	function worona:initializeWoronaExtensions()	
 
 		-- Initialize includes and extensions
-		initializeExtensions( "worona.includes" )
+		initializeIncludes()
 		initializeExtensions( "extensions" )
 	end
 

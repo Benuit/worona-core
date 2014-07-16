@@ -1,17 +1,11 @@
-local blood  = require "blood"
-local widget = require "widget"
+local worona = require "worona"
 
-local theme          = "ios7"
-local extensions_folder = "extensions.scene-post."
-local images_folder  = "themes/" .. theme .. "/scene-post/"
+local function newScene( scene_name )
 
-local page = {
-   	page_type = "scene-post",
-   	page_creator = function( page_name )
-
-    local blood    = require "blood"
     local composer = require "composer"
-    local scene    = composer.newScene( page_name )
+    local scene    = composer.newScene( scene_name )
+
+    local plugins_folder = "worona.includes.post.content-blocks."
 
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -26,66 +20,68 @@ local page = {
 
         local sceneGroup = self.view
 
+        local style = worona.style:get("post")
+        
         -- Initialize the scene here.
         -- Example: add display objects to "sceneGroup", add touch listeners, etc.
       
-        local background = display.newImageRect( sceneGroup, images_folder .. "scene-postBG.png", SCREENWIDTH, SCREENWIDTH/320*570 )
+        local background = display.newImageRect( sceneGroup, style.background.image, SCREENWIDTH, SCREENWIDTH/320*570 )
         background.x = display.contentWidth / 2
         background.y = display.contentHeight / 2
 
-        local content = blood.content:getPage( "scene-post", event.params.page_id )
+        local content = worona.content:getPage( "post", event.params.url )
         local pagetitle
         
         if content == nil or content.pagetitle == nil then
            	pagetitle = "Failed to Load"
         else
-            	pagetitle = content.pagetitle
+            pagetitle = content.title
         end
 
-        blood:do_action( "add_navbar", { text = pagetitle, parent = sceneGroup } )
+        worona:do_action( "before_creating_scene", { pagetitle = pagetitle, sceneGroup = sceneGroup } )
 
-        local createScrollview = require( extensions_folder .. "scrollview" )
+        local createScrollview = require( plugins_folder .. "scrollview" )
         local scrollView = createScrollview( { parent = sceneGroup } )
 
         if content == nil then
-            local createSubtitle = require( extensions_folder .. "subtitle" )
+            local createSubtitle = require( plugins_folder .. "subtitle" )
             createSubtitle( { text = "Sorry, this page doesn't exist", size = 16, actual_y = 0, parent = scrollView } )
-        elseif content.scene-post == nil  or content.scene-post == false then
-            local createSubtitle = require( extensions_folder .. "subtitle" )
+        elseif content.worona_content.post == nil  or content.worona_content.post == false then
+            local createSubtitle = require( plugins_folder .. "subtitle" )
             createSubtitle( { text = "Sorry, this page is empty", size = 16, actual_y = 0, parent = scrollView } )
         else
-            for i = 1, #content.scene-post do
+            for i = 1, #content.worona_content.post do
                               
-	          	local field    = content.scene-post[i]
+	          	local field    = content.worona_content.post[i]
 	           	field.parent   = scrollView
 
 	           	if i == 1 then
-	            	field.actual_y = 0
+	            	  field.actual_y = 0
 	           	else
-	              	field.actual_y = content.scene-post[ i - 1 ].actual_y
+	              	field.actual_y = content.customcontent[ i - 1 ].actual_y
 	           	end
 	           
-	           	if field.acf_fc_layout == "subtitle" then
-	              	local createSubtitle = require( extensions_folder .. "subtitle" )
+	           	if field.type == "subtitle" then
+	              	local createSubtitle = require( plugins_folder .. "subtitle" )
 	              	createSubtitle( field )
-	           	elseif field.acf_fc_layout == "paragraph" then
-	              	local createParagraph = require( extensions_folder .. "paragraph" )
+	           	elseif field.type == "paragraph" then
+	              	local createParagraph = require( plugins_folder .. "paragraph" )
 	              	createParagraph( field )
-	           	elseif field.acf_fc_layout == "image" then
-	              	local createImage = require( extensions_folder .. "image" )
-	              	createImage( field )
-	           	elseif field.acf_fc_layout == "button" then
-	              	local createButton = require( extensions_folder .. "button" )
-	              	createButton( field )
-               elseif field.acf_fc_layout == "list" then
-                  local createList = require( extensions_folder .. "list" )
-                  createList( field )
-	           	elseif field.acf_fc_layout == "gallery" then
-	           	   	local createGallery = require( extensions_folder .. "gallery" )
-	           	   	createGallery( field )
-              elseif field.acf_fc_layout == "map" then
-                local createMap = require ( extensions_folder .. "map")
-                createMap( field )
+	           	-- elseif field.type == "image" then
+	            --   	local createImage = require( plugins_folder .. "image" )
+	            --   	createImage( field )
+	           	-- elseif field.type == "button" then
+	            --   	local createButton = require( plugins_folder .. "button" )
+	            --   	createButton( field )
+             --   elseif field.type == "list" then
+             --      local createList = require( plugins_folder .. "list" )
+             --      createList( field )
+	           	-- elseif field.type == "gallery" then
+	           	--    	local createGallery = require( plugins_folder .. "gallery" )
+	           	--    	createGallery( field )
+             --  elseif field.type == "map" then
+             --    local createMap = require ( plugins_folder .. "map")
+             --    createMap( field )
 	           	end
 	      
             end
@@ -101,8 +97,6 @@ local page = {
 
          if ( phase == "will" ) then
             -- Called when the scene is still off screen (but is about to come on screen).
-
-            blood:do_action( "add_tabbar", { parent = sceneGroup } )
 
          elseif ( phase == "did" ) then
             
@@ -149,7 +143,5 @@ local page = {
       -- -------------------------------------------------------------------------------
 
       return scene
-   end
-}
-
-blood:do_action( "register_page", page )
+end
+worona:do_action( "register_scene", { scene = "post", creator = newScene } )
