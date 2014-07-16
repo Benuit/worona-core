@@ -25,7 +25,7 @@ local function newScene( scene_name )
 		-- local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		-- sceneGroup:insert( background )
 
-		local content = worona.content:getContentList("posts")
+		local content = worona.content:getContentList("post")
 
 		if content == -1 then
 			local no_posts = display.newText( { 
