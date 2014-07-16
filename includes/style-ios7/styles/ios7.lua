@@ -39,7 +39,7 @@ local function newStyle()
 	}
 
 	style.navbar.background.stroke = {
-		color = dark_blue,
+		color = dark_grey,
 		width = stroke_width
 	}
 
@@ -104,6 +104,13 @@ local function newStyle()
 		text = "Compras",
 		image = { default = images_folder .. "/basic-tabbar/tabBarDefault_5.png", over = images_folder .. "/basic-tabbar/tabBarDefault_5.png" }
 	}
+
+	---- WEBVIEW ---
+	--style
+	style.webview = {}
+
+	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
+	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight
 
 	return style
 end
