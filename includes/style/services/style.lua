@@ -6,18 +6,19 @@ local function newStyleService()
 	local style = {}
 
 	--: private variables
-	local registered_styles = {}
+	local registered_functions = {}
+	local registered_style = {}
 
 	--: private functions
 	local function registerStyle( params )
-		registered_styles[ params.style ] = params.object
+		registered_functions[ params.style ] = params.object
 	end
 	worona:add_action( "register_style", registerStyle )
 
 	--: loads the style which is currently selected
 	local function loadStyle( params )
-		if type( registered_styles[ worona.current_style ] ) == "function" then
-			registered_styles[ worona.current_style ]()
+		if type( registered_functions[ worona.current_style ] ) == "function" then
+			registered_style = registered_functions[ worona.current_style ]()
 		else
 			worona.log:warning("Style: the style '" .. worona.current_style .. "' couldn't be loaded." )
 		end
@@ -27,12 +28,12 @@ local function newStyleService()
 
 	--: public methods
 	function style:set( new_style )
-		current_style = new_style
+		worona.current_style = new_style
 	end
 
 	function style:get( class )
-		if registered_styles[ current_style ][ class ] ~= nil then
-			return registered_styles[ current_style ][ class ]
+		if registered_style[ class ] ~= nil then
+			return registered_style[ class ]
 		else
 			return nil
 		end

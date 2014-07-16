@@ -53,7 +53,7 @@ function ui:newBasicNavBar( params )
 
 	local text_options = {
 		parent   = navbar,
-		text     = params.text,
+		text     = params.text or "nothing",
 		x        = attributes.navbar_x,
 		y        = attributes.navbar_center_point,
 		fontSize = attributes.text_size
