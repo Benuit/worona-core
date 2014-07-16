@@ -199,6 +199,67 @@ local function newStyle()
 	    color = { default = { 1, 1, 1, 1 }, over = { 0, 0, 0, 1 } }
 	}
 
+
+
+	---- POST ----
+	--style
+	style.post = {}
+
+	style.post.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
+	style.post.y      = style.navbar.height + style.post.height / 2 + display.topStatusBarContentHeight
+
+	style.post.background = {
+		image = images_folder .. "/post/customcontentBG.png"
+	}
+
+	style.post.list = {
+		height                 = 50,
+		width                  = display.contentWidth - 20,
+		space_between_elements = 10,
+		color                  = { default = { 0.2, 0.2, 0.2, 1 }, over = { 0, 0, 0, 1 } }
+	}
+
+	style.post.list.sheet = {
+		image   = images_folder .. "/post/listSheet.png",
+		options = {
+	        frames =
+	        {
+	           { x=0, y=0, width=1, height=1 },
+	           { x=0, y=1, width=1, height=1 },
+	           { x=0, y=2, width=1, height=1 },
+	           { x=1, y=0, width=1, height=1 },
+	           { x=1, y=1, width=1, height=1 },
+	           { x=1, y=2, width=1, height=1 }
+	        },
+	        sheetContentWidth  = 2,
+	        sheetContentHeight = 3
+		}
+	}
+
+	style.post.list.arrow = {
+		image  = images_folder .. "/post/listArrow.png",
+		width  = 14,
+		height = 22
+	}
+
+	style.post.button = {
+		sheet_options = {
+	             frames =
+	             {
+	                { x=0, y=0, width=1, height=1 },
+	                { x=0, y=1, width=1, height=1 },
+	                { x=0, y=2, width=1, height=1 },
+	                { x=1, y=0, width=1, height=1 },
+	                { x=1, y=1, width=1, height=1 },
+	                { x=1, y=2, width=1, height=1 }
+	             },
+	             sheetContentWidth  = 2,
+	             sheetContentHeight = 3
+	        },
+	    image = images_folder .. "/post/buttonSheet.png",
+	    color = { default = { 1, 1, 1, 1 }, over = { 0, 0, 0, 1 } }
+	}
+
 	return style
 end
 worona:do_action( "register_style", { style = "flat-ui", creator = newStyle } )

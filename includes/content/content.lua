@@ -1,7 +1,7 @@
 local worona = require "worona"
 local json   = require "json"
 
-local content_type = "posts" --. insert content type ( "customcontent" / "posts" )
+local content_type = "post" --. insert content type ( "customcontent" / "post" )
 
 local function newContentService()
 
@@ -44,7 +44,7 @@ local function newContentService()
 	--. Checks a content file of content_type type, and stores the URLs of the pages in content_urls_table = {"URL" = "content_type"} .--
 		--. RETURN: -
 		--. ARGUMENTS: 
-		--. 	content_type: "posts" or "customcontent"
+		--. 	content_type: "post" or "customcontent"
 	local function checkContentUrls( content_type )
 
 		for k,v in pairs( content_table[ content_type ] ) do
@@ -59,7 +59,7 @@ local function newContentService()
 	function content:urlExist( url ) 
 		for k,v in pairs (content_urls_table) do
 			if k == url then
-				return true
+				return v
 			end
 		end
 		return false
@@ -78,7 +78,9 @@ local function newContentService()
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
 			worona.log:info( "content-main/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
-			return json_table
+			content_table[content_type] = json_table
+			checkContentUrls( content_type )
+			return true
 		else
 			--: error, file doesn't exist :--
 			worona.log:fatal("content-main/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
@@ -95,7 +97,7 @@ local function newContentService()
 			content_type = content_type.content_type
 		end
 
-		if content_type ~= "posts" then
+		if content_type ~= "post" then
 			url = url .."/wp-json/posts?type=" .. content_type
 		else
 			url = url .. "/wp-json/posts"
@@ -123,7 +125,7 @@ local function newContentService()
 			elseif ( event.phase == "ended" ) then
 				worona.log:debug ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
 				--. content_table = {} --. not quite sure why this is here...
-				content_table[content_type] = worona.content:readContentFile( content_type ) --. read content file once downloaded.
+		worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				checkContentUrls(content_type)
 				worona:do_action("content_file_updated", {content_file_path = content_file_path} )
 			end
@@ -155,12 +157,12 @@ local function newContentService()
 		end
 
 		if content_table[ content_type ] == nil then
-			content_table[ content_type ] = worona.content:readContentFile( content_type ) --. not sure if this is needed...
+			worona.content:readContentFile( content_type ) --. not sure if this is needed...
 		end
 		
 		for k,v in pairs( content_table[ content_type ] ) do
 			if v.link == page_url then
-				return v --. ¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts 
+				return v --. Â¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts 
 			end
 		end
 
@@ -183,7 +185,7 @@ local function newContentService()
 		local content_file_path = "content/json/".. content_type .. ".json"
 
 		if content_table[ content_type ] == nil then
-			content_table[ content_type ] = worona.content:readContentFile( content_type )
+			worona.content:readContentFile( content_type )
 		end
 		
 		return content_table[ content_type ]
@@ -196,7 +198,7 @@ worona:do_action( "register_service", { service = "content", creator = newConten
 
 
 local function readContent()
-	local content_types_array = { "posts", "customcontent" }
+	local content_types_array = { "post", "customcontent" }
 	
 	for i=1, #content_types_array do
 		worona.log:info("content/main.lua - Reading content type: '" .. content_types_array[i] .. "'")
@@ -212,3 +214,4 @@ local function downloadContent()
 end
 
 worona:add_action( "init", downloadContent )
+
