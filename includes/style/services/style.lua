@@ -7,7 +7,6 @@ local function newStyleService()
 
 	--: private variables
 	local registered_styles = {}
-	local current_style = "flat-ui" -- this should be the worona "default" theme once it is completed
 
 	--: private functions
 	local function registerStyle( params )
@@ -15,7 +14,16 @@ local function newStyleService()
 	end
 	worona:add_action( "register_style", registerStyle )
 
-	
+	--: loads the style which is currently selected
+	local function loadStyle( params )
+		if type( registered_styles[ worona.current_style ] ) == "function" then
+			registered_styles[ worona.current_style ]()
+		else
+			worona.log:warning("Style: the style '" .. worona.current_style .. "' couldn't be loaded." )
+		end
+	end
+	worona:add_action( "load_style", loadStyle)
+
 
 	--: public methods
 	function style:set( new_style )

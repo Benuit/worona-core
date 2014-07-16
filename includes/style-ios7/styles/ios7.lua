@@ -1,9 +1,10 @@
 local worona = require "worona"
 
-local style = {}
-
-local function applyStyle()
+local function newStyle()
 	--== VARIABLES ==--
+
+	-- style
+	local style = {}
 
 	-- paths
 	local images_folder = "worona/includes/style-ios7/images"
@@ -104,10 +105,8 @@ local function applyStyle()
 		image = { default = images_folder .. "/basic-tabbar/tabBarDefault_5.png", over = images_folder .. "/basic-tabbar/tabBarDefault_5.png" }
 	}
 
+	return style
 end
 
-worona:add_action( "load_style", applyStyle)
-
-
-return style
+return newStyle
 
