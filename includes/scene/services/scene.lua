@@ -16,6 +16,7 @@ local function newSceneService()
 	end
 	worona:add_action( "register_scene", registerScene )
 
+
 	local function gotoScene( params )
 		
 		local scene_with_id = params.scene
@@ -25,7 +26,7 @@ local function newSceneService()
 		end
 
 		if composer.getScene( scene_with_id ) == nil then
-			registered_scenes[ params.scene ]( scene_with_id ) 
+			registered_scenes[ params.scene ]( scene_with_id )
 		end
 
 		worona.log:info("scene: About to load the scene '" .. scene_with_id .. "'" )
@@ -34,6 +35,24 @@ local function newSceneService()
 		composer.gotoScene( scene_with_id, params.options )
 	end
 	worona:add_action( "go_to_scene", gotoScene )
+
+
+	function loadUrl( params )
+
+		local url = params.url
+
+		local content_type_if_url_in_content = worona.content:urlExist(url) 
+		
+		if content_type_if_url_in_content ~= false then	
+			worona:do_action( "go_to_scene", { scene = content_type_if_url_in_content, scene_id = url } )
+		else
+			worona:do_action( "go_to_scene", { scene = "webview", scene_id = url, } )
+		end
+	end
+	worona:add_action( "load_url", loadUrl )
+
+	
+
 
 	local function loadPreviousScene( params )
 

@@ -79,8 +79,12 @@ local function worona_load( blood_name )
 				for i = 1, #func_list do
 					if worona.log ~= nil then
 						worona.log:info( "do_action: Hook '" .. hook_name .. "', calling function '" .. tostring( func_list[i] ) .. "'." )
+						worona.log:addIndent()
 					end
 					func_list[ i ]( unpack( arg ) ) --: call the function :)
+					if worona.log ~= nil then
+						worona.log:removeIndent()
+					end
 				end				
 			end
 		end

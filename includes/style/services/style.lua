@@ -23,7 +23,7 @@ local function newStyleService()
 		end
 	end
 	worona:add_action( "load_style", loadStyle)
-
+	
 
 	--: public methods
 	function style:set( new_style )

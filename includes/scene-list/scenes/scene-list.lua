@@ -22,8 +22,8 @@ local function newScene( scene_name )
 	
 		
 		--: BACKGROUND
-		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
-		sceneGroup:insert( background )
+		-- local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
+		-- sceneGroup:insert( background )
 
 		local content = worona.content:getContentList("posts")
 
@@ -105,9 +105,8 @@ local function newScene( scene_name )
 			end
 
 			local function onRowTouch( event )
-
 				local params = event.target.params
-
+				worona:do_action( "load_url", { url = params.content.link } )
 			end
 
 			-- Create the widget
@@ -121,6 +120,8 @@ local function newScene( scene_name )
 			    onRowTouch = onRowTouch,
 			    listener = scrollListener
 			}
+			
+			sceneGroup:insert( tableView )
 
 			-- Insert rows
 			for i = 1, #content do
