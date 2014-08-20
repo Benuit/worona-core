@@ -15,7 +15,7 @@ local function newContentService()
 	local function checkConnection()
 
 	    --: private variables :--
-	    local website = "www.google.com"       -- Note that the test does not work if we put http:// in front
+	    local website = string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
 	    local timeout = 3
 		local connection_available
 

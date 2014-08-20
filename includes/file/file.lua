@@ -199,7 +199,42 @@ local function newFileService()
 		end
 		
 		return -1
-		
+	end
+
+
+	function file:copyFile( srcName, srcPath, dstName, dstPath, overwrite )
+
+	        -- assume no errors
+	        local results = true
+
+	        -- Copy the source file to the destination file
+	        local rfilePath = system.pathForFile( srcName, srcPath )
+	        local wfilePath = system.pathForFile( dstName, dstPath )
+
+	        local rfh = io.open( rfilePath, "rb" )
+	        local wfh = io.open( wfilePath, "wb" )
+
+	        if  not wfh then
+	                print( "writeFileName open error!")
+	                results = false 
+	        else
+	                -- Read the file from the Resource directory and write it to the destination directory
+	                local data = rfh:read( "*a" )
+	                if not data then
+	                    print( "read error!" )
+	                    results = false     -- error
+	                else
+	                    if not wfh:write( data ) then
+	                        print( "write error!" ) 
+	                        results = false -- error
+	                    end
+	                end
+	        end
+
+	        -- Clean up our file handles
+	        rfh:close()
+	        wfh:close()
+	        return results  
 	end
 
 	return file
