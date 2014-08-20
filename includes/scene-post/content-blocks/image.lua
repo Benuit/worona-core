@@ -4,13 +4,13 @@ local function createImage( field )
 
    local image = worona.image:newImage
    {
-      image_object = field.image,
-      image_path   = "content/images/",
-      shape        = "normal",
-      directory    = system.DocumentsDirectory,
-      width        = display.contentWidth - 20,
-      x            = display.contentWidth / 2,
-      y            = 0
+      url         = field.url,
+      real_width  = field.width,
+      real_height = field.height,
+      directory   = system.DocumentsDirectory,
+      width       = display.contentWidth - 20,
+      x           = display.contentWidth / 2,
+      y           = 0
    }
    image.anchorY = 0
    image.y       = field.actual_y 
