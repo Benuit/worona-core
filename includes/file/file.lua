@@ -6,7 +6,7 @@ local function newFileService()
 
 	function file:isFolder( file_or_folder )
 
-		local file_type = string.match(file_or_folder, "\.[0-9a-zA-Z]+$")
+		local file_type = string.match(file_or_folder, "\..+$")
 		if file_type == file_or_folder then
 			return true
 		end
@@ -137,8 +137,7 @@ local function newFileService()
 	function file:locateFileBaseDirectory ( file_path )
 
 		local system_path
-		local base_directory = nil
-		local file_exists = nil
+		local file_exists
 		
 		if file_path ~= nil then
 			--. First we check in system.TemporaryDirectory
@@ -148,7 +147,7 @@ local function newFileService()
 			
 			if file_exists ~= nil then
 				io.close(file_exists)
-				base_directory = system.TemporaryDirectory
+				return system.TemporaryDirectory
 				
 			else  --. If the file is not there, we check in system.DocumentsDirectory
 				system_path = system.pathForFile( file_path, system.DocumentsDirectory )
@@ -157,19 +156,17 @@ local function newFileService()
 				
 				if file_exists ~= nil then
 					io.close(file_exists)
-					base_directory = system.DocumentsDirectory
-					
+					return system.DocumentsDirectory				
 				else  --. If the file is not there, we check in system.ResourceDirectory
 					system_path = system.pathForFile( file_path, system.ResourceDirectory )
 					if system_path then  --. If base_directory is system.ResourceDirectory and file does not exist, system.pathForFile returns nil .--
-						base_directory = system.ResourceDirectory
+						return system.ResourceDirectory
 					end
 				end
-			end
-
-			return base_directory 
+			end 
 		end
-			return -1  --. if file DOES NOT EXIST, return -1
+		
+		return -1  --. if file DOES NOT EXIST, return -1
 	end
 
 	--. Returns content as a string from a file .--
@@ -202,7 +199,42 @@ local function newFileService()
 		end
 		
 		return -1
-		
+	end
+
+
+	function file:copyFile( srcName, srcPath, dstName, dstPath, overwrite )
+
+	        -- assume no errors
+	        local results = true
+
+	        -- Copy the source file to the destination file
+	        local rfilePath = system.pathForFile( srcName, srcPath )
+	        local wfilePath = system.pathForFile( dstName, dstPath )
+
+	        local rfh = io.open( rfilePath, "rb" )
+	        local wfh = io.open( wfilePath, "wb" )
+
+	        if  not wfh then
+	                print( "writeFileName open error!")
+	                results = false 
+	        else
+	                -- Read the file from the Resource directory and write it to the destination directory
+	                local data = rfh:read( "*a" )
+	                if not data then
+	                    print( "read error!" )
+	                    results = false     -- error
+	                else
+	                    if not wfh:write( data ) then
+	                        print( "write error!" ) 
+	                        results = false -- error
+	                    end
+	                end
+	        end
+
+	        -- Clean up our file handles
+	        rfh:close()
+	        wfh:close()
+	        return results  
 	end
 
 	return file

@@ -12,7 +12,7 @@ local function createSubtitle( field )
 
    field.parent:insert( subtitle )
 
-   field.actual_y = field.actual_y + subtitle.contentHeight + ( field.size or 16 ) / 2
+   field.actual_y = field.actual_y + subtitle.contentHeight + ( 18 ) / 2
 end
 
 return createSubtitle

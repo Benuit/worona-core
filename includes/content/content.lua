@@ -15,7 +15,7 @@ local function newContentService()
 	local function checkConnection()
 
 	    --: private variables :--
-	    local website = "www.google.com"       -- Note that the test does not work if we put http:// in front
+	    local website = string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
 	    local timeout = 3
 		local connection_available
 
@@ -56,7 +56,7 @@ local function newContentService()
 
 	--. PUBLIC METHODS .--
 
-	function content:urlExist( url ) 
+	function content:urlCustomPostType( url ) 
 		for k,v in pairs (content_urls_table) do
 			if k == url then
 				return v
@@ -148,7 +148,7 @@ local function newContentService()
 		--. ARGUMENTS: 
 		--. 	content_type: ex: "customcontent"
 		--. 	page_url: page url.
-	function content:getPage( content_type, page_url )
+	function content:getPost( content_type, page_url )
 
 		--. Function arguments compatible with table (worona.content:getPage( {content_type = "customcontent", page_url = "http://example.com"} ))
 		if type(content_type) == "table" then
@@ -175,9 +175,11 @@ local function newContentService()
 		--. RETURN: description
 		--. ARGUMENTS: 
 		--. 	Argument1: description
-	function content:getContentList( content_type )
+	function content:getPostList( content_type )
+
+		local read_success
 		
-		--. Function arguments compatible with table (worona.content:getContentList( {content_type = "customcontent", url = "testing.turismob.com"} ))
+		--. Function arguments compatible with table (worona.content:getPostList( {content_type = "post", url = "testing.turismob.com"} ))
 		if type(content_type) == "table" then
 			content_type = content_type.content_type
 		end
@@ -185,10 +187,10 @@ local function newContentService()
 		local content_file_path = "content/json/".. content_type .. ".json"
 
 		if content_table[ content_type ] == nil then
-			worona.content:readContentFile( content_type )
+			read_success = worona.content:readContentFile( content_type )
 		end
-		
-		return content_table[ content_type ]
+
+		if read_success == -1 then return -1 else return content_table[ content_type ] end
 	end
 
 	return content

@@ -25,14 +25,14 @@ local function newScene( scene_name )
 		-- local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		-- sceneGroup:insert( background )
 
-		local content = worona.content:getContentList("post")
+		local content = worona.content:getPostList("post")
 
 		if content == -1 then
 			local no_posts = display.newText( { 
 				text = "Sorry, no posts available", 
 				x = display.contentWidth/2, 
 				y = display.contentHeight/2  } )
-			no_posts:setFillColor( black )
+			no_posts:setFillColor( 1, 1, 1, 1 )
 			sceneGroup:insert( no_posts )
 		else
 
@@ -79,7 +79,7 @@ local function newScene( scene_name )
 
 			    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
 			    local rowHeight = row.contentHeight
-			    local rowWidth = row.contentWidth
+			    local rowWidth  = row.contentWidth
 
 			    --. POST TITLE
 			    local rowTitle = display.newText( row, row.params.content.title, 0, 0, nil, 14 )
