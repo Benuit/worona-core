@@ -107,27 +107,27 @@ local function newContentService()
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		local connection_available = checkConnection()
-		local checkConnection_delay = 10000
+		-- local connection_available = checkConnection()
+		-- local checkConnection_delay = 10000
 
-		if connection_available == false then
-			if checkConnection_delay ~= 0 then
-				worona.log:info( "content/content.lua - update: Checking if there is connection or not (delay: '" .. checkConnection_delay .. "')" )
-				timer.performWithDelay( checkConnection_delay, checkConnection )
-			else
-				checkConnection()
-			end
-		end
+		-- if connection_available == false then
+		-- 	if checkConnection_delay ~= 0 then
+		-- 		worona.log:info( "content/content.lua - update: Checking if there is connection or not (delay: '" .. checkConnection_delay .. "')" )
+		-- 		timer.performWithDelay( checkConnection_delay, checkConnection )
+		-- 	else
+		-- 		checkConnection()
+		-- 	end
+		-- end
 
 		local function fileNetworkListener( event )
 			if ( event.isError ) then
 				worona.log:error ( "content/content.lua - fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
+				worona:do_action( "connection_not_available" )
 			elseif ( event.phase == "began" ) then
 				worona.log:debug( "content/content.lua - fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
 				worona.log:debug ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
-				--. content_table = {} --. not quite sure why this is here...
-		worona.content:readContentFile( content_type ) --. read content file once downloaded.
+				worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				checkContentUrls(content_type)
 				worona:do_action("content_file_updated", {content_file_path = content_file_path} )
 			end
@@ -213,9 +213,5 @@ end
 
 
 
-local function downloadContent()
-	worona.content:update( content_type, worona.wp_url )
-end
 
-worona:add_action( "init", downloadContent )
 

@@ -1,11 +1,14 @@
 local worona = require "worona"
-local widget = require( "widget" )
+local widget = require "widget" 
+
+
 
 local function newScene( scene_name )
 
-	local composer = require "composer"
-	local scene    = composer.newScene( scene_name )
-	-- local style    = worona.style:get("scene-list")
+	local composer     = require "composer"
+	local scene        = composer.newScene( scene_name )
+	local style        = worona.style:get("list")
+	local navbar_style = worona.style:get("navbar")
 
 	-- -----------------------------------------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -19,6 +22,7 @@ local function newScene( scene_name )
 
 		-- Initialize the scene here.
 		-- Example: add display objects to "sceneGroup", add touch listeners, etc.
+		
 	
 		
 		--: BACKGROUND
@@ -79,28 +83,18 @@ local function newScene( scene_name )
 
 			    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
 			    local rowHeight = row.contentHeight
-			    local rowWidth  = row.contentWidth
+			    local rowWidth = row.contentWidth
 
 			    --. POST TITLE
-			    local rowTitle = display.newText( row, row.params.content.title, 0, 0, nil, 14 )
+			    local rowTitle = display.newText( row, row.params.content.title, 0, 0, style.title.font_type, style.title.font_size )
 			    rowTitle:setFillColor( 0 )
 
 			    -- Align the label left and vertically centered
-			    rowTitle.anchorX = 0
-			    rowTitle.x = 50
-			    rowTitle.anchorY = 0
-			    rowTitle.y = 0
+			    rowTitle.anchorX = 0.5
+			    rowTitle.x = rowWidth / 2
+			    rowTitle.anchorY = 0.5
+			    rowTitle.y = rowHeight / 2
 
-
-			    --. POST CONTENT SUMMARY
-			    local rowContent = display.newText( row, row.params.content.content, 0, 0, nil, 14 )
-			    rowContent:setFillColor( 0 )
-
-			    -- Align the label left and vertically centered
-			    rowContent.anchorX = 0
-			    rowContent.x = 0
-			    rowContent.anchorY = 0
-			    rowContent.y = rowTitle.height
 
 			end
 
@@ -112,14 +106,16 @@ local function newScene( scene_name )
 			-- Create the widget
 			local tableView = widget.newTableView
 			{
-			    left = 0,
-			    top = 50,
+			    left = - 20,
+			    top = navbar_style.height,
 			    height = display.contentHeight - 50,
-			    width = display.contentWidth,
+			    width = display.contentWidth + 40,
 			    onRowRender = onRowRender,
 			    onRowTouch = onRowTouch,
-			    listener = scrollListener
+			    listener = scrollListener,
+			    hideScrollBar = true
 			}
+			
 			
 			sceneGroup:insert( tableView )
 
@@ -127,7 +123,7 @@ local function newScene( scene_name )
 			for i = 1, #content do
 
 			    local isCategory = false
-			    local rowHeight  = 60
+			    local rowHeight  = 50
 			    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
 			    local lineColor  = { 0.5, 0.5, 0.5 }
 			    local params     = {
@@ -209,8 +205,59 @@ end
 
 worona:do_action( "register_scene", { scene_type = "scene-list", creator = newScene } )
 
-local function loadListView( params )
-	worona.log:info("scene-list/main - do action: go_to_scene -> scene-list")
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 , params = { title = "Example Title" } } )
+
+
+
+local spinner = widget.newSpinner
+{
+    x = display.contentWidth / 2,
+    y = 50 + (display.contentHeight - 50) / 2
+}
+
+local function downloadContent()
+	worona.log:info("scene-list - downloadContent()")
+	worona.content:update( "post", worona.wp_url )
+	spinner:start()
 end
-worona:add_action( "init", loadListView )
+worona:add_action( "init", downloadContent )
+
+
+local function loadSavedListData()
+	spinner:stop()
+	if spinner ~= nil then 
+		spinner:removeSelf( )
+	end
+
+	local function nativeAlertListener( event )
+	    if "clicked" == event.action then
+	        if event.index == 1 then
+	        	worona.log:info("scene-list - nativeAlertListener() - option 1 selected")
+	        elseif event.index == 2 then
+	        	worona.log:info("scene-list - nativeAlertListener() - option 2 selected")
+	            downloadContent()
+	        end
+	    end
+	end
+
+	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
+	worona:do_action( "go_to_scene", { scene = "scene-list", options = { effect = "slideLeft", time = 500 , title = "Example Title" } } )
+
+	-- native.showAlert("blood.lang:get("popup1_title", "offline-sync")", blood.lang:get("popup1_description", "offline-sync") , { blood.lang:get("popup_button_1", "offline-sync"), blood.lang:get("popup_button_2", "offline-sync"), blood.lang:get("popup_button_3", "offline-sync") }, nativeAlertListener )
+	native.showAlert("Connection Error", "Content could not be syncronezed due to a connection error." , { "Ok", "Try again" }, nativeAlertListener )
+
+	
+end
+worona:add_action( "connection_not_available", loadSavedListData)
+
+
+local function loadListView( params )
+	spinner:stop()
+	if spinner ~= nil then 
+		spinner:removeSelf( )
+	end
+	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
+	worona:do_action( "go_to_scene", { scene = "scene-list", options = { effect = "slideLeft", time = 500 , title = "Example Title" } } )
+end
+worona:add_action( "content_file_updated", loadListView )
+
+

@@ -112,6 +112,18 @@ local function newStyle()
 	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
 	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight
 
+
+	---- LIST ----
+	--style
+	style.list = {
+		title = {
+			font_type = native.systemFontBold,
+			font_size = 14
+		}
+	}
+
+	
+
 	return style
 end
 worona:do_action( "register_style", { style = "ios7", creator = newStyle } )
