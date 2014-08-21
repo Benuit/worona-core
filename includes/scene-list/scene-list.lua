@@ -1,8 +1,6 @@
 local worona = require "worona"
 local widget = require "widget" 
 
-
-
 local function newScene( scene_name )
 
 	local composer     = require "composer"
@@ -17,12 +15,12 @@ local function newScene( scene_name )
 	-- "scene:create()"
 	function scene:create( event )
 
+		worona:do_action( "before_creating_scene" )
+
 		local sceneGroup = self.view
 
 		-- Initialize the scene here.
 		-- Example: add display objects to "sceneGroup", add touch listeners, etc.
-		
-	
 		
 		--: BACKGROUND
 		-- local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
@@ -152,6 +150,8 @@ local function newScene( scene_name )
 			    )
 			end
 		end
+
+		worona:do_action( "after_creating_scene" )
 
 	end
 

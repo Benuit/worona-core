@@ -3,7 +3,7 @@ local worona = require "worona"
 local function newPostScene( scene_name )
 
   local composer = require "composer"
-  local scene = composer.newScene( scene_name )
+  local scene    = composer.newScene( scene_name )
 
   --: private variables
   local webview, content, url
@@ -26,6 +26,8 @@ local function newPostScene( scene_name )
        content = worona.content:getPost( "post", url )
 
        postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
+
+       worona:do_action( "after_creating_scene" )
   end
 
     -- "scene:show()"

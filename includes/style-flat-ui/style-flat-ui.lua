@@ -36,7 +36,7 @@ local function newStyle()
 		width = stroke_width
 	}
 
-	style.navbar.back_button = {
+	style.navbar.left_button = {
 		image          = { default = images_folder .. "/basic-navbar/navBarButtonDefault.png", over = images_folder .. "/basic-navbar/navBarButtonOver.png" },
 		height         = style.navbar.height,
 		width          = style.navbar.height,
@@ -54,7 +54,7 @@ local function newStyle()
 	---- TABBAR ----
 	--style
 	style.tabbar = {
-		height = 68
+		height = 0--68
 	}
 
 	style.tabbar.background = {
@@ -268,7 +268,7 @@ local function newStyle()
 			font_type = native.systemFont,
 			font_size = 14
 		},
-		top = style.navbar.height
+		top = display.topStatusBarContentHeight + style.navbar.height
 	}
 	
 
