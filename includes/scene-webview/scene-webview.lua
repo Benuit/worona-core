@@ -103,4 +103,4 @@ local function newScene( scene_name )
   return scene
 end
 
-worona:do_action( "register_scene", { scene = "webview", creator = newScene } )
+worona:do_action( "register_scene", { scene_type = "webview", creator = newScene } )

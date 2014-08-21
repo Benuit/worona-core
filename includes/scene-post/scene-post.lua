@@ -1,11 +1,13 @@
 local worona = require "worona"
 
-local function newWebviewScene( scene_name )
+local function newPostScene( scene_name )
 
   local composer = require "composer"
-  local htmlRender = require "worona.includes.scene-post.html-render"
-  local webview, params, content
   local scene = composer.newScene( scene_name )
+
+  --: private variables
+  local webview, content, url
+  local postHtmlRender = require "worona.includes.scene-post.html-render"
 
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -14,24 +16,16 @@ local function newWebviewScene( scene_name )
     -- "scene:create()"
   function scene:create( event )
 
+       worona:do_action( "before_creating_scene" )
+
        local sceneGroup = self.view
 
        local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
-       params  = event.params
-       content = worona.content:getPost( "post", params.url )
+       url     = worona.scene:getCurrentSceneUrl()
+       content = worona.content:getPost( "post", url )
 
-       htmlRender:createFolders()
-       htmlRender:copyFiles()
-       htmlRender:copyHtml( content.worona_content.html )
-
-       worona:do_action( "before_creating_scene", params )
-
-       -- Initialize the scene here.
-       -- Example: add display objects to "sceneGroup", add touch listeners, etc.
-
-       
-
+       postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
   end
 
     -- "scene:show()"
@@ -42,42 +36,17 @@ local function newWebviewScene( scene_name )
 
        if ( phase == "will" ) then
           -- Called when the scene is still off screen (but is about to come on screen).
-          --blood:do_action( "add_tabbar", { parent = sceneGroup } )
-          --blood:do_action( "add_navbar", { text = params.websitetitle, parent = sceneGroup } )
           
 
        elseif ( phase == "did" ) then
           
           -- Called when the scene is now on screen.
-          -- Insert code here to make the scene come alive.
-          -- Example: start timers, begin animation, play audio, etc.
+
           local style = worona.style:get( "webview" )
 
           webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-          webview:request( "content/html/index.html", system.DocumentsDirectory )
+          webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
 
-          local function webListener( event )
-              if event.url then
-                  print( "You are visiting: " .. event.url )
-                  if event.url == "file:///historia" then
-                    print( "GOING TO A NEW HTML")
-                    webview:request( "about:blank" ) 
-                    webview:stop()
-                    webview:request( "html2/historia.html", system.ResourceDirectory )
-                  end
-              end
-
-              if event.type then
-                  print( "The event.type is " .. event.type ) -- print the type of request
-              end
-
-              if event.errorCode then
-                  --native.showAlert( "Error!", event.errorMessage, { "OK" } )
-              end
-          end
-
-          webview:addEventListener( "urlRequest", webListener )
-          
        end
   end
 
@@ -93,8 +62,8 @@ local function newWebviewScene( scene_name )
           -- Example: stop timers, stop animation, stop audio, etc. 
 
       if webview ~= nil then 
-      webview.x = display.contentWidth * 2
-    end
+        webview.x = display.contentWidth * 2
+      end
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
@@ -128,4 +97,4 @@ local function newWebviewScene( scene_name )
 
   return scene
 end
-worona:do_action( "register_scene", { scene = "post", creator = newWebviewScene } )
+worona:do_action( "register_scene", { scene_type = "post", creator = newPostScene } )
