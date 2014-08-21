@@ -8,7 +8,6 @@ local function newScene( scene_name )
 	local composer     = require "composer"
 	local scene        = composer.newScene( scene_name )
 	local style        = worona.style:get("list")
-	local navbar_style = worona.style:get("navbar")
 
 	-- -----------------------------------------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -86,7 +85,17 @@ local function newScene( scene_name )
 			    local rowWidth = row.contentWidth
 
 			    --. POST TITLE
-			    local rowTitle = display.newText( row, row.params.content.title, 0, 0, style.title.font_type, style.title.font_size )
+			    local title_options = 
+			    {	
+			    	parent = row,
+			        text     = row.params.content.title,
+			        x        = 40,
+			        y        = 0,
+			        width    = display.contentWidth - 20,     --required for multi-line and alignment
+			        font     = style.title.font_type,
+			        fontSize = style.title.font_size
+			    }
+			    local rowTitle = display.newText( title_options )
 			    rowTitle:setFillColor( 0 )
 
 			    -- Align the label left and vertically centered
@@ -107,7 +116,7 @@ local function newScene( scene_name )
 			local tableView = widget.newTableView
 			{
 			    left = - 20,
-			    top = navbar_style.height,
+			    top = style.top,
 			    height = display.contentHeight - 50,
 			    width = display.contentWidth + 40,
 			    onRowRender = onRowRender,
@@ -240,7 +249,7 @@ local function loadSavedListData()
 	end
 
 	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
-	worona:do_action( "go_to_scene", { scene = "scene-list", options = { effect = "slideLeft", time = 500 , title = "Example Title" } } )
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 
 	-- native.showAlert("blood.lang:get("popup1_title", "offline-sync")", blood.lang:get("popup1_description", "offline-sync") , { blood.lang:get("popup_button_1", "offline-sync"), blood.lang:get("popup_button_2", "offline-sync"), blood.lang:get("popup_button_3", "offline-sync") }, nativeAlertListener )
 	native.showAlert("Connection Error", "Content could not be syncronezed due to a connection error." , { "Ok", "Try again" }, nativeAlertListener )
@@ -256,7 +265,7 @@ local function loadListView( params )
 		spinner:removeSelf( )
 	end
 	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
-	worona:do_action( "go_to_scene", { scene = "scene-list", options = { effect = "slideLeft", time = 500 , title = "Example Title" } } )
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 end
 worona:add_action( "content_file_updated", loadListView )
 

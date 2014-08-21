@@ -265,9 +265,10 @@ local function newStyle()
 	--style
 	style.list = {
 		title = {
-			font_type = native.systemFontBold,
+			font_type = native.systemFont,
 			font_size = 14
-		}
+		},
+		top = style.navbar.height
 	}
 	
 
