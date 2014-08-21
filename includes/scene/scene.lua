@@ -60,16 +60,14 @@ local function newSceneService()
 			scene_with_url = scene_with_url .. "_" .. url_in_numbers
 		end
 
-
-		local scene_to_load = composer.getScene( scene_with_url )
-		if scene_to_load == nil then
-			scene_to_load = registered_scenes[ params.scene_type ]( scene_with_url )
+		if composer.getScene( scene_with_url ) == nil then
+			registered_scenes[ params.scene_type ]( scene_with_url )
 		end
 
 
 		worona.log:info("scene: About to load the scene '" .. scene_with_url .. "'" )
 		
-		scenes_history[ #scenes_history + 1 ] = { scene_type = params.scene_type, scene_url = params.scene_url, scene_with_url = scene_with_url, scene_group = scene_to_load.view }
+		scenes_history[ #scenes_history + 1 ] = { scene_type = params.scene_type, scene_url = params.scene_url, scene_with_url = scene_with_url }
 
 		composer.gotoScene( scene_with_url, { effect = params.effect, time = params.time, params = params.params } )
 	end
@@ -164,7 +162,8 @@ local function newSceneService()
 		-            current_scene_group:insert( some_image )
 		]]--
 	function scene:getCurrentSceneGroup()
-		return scenes_history[ #scenes_history ].scene_group or -1
+		local scene_object = composer.getScene( scenes_history[ #scenes_history ].scene_with_url )
+		return scene_object.view
 	end
 
 
