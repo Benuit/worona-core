@@ -260,6 +260,17 @@ local function newStyle()
 	    color = { default = { 1, 1, 1, 1 }, over = { 0, 0, 0, 1 } }
 	}
 
+
+	---- LIST ----
+	--style
+	style.list = {
+		title = {
+			font_type = native.systemFontBold,
+			font_size = 14
+		}
+	}
+	
+
 	return style
 end
 worona:do_action( "register_style", { style = "flat-ui", creator = newStyle } )
