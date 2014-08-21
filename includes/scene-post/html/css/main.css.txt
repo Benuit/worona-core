@@ -94,17 +94,19 @@ textarea {
 
 
 .container {
-    padding: 10px;
+    padding: 15px;
 }
 
 img {
     margin: 0px !important;
     padding: 0px !important;
-    width: 90% !important;
+    width: 85% !important;
     height: inherit !important;
 }
 
-
+p {
+    text-align: justify;
+}
 
 
 

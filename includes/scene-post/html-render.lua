@@ -5,7 +5,7 @@ local htmlRender = {}
 local folders_created = false
 local files_copied    = false
 
-function htmlRender:createFolders()
+local function createFolders()
 	if folders_created == false then
 		worona.file:createFolder( "content/html", system.DocumentsDirectory )
 		worona.file:createFolder( "content/html/css", system.DocumentsDirectory )
@@ -15,7 +15,7 @@ function htmlRender:createFolders()
 	end
 end
 
-function htmlRender:copyFiles()
+local function copyFiles()
 	if files_copied == false then
 		worona.file:copyFile( "worona/includes/scene-post/html/css/main.css.txt", system.ResourcesDirectory, "content/html/css/main.css", system.DocumentsDirectory )
 		worona.file:copyFile( "worona/includes/scene-post/html/css/normalize.css.txt", system.ResourcesDirectory, "content/html/css/normalize.css", system.DocumentsDirectory )
@@ -27,7 +27,7 @@ function htmlRender:copyFiles()
 	end
 end
 
-function htmlRender:copyHtml( html )
+local function copyHtml( filename, html )
 	
 	local headerPath = system.pathForFile( "worona/includes/scene-post/html/header.html.txt", system.ResourceDirectory )
 	local headerFile = io.open( headerPath, "r" )
@@ -39,10 +39,16 @@ function htmlRender:copyHtml( html )
 	local footerData = footerFile:read( "*a" )
 	footerFile:close()
 
-	local htmlPath = system.pathForFile( "content/html/index.html", system.DocumentsDirectory )
+	local htmlPath = system.pathForFile( "content/html/" .. filename .. ".html", system.DocumentsDirectory )
 	local htmlFile = io.open( htmlPath, "w" )
 	htmlFile:write( headerData .. html .. footerData )
 	htmlFile:close()
+end
+
+function htmlRender:prepareHtmlFile( options )
+	createFolders()
+	copyFiles()
+	copyHtml( options.name, options.html )
 end
 
 return htmlRender
