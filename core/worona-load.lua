@@ -18,6 +18,7 @@ local function worona_load( blood_name )
 
     					-- proxies
     					"content",
+    					"lang",
     					"local_options",
 
     					-- actions

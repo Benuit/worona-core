@@ -1,7 +1,7 @@
 local worona = require "worona"
 local widget = require "widget" 
 
-
+worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
 
 local function newScene( scene_name )
 
@@ -251,9 +251,7 @@ local function loadSavedListData()
 	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
 	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 
-	-- native.showAlert("blood.lang:get("popup1_title", "offline-sync")", blood.lang:get("popup1_description", "offline-sync") , { blood.lang:get("popup_button_1", "offline-sync"), blood.lang:get("popup_button_2", "offline-sync"), blood.lang:get("popup_button_3", "offline-sync") }, nativeAlertListener )
-	native.showAlert("Connection Error", "Content could not be syncronezed due to a connection error." , { "Ok", "Try again" }, nativeAlertListener )
-
+	native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
 	
 end
 worona:add_action( "connection_not_available", loadSavedListData)
