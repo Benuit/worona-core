@@ -1,6 +1,6 @@
 local worona = require "worona"
 
-local function newBasicNavBar( params )
+local function newBasicNavBar( self, params )
 
 	local widget = require "widget"
 
@@ -20,10 +20,6 @@ local function newBasicNavBar( params )
 		background_color        = style.background.color,
 		background_stroke_color = style.background.stroke.color,
 		background_stroke_width = style.background.stroke.width,
-		back_button_default_img = style.back_button.image.default,
-		back_button_over_img    = style.back_button.image.over,
-		back_button_height      = style.back_button.height,
-		back_button_width       = style.back_button.width,
 		text                    = "Untitled" or params.text,
 		text_size               = style.text.fontSize,
 		text_color              = style.text.color
@@ -38,17 +34,33 @@ local function newBasicNavBar( params )
 	local stroke = display.newRect( navbar, attributes.navbar_x, attributes.navbar_height + attributes.background_stroke_width / 2 - attributes.background_stroke_width, attributes.navbar_width, attributes.background_stroke_width )
 	stroke:setFillColor( attributes.background_stroke_color[1], attributes.background_stroke_color[2], attributes.background_stroke_color[3], attributes.background_stroke_color[4] )
 
-	local back_button_options = {
-		x 			= attributes.back_button_width / 2,
-		y 			= attributes.navbar_center_point,
-	    width       = attributes.back_button_width,
-	    height      = attributes.back_button_height,
-	    defaultFile = attributes.back_button_default_img,
-        overFile    = attributes.back_button_over_img,
-        onRelease   = params.handler
-	}
-	local back_button = widget.newButton( back_button_options )
-	navbar:insert( back_button )
+	if params.left_button_icon ~= nil then
+		local left_button_options = {
+			x 			= params.left_button_icon.width / 2 - 15,
+			y 			= attributes.navbar_center_point,
+		    width       = params.left_button_icon.width,
+		    height      = params.left_button_icon.height,
+		    defaultFile = params.left_button_icon.default,
+	        overFile    = params.left_button_icon.over,
+	        onRelease   = function() worona:do_action( "navbar_left_button_pushed" ) end
+		}
+		local left_button = widget.newButton( left_button_options )
+		navbar:insert( left_button )
+	end
+
+	if params.right_button_icon ~= nil then
+		local right_button_options = {
+			x 			= display.contentWidth - ( params.right_button_icon.width / 2 ) + 15,
+			y 			= attributes.navbar_center_point,
+		    width       = params.right_button_icon.width,
+			height      = params.right_button_icon.height,
+		    defaultFile = params.right_button_icon.default,
+	        overFile    = params.right_button_icon.over,
+	        onRelease   = function() worona:do_action( "navbar_right_button_pushed" ) end
+		}
+		local right_button = widget.newButton( right_button_options )
+		navbar:insert( right_button )
+	end
 
 	local text_options = {
 		parent   = navbar,
@@ -62,8 +74,8 @@ local function newBasicNavBar( params )
 	text:setFillColor( attributes.text_color[1], attributes.text_color[2], attributes.text_color[3], attributes.text_color[4] )
 
 	-- Insert navbar on the parent group
-	if params ~= nil and params.sceneGroup ~= nil then
-		params.sceneGroup:insert( navbar )
+	if params ~= nil and params.parent ~= nil then
+		params.parent:insert( navbar )
 	end
 
 	-- Return the object

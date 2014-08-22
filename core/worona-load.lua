@@ -32,9 +32,6 @@ local function worona_load( blood_name )
     					-- styles
     					"style-flat-ui",
     					"style-ios7",
-    					  		
-    					-- items
-    					"basic-navbar",
 
     					-- ui
     					"ui-newBasicNavBar"
@@ -123,16 +120,35 @@ local function worona_load( blood_name )
 			for i = 1, #priorities_list do
 				--: iterate thru the functions table
 				local func_list = hook_name_list[ priorities_list[ i ] ] --: localise
-				for i = 1, #func_list do
+				for j = 1, #func_list do
 					if worona.log ~= nil then
-						worona.log:info( "do_action: Hook '" .. hook_name .. "', calling function '" .. tostring( func_list[i] ) .. "'." )
+						worona.log:info( "do_action: Hook '" .. hook_name .. "', calling function '" .. tostring( func_list[j] ) .. "'." )
 						worona.log:addIndent()
 					end
-					func_list[ i ]( unpack( arg ) ) --: call the function :)
+					func_list[ j ]( unpack( arg ) ) --: call the function :)
 					if worona.log ~= nil then
 						worona.log:removeIndent()
 					end
 				end				
+			end
+		end
+	end
+
+	function worona:remove_action( hook_name, func )
+		
+		local hook_name_list = action_list[ hook_name ]
+
+		if hook_name_list ~= nil then
+			--: search for the func in
+			local priorities_list = hook_name_list.priorities
+			for i = 1, #priorities_list do
+				local func_list = hook_name_list[ priorities_list[ i ] ] --: localise
+				for j = 1, #func_list do
+					if func_list[j] == func then
+						worona.log:info( "remove_action: Hook '" .. hook_name .. "', removing function '" .. tostring( func_list[j] ) .. "'." )
+						func_list[j] = nil
+					end
+				end
 			end
 		end
 	end

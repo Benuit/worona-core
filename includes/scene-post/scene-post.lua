@@ -3,7 +3,7 @@ local worona = require "worona"
 local function newPostScene( scene_name )
 
   local composer = require "composer"
-  local scene = composer.newScene( scene_name )
+  local scene    = composer.newScene( scene_name )
 
   --: private variables
   local webview, content, url
@@ -12,6 +12,10 @@ local function newPostScene( scene_name )
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
     -- -----------------------------------------------------------------------------------------------------------------
+
+  local function left_button_handler()
+    worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
+  end
 
     -- "scene:create()"
   function scene:create( event )
@@ -26,6 +30,15 @@ local function newPostScene( scene_name )
        content = worona.content:getPost( "post", url )
 
        postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
+
+       --: load the navbar
+       local basic_navbar = worona.ui:newBasicNavBar({
+        parent            = sceneGroup,
+        text              = content.title,
+        left_button_icon  = worona.style:get("icons").back
+       })
+
+       worona:do_action( "after_creating_scene" )
   end
 
     -- "scene:show()"
@@ -42,8 +55,10 @@ local function newPostScene( scene_name )
           
           -- Called when the scene is now on screen.
 
-          local style = worona.style:get( "webview" )
+          --: personalise behavior of navbar
+          worona:add_action( "navbar_left_button_pushed", left_button_handler )
 
+          local style = worona.style:get( "webview" )
           webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
           webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
 
@@ -61,9 +76,13 @@ local function newPostScene( scene_name )
           -- Insert code here to "pause" the scene.
           -- Example: stop timers, stop animation, stop audio, etc. 
 
-      if webview ~= nil then 
-        webview.x = display.contentWidth * 2
-      end
+          --: personalise behavior of navbar
+          worona:remove_action( "navbar_left_button_pushed", left_button_handler )
+
+          --: move webview out of the screen
+          if webview ~= nil then 
+              webview.x = display.contentWidth * 2
+          end
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.

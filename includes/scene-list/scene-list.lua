@@ -25,6 +25,8 @@ local function newScene( scene_name )
 	-- "scene:create()"
 	function scene:create( event )
 
+		worona:do_action( "before_creating_scene" )
+
 		local sceneGroup = self.view
 
 		
@@ -38,6 +40,7 @@ local function newScene( scene_name )
 		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		sceneGroup:insert( background )
 		sceneGroup:insert(spinner)
+
 
 		local content = worona.content:getPostList("post")
 
@@ -121,7 +124,9 @@ local function newScene( scene_name )
 				worona:do_action( "load_url", { url = params.content.link } )
 			end
 
-			-- Create the widget
+			tableView = widget.newTableView
+
+
 			tableView = widget.newTableView
 			{
 			    left = - 20,
@@ -133,12 +138,12 @@ local function newScene( scene_name )
 			    listener = scrollListener,
 			    hideScrollBar = true
 			}
-
+			
 			tableView.alpha = 0
 			
 			
 			sceneGroup:insert( tableView )
-			
+
 
 			-- Insert rows
 			for i = 1, #content do
@@ -164,6 +169,16 @@ local function newScene( scene_name )
 
 			
 		end
+
+		--: load the navbar
+		local basic_navbar = worona.ui:newBasicNavBar({
+			parent            = sceneGroup,
+			text              = worona.app_title,
+			left_button_icon  = worona.style:get("icons").more,
+			right_button_icon = worona.style:get("icons").refresh
+		})
+
+		worona:do_action( "after_creating_scene" )
 
 	end
 
@@ -231,7 +246,7 @@ worona:do_action( "register_scene", { scene_type = "scene-list", creator = newSc
 
 
 local function downloadContent()
-	worona.log:info("scene-list - downloadContent()")
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 	worona.content:update( "post", worona.wp_url )
 	spinner:start()
@@ -263,7 +278,7 @@ local function loadSavedListData()
 	transition.to( tableView, { time=1000, alpha=1.0 } )
 
 	native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
-	
+
 end
 worona:add_action( "connection_not_available", loadSavedListData)
 
@@ -272,7 +287,7 @@ local function loadListView( params )
 	spinner:stop()
 	transition.to( tableView, { time=1000, alpha=1.0 } )
 	worona.log:info("scene-list - loadListView()")
-end
+	end
 worona:add_action( "content_file_updated", loadListView )
 
 

@@ -8,6 +8,7 @@ local function newStyle()
 
 	-- paths
 	local images_folder = "worona/includes/style-flat-ui/images"
+	local icons_folder  = "worona/includes/style-flat-ui/icons"
 
 	-- colors
 	local light_blue = { 0.203125, 0.59375, 0.85546875, 1 }
@@ -21,8 +22,14 @@ local function newStyle()
 
 	--== STYLES ==--
 
+	---- ICONS ----
+	style.icons = {
+		back    = { default = icons_folder .. "/backDefault.png", 		over = icons_folder .. "/backOver.png", 		width = 68, height = 68  },
+		refresh = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
+		more    = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  }
+	}
+
 	---- NAVBAR ----
-	-- style
 	style.navbar = {
 		height = 50
 	}
@@ -36,7 +43,7 @@ local function newStyle()
 		width = stroke_width
 	}
 
-	style.navbar.back_button = {
+	style.navbar.left_button = {
 		image          = { default = images_folder .. "/basic-navbar/navBarButtonDefault.png", over = images_folder .. "/basic-navbar/navBarButtonOver.png" },
 		height         = style.navbar.height,
 		width          = style.navbar.height,
@@ -54,7 +61,7 @@ local function newStyle()
 	---- TABBAR ----
 	--style
 	style.tabbar = {
-		height = 68
+		height = 0--68
 	}
 
 	style.tabbar.background = {
@@ -268,7 +275,7 @@ local function newStyle()
 			font_type = native.systemFont,
 			font_size = 14
 		},
-		top = style.navbar.height
+		top = display.topStatusBarContentHeight + style.navbar.height
 	}
 	
 
