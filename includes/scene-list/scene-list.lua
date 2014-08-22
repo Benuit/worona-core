@@ -41,7 +41,6 @@ local function newScene( scene_name )
 		sceneGroup:insert( background )
 		sceneGroup:insert(spinner)
 
-
 		local content = worona.content:getPostList("post")
 
 		if content == -1 then
@@ -124,9 +123,7 @@ local function newScene( scene_name )
 				worona:do_action( "load_url", { url = params.content.link } )
 			end
 
-			tableView = widget.newTableView
-
-
+			-- Create the widget
 			tableView = widget.newTableView
 			{
 			    left = - 20,
@@ -138,7 +135,7 @@ local function newScene( scene_name )
 			    listener = scrollListener,
 			    hideScrollBar = true
 			}
-			
+
 			tableView.alpha = 0
 			
 			
@@ -245,14 +242,20 @@ end
 worona:do_action( "register_scene", { scene_type = "scene-list", creator = newScene } )
 
 
+local function callListScene()
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "fade", time = 500 } )
+end
+worona:add_action( "init", callListScene )
+
 local function downloadContent()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
-	worona.content:update( "post", worona.wp_url )
+	worona.log:info("scene-list - downloadContent()")
+	tableView.alpha = 0
 	spinner:start()
 	spinner.alpha = 1
+	worona.content:update( "post", worona.wp_url )
 end
 worona:add_action( "init", downloadContent )
+worona:add_action("navbar_right_button_pushed", downloadContent)
 
 
 
@@ -287,7 +290,26 @@ local function loadListView( params )
 	spinner:stop()
 	transition.to( tableView, { time=1000, alpha=1.0 } )
 	worona.log:info("scene-list - loadListView()")
-	end
+end
 worona:add_action( "content_file_updated", loadListView )
 
 
+local function loadAboutScene()
+
+end
+
+
+
+-------------------------- TO BE DELETED ------------------------
+
+-- local function rightButtonPushedSimulation()
+-- 	worona:do_action("navbar_right_button_pushed")
+-- end
+-- timer.performWithDelay( 10000, rightButtonPushedSimulation )
+
+
+-- local function rightButtonPushedSimulation()
+-- 	worona:do_action("navbar_left_button_pushed")
+-- end
+-- timer.performWithDelay( 15000, rightButtonPushedSimulation )
+-------------------------------------------------------------------
