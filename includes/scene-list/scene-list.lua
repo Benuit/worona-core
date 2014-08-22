@@ -231,7 +231,7 @@ worona:do_action( "register_scene", { scene_type = "scene-list", creator = newSc
 
 
 local function callListScene()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "fade", time = 500 } )
 end
 worona:add_action( "init", callListScene )
 
