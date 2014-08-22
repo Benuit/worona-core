@@ -1,6 +1,15 @@
 local worona = require "worona"
 local widget = require "widget" 
 
+local spinner = widget.newSpinner
+{
+    x = display.contentWidth / 2,
+    y = 50 + (display.contentHeight - 50) / 2
+}
+spinner.alpha = 0
+
+local tableView
+
 worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
 
 local function newScene( scene_name )
@@ -13,11 +22,12 @@ local function newScene( scene_name )
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
 	-- -----------------------------------------------------------------------------------------------------------------
 
-
 	-- "scene:create()"
 	function scene:create( event )
 
 		local sceneGroup = self.view
+
+		
 
 		-- Initialize the scene here.
 		-- Example: add display objects to "sceneGroup", add touch listeners, etc.
@@ -25,8 +35,9 @@ local function newScene( scene_name )
 	
 		
 		--: BACKGROUND
-		-- local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
-		-- sceneGroup:insert( background )
+		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
+		sceneGroup:insert( background )
+		sceneGroup:insert(spinner)
 
 		local content = worona.content:getPostList("post")
 
@@ -103,8 +114,6 @@ local function newScene( scene_name )
 			    rowTitle.x = rowWidth / 2
 			    rowTitle.anchorY = 0.5
 			    rowTitle.y = rowHeight / 2
-
-
 			end
 
 			local function onRowTouch( event )
@@ -113,7 +122,7 @@ local function newScene( scene_name )
 			end
 
 			-- Create the widget
-			local tableView = widget.newTableView
+			tableView = widget.newTableView
 			{
 			    left = - 20,
 			    top = style.top,
@@ -124,9 +133,12 @@ local function newScene( scene_name )
 			    listener = scrollListener,
 			    hideScrollBar = true
 			}
+
+			tableView.alpha = 0
 			
 			
 			sceneGroup:insert( tableView )
+			
 
 			-- Insert rows
 			for i = 1, #content do
@@ -138,8 +150,6 @@ local function newScene( scene_name )
 			    local params     = {
 			    						content = content[i]
 									}
-
-
 			    -- Insert a row into the tableView
 			    tableView:insertRow(
 			        {
@@ -151,6 +161,8 @@ local function newScene( scene_name )
 			        }
 			    )
 			end
+
+			
 		end
 
 	end
@@ -195,6 +207,9 @@ local function newScene( scene_name )
 
 		local sceneGroup = self.view
 
+		display.remove( spinner )
+		display.remove( tableView )
+
 		-- Called prior to the removal of scene's view ("sceneGroup").
 		-- Insert code here to clean up the scene.
 		-- Example: remove display objects, save state, etc.
@@ -215,27 +230,20 @@ end
 worona:do_action( "register_scene", { scene_type = "scene-list", creator = newScene } )
 
 
-
-
-local spinner = widget.newSpinner
-{
-    x = display.contentWidth / 2,
-    y = 50 + (display.contentHeight - 50) / 2
-}
-
 local function downloadContent()
 	worona.log:info("scene-list - downloadContent()")
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
 	worona.content:update( "post", worona.wp_url )
 	spinner:start()
+	spinner.alpha = 1
 end
 worona:add_action( "init", downloadContent )
 
 
+
 local function loadSavedListData()
 	spinner:stop()
-	if spinner ~= nil then 
-		spinner:removeSelf( )
-	end
+	spinner.alpha = 0
 
 	local function nativeAlertListener( event )
 	    if "clicked" == event.action then
@@ -243,13 +251,16 @@ local function loadSavedListData()
 	        	worona.log:info("scene-list - nativeAlertListener() - option 1 selected")
 	        elseif event.index == 2 then
 	        	worona.log:info("scene-list - nativeAlertListener() - option 2 selected")
-	            downloadContent()
+	        	tableView.alpha = 0
+	        	spinner:start()
+	        	spinner.alpha = 1
+	            timer.performWithDelay( 1000, downloadContent )
 	        end
 	    end
 	end
 
-	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
+	worona.log:info("scene-list - loadSavedListData()")
+	transition.to( tableView, { time=1000, alpha=1.0 } )
 
 	native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
 	
@@ -259,11 +270,8 @@ worona:add_action( "connection_not_available", loadSavedListData)
 
 local function loadListView( params )
 	spinner:stop()
-	if spinner ~= nil then 
-		spinner:removeSelf( )
-	end
-	worona.log:info("scene-list - loadListView(): go_to_scene -> scene-list")
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
+	transition.to( tableView, { time=1000, alpha=1.0 } )
+	worona.log:info("scene-list - loadListView()")
 end
 worona:add_action( "content_file_updated", loadListView )
 
