@@ -230,14 +230,20 @@ end
 worona:do_action( "register_scene", { scene_type = "scene-list", creator = newScene } )
 
 
+local function callListScene()
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
+end
+worona:add_action( "init", callListScene )
+
 local function downloadContent()
 	worona.log:info("scene-list - downloadContent()")
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 500 } )
-	worona.content:update( "post", worona.wp_url )
+	tableView.alpha = 0
 	spinner:start()
 	spinner.alpha = 1
+	worona.content:update( "post", worona.wp_url )
 end
 worona:add_action( "init", downloadContent )
+worona:add_action("navbar_right_button_pushed", downloadContent)
 
 
 
@@ -276,3 +282,22 @@ end
 worona:add_action( "content_file_updated", loadListView )
 
 
+local function loadAboutScene()
+
+end
+
+
+
+-------------------------- TO BE DELETED ------------------------
+
+-- local function rightButtonPushedSimulation()
+-- 	worona:do_action("navbar_right_button_pushed")
+-- end
+-- timer.performWithDelay( 10000, rightButtonPushedSimulation )
+
+
+-- local function rightButtonPushedSimulation()
+-- 	worona:do_action("navbar_left_button_pushed")
+-- end
+-- timer.performWithDelay( 15000, rightButtonPushedSimulation )
+-------------------------------------------------------------------
