@@ -27,6 +27,7 @@ local function worona_load( blood_name )
     					-- scenes
     					"scene-list",
     					"scene-post",
+    					"scene-about",
     					"scene-webview",
     					
     					-- styles
@@ -81,7 +82,8 @@ local function worona_load( blood_name )
 
 	local action_list = {}
 
-	function worona:add_action( hook_name, func, priority )
+	--. optional_data is used for debugging.
+	function worona:add_action( hook_name, func, priority, optional_data )
 		
 		priority = priority or 10 --: default
 
@@ -107,7 +109,11 @@ local function worona_load( blood_name )
 		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
 		
 		if worona.log ~= nil then
-			worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority " .. priority )
+			if optional_data == nil then
+				worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority " .. priority )
+			else
+				worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority '" .. priority .. "' - optional_data = " .. optional_data )
+			end
 		end
 	end 
 
