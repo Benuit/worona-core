@@ -38,8 +38,7 @@ local function newScene( scene_name )
 		local basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
 			text              = "About",
-			left_button_icon  = worona.style:get("icons").more,
-			right_button_icon = worona.style:get("icons").refresh
+			left_button_icon  = worona.style:get("icons").back
 		})
 
 		local text_options = 

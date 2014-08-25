@@ -26,7 +26,16 @@ local function newScene( scene_name )
 	local composer     = require "composer"
 	local scene        = composer.newScene( scene_name )
 	style  = worona.style:get("list")
+	local spinner
+	local tableView
 
+	local function downloadContent()
+		worona.log:info("scene-list - downloadContent()")
+		tableView.alpha = 0
+		spinner:start()
+		spinner.alpha = 1
+		worona.content:update( "post", worona.wp_url )
+	end
 
 
 	-- -----------------------------------------------------------------------------------------------------------------
@@ -50,7 +59,7 @@ local function newScene( scene_name )
 		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		sceneGroup:insert( background )
 
-		local spinner = widget.newSpinner
+		spinner = widget.newSpinner
 		{
 		    x = display.contentWidth / 2,
 		    y = 50 + (display.contentHeight - 50) / 2
@@ -178,14 +187,8 @@ local function newScene( scene_name )
 		tableView.alpha = 0
 
 
-		local function downloadContent()
-			worona.log:info("scene-list - downloadContent()")
-			tableView.alpha = 0
-			spinner:start()
-			spinner.alpha = 1
-			worona.content:update( "post", worona.wp_url )
-		end
-		downloadContent()
+		
+		downloadContent(tableView, spinner)
 
 
 		--. Configure hooks to content-download-type actions
@@ -267,8 +270,8 @@ local function newScene( scene_name )
 			-- Insert code here to make the scene come alive.
 			-- Example: start timers, begin animation, play audio, etc.
 
-			worona:add_action("navbar_right_button_pushed", downloadContent, 10, "downloadContent")
-			worona:add_action("navbar_left_button_pushed", loadAboutScene, 10, "loadAboutScene")	 
+			worona:add_action("navbar_right_button_pushed", downloadContent, 10)
+			worona:add_action("navbar_left_button_pushed", loadAboutScene, 10)	 
 		end
 	end
 

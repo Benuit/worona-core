@@ -82,8 +82,8 @@ local function worona_load( blood_name )
 
 	local action_list = {}
 
-	--. optional_data is used for debugging.
-	function worona:add_action( hook_name, func, priority, optional_data )
+	
+	function worona:add_action( hook_name, func, priority )
 		
 		priority = priority or 10 --: default
 
@@ -109,11 +109,7 @@ local function worona_load( blood_name )
 		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
 		
 		if worona.log ~= nil then
-			if optional_data == nil then
-				worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority " .. priority )
-			else
-				worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority '" .. priority .. "' - optional_data = " .. optional_data )
-			end
+			worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority " .. priority )
 		end
 	end 
 
@@ -152,7 +148,7 @@ local function worona_load( blood_name )
 				for j = 1, #func_list do
 					if func_list[j] == func then
 						worona.log:info( "remove_action: Hook '" .. hook_name .. "', removing function '" .. tostring( func_list[j] ) .. "'." )
-						func_list[j] = nil
+						table.remove(func_list, j)
 					end
 				end
 			end
