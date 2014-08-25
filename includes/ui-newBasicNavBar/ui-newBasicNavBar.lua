@@ -34,6 +34,7 @@ local function newBasicNavBar( self, params )
 	local stroke = display.newRect( navbar, attributes.navbar_x, attributes.navbar_height + attributes.background_stroke_width / 2 - attributes.background_stroke_width, attributes.navbar_width, attributes.background_stroke_width )
 	stroke:setFillColor( attributes.background_stroke_color[1], attributes.background_stroke_color[2], attributes.background_stroke_color[3], attributes.background_stroke_color[4] )
 
+	local left_button_width = 0
 	if params.left_button_icon ~= nil then
 		local left_button_options = {
 			x 			= params.left_button_icon.width / 2 - 15,
@@ -44,10 +45,12 @@ local function newBasicNavBar( self, params )
 	        overFile    = params.left_button_icon.over,
 	        onRelease   = function() worona:do_action( "navbar_left_button_pushed" ) end
 		}
+		left_button_width = params.left_button_icon.width
 		local left_button = widget.newButton( left_button_options )
 		navbar:insert( left_button )
 	end
 
+	local right_button_width = 0
 	if params.right_button_icon ~= nil then
 		local right_button_options = {
 			x 			= display.contentWidth - ( params.right_button_icon.width / 2 ) + 15,
@@ -58,8 +61,10 @@ local function newBasicNavBar( self, params )
 	        overFile    = params.right_button_icon.over,
 	        onRelease   = function() worona:do_action( "navbar_right_button_pushed" ) end
 		}
+		right_button_width = params.left_button_icon.width
 		local right_button = widget.newButton( right_button_options )
 		navbar:insert( right_button )
+
 	end
 
 	local text_options = {
@@ -72,6 +77,21 @@ local function newBasicNavBar( self, params )
 
 	local text = display.newText( text_options )
 	text:setFillColor( attributes.text_color[1], attributes.text_color[2], attributes.text_color[3], attributes.text_color[4] )
+
+	--. If text is too wide, cut it and add "..."
+	local nabvar_available_space = display.contentWidth - right_button_width - left_button_width - 10
+	if text.width > nabvar_available_space then
+		--. Calculate the width of a character:
+		text.text = "o"
+		local character_width = text.width
+		print(character_width)
+
+		--. Calculate how many character can be placed in the nabvar:
+		local characters_number = math.floor(nabvar_available_space / character_width)
+
+		--. Insert text with new length
+		text.text = text_options.text:sub(1, characters_number - 3) .. "..."
+	end
 
 	-- Insert navbar on the parent group
 	if params ~= nil and params.parent ~= nil then
