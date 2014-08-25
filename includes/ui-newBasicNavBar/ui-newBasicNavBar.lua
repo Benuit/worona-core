@@ -43,7 +43,7 @@ local function newBasicNavBar( self, params )
 		    height      = params.left_button_icon.height,
 		    defaultFile = params.left_button_icon.default,
 	        overFile    = params.left_button_icon.over,
-	        onRelease   = function() worona:do_action( "navbar_left_button_pushed" ) end
+	        onRelease   = function() worona:do_action( "navbar_left_button_pushed" ); return true end
 		}
 		left_button_width = params.left_button_icon.width
 		local left_button = widget.newButton( left_button_options )
@@ -59,7 +59,7 @@ local function newBasicNavBar( self, params )
 			height      = params.right_button_icon.height,
 		    defaultFile = params.right_button_icon.default,
 	        overFile    = params.right_button_icon.over,
-	        onRelease   = function() worona:do_action( "navbar_right_button_pushed" ) end
+	        onRelease   = function() worona:do_action( "navbar_right_button_pushed" ); return true end
 		}
 		right_button_width = params.left_button_icon.width
 		local right_button = widget.newButton( right_button_options )
