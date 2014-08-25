@@ -15,6 +15,7 @@ local function worona_load( blood_name )
     					"file",
     					"image",
     					"string",
+    					"html_server",
 
     					-- proxies
     					"content",
