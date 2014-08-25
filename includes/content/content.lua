@@ -126,7 +126,11 @@ local function newContentService()
 			elseif ( event.phase == "began" ) then
 				worona.log:debug( "content/content.lua - fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
-				worona.log:debug ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
+				if event.response.filename ~= nil then
+					worona.log:info ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
+				else
+					worona.log:info ( "content/content.lua - fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+				end
 				worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				checkContentUrls(content_type)
 				worona:do_action("content_file_updated", {content_file_path = content_file_path} )
