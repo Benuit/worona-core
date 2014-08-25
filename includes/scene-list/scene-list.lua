@@ -86,9 +86,9 @@ local function newScene( scene_name )
 			    {	
 			    	parent = row,
 			        text     = row.params.content.title,
-			        x        = 40,
-			        y        = 0,
-			        width    = display.contentWidth - 20,     --required for multi-line and alignment
+			        x        = style.title.x,
+			        y        = style.title.y,
+			        width    = style.title.width,     --required for multi-line and alignment
 			        font     = style.title.font_type,
 			        fontSize = style.title.font_size
 			    }
@@ -107,19 +107,21 @@ local function newScene( scene_name )
 					local params = event.target.params
 					worona:do_action( "load_url", { url = params.content.link } )
 				end
+
+				return true
 			end
 
 			-- Create the widget
 			table_view = widget.newTableView
 			{
-			    left = - 20,
-			    top = style.top,
-			    height = display.contentHeight - 50,
-			    width = display.contentWidth + 40,
+			    left = style.table_view.left,
+			    top = style.table_view.top,
+			    height = style.table_view.height,
+			    width = style.table_view.width,
+			    hideScrollBar = style.table_view.hideScrollBar,
 			    onRowRender = onRowRender,
 			    onRowTouch = onRowTouch,
-			    listener = scrollListener,
-			    hideScrollBar = true
+			    listener = scrollListener
 			}
 			if parent_group ~= nil then
 				parent_group:insert(table_view)

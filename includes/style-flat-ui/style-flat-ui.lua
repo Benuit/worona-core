@@ -272,11 +272,39 @@ local function newStyle()
 	--style
 	style.list = {
 		title = {
+			x         = 40,
+			y         = 0,
+			width     = display.contentWidth - 20,
 			font_type = native.systemFont,
-			font_size = 14
+			font_size = 16
+		},
+		table_view = {
+			left = - 20,
+			top = display.topStatusBarContentHeight + style.navbar.height,
+			height = display.contentHeight - 50,
+			width = display.contentWidth + 40,
+			hideScrollBar = true
 		},
 		top = display.topStatusBarContentHeight + style.navbar.height
+
 	}
+
+
+	---- ABOUT ----
+	--style
+	style.about = {
+		title = {
+			font_type = native.systemFont,
+			font_size = 16
+		},
+		text = {
+			x         = 10,
+			y         = display.topStatusBarContentHeight + style.navbar.height + 10,
+			font_size = 16,
+			font_type = native.systemFont
+		}
+	}
+	style.about.text.width = display.contentWidth - 2 * style.about.text.x
 	
 
 	return style

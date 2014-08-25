@@ -13,6 +13,7 @@ local function newScene( scene_name )
 	local composer = require "composer"
 	local scene    = composer.newScene( scene_name )
 	-- local style    = worona.style:get("list")
+	local style  = worona.style:get("about")
 
 
 	-- -----------------------------------------------------------------------------------------------------------------
@@ -43,13 +44,13 @@ local function newScene( scene_name )
 
 		local user_text_options = 
 		{	
-			parent = sceneGroup,
+			parent   = sceneGroup,
 		    text     = worona.app_about_description,
-		    x        = 10,
-		    y        = 70,
-		    width    = display.contentWidth - 20,     --required for multi-line and alignment
-		    -- font     = style.title.font_type,
-		    -- fontSize = style.title.font_size
+		    x        = style.text.x,
+		    y        = style.text.y,
+		    width    = style.text.width,     --required for multi-line and alignment
+		    -- font  = style.text.font_type,
+		    fontSize = style.text.font_size
 		}
 		local user_text = display.newText( user_text_options )
 		user_text:setFillColor( 0 )
