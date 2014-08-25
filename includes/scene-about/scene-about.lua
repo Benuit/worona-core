@@ -93,7 +93,7 @@ local function newScene( scene_name )
 			-- Insert code here to make the scene come alive.
 			-- Example: start timers, begin animation, play audio, etc.
 
-			worona:add_action("navbar_left_button_pushed", loadSceneList, 10, "loadSceneList")	 
+			worona:add_action("navbar_left_button_pushed", loadSceneList)	 
 		end
 	end
 
@@ -108,7 +108,7 @@ local function newScene( scene_name )
 			-- Insert code here to "pause" the scene.
 			-- Example: stop timers, stop animation, stop audio, etc.
 
-			worona:remove_action("navbar_left_button_pushed", loadAboutScene)
+			worona:remove_action("navbar_left_button_pushed", loadSceneList)
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.
