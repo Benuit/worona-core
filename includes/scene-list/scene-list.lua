@@ -7,7 +7,7 @@ local style
 local function LoadListScene()
 	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "fade", time = 500 } )
 end
-worona:add_action( "init", LoadListScene, 10, "LoadListScene" )
+worona:add_action( "init", LoadListScene )
 
 
 
@@ -103,8 +103,10 @@ local function newScene( scene_name )
 			end
 
 			local function onRowTouch( event )
-				local params = event.target.params
-				worona:do_action( "load_url", { url = params.content.link } )
+				if event.phase == "tap" then
+					local params = event.target.params
+					worona:do_action( "load_url", { url = params.content.link } )
+				end
 			end
 
 			-- Create the widget
@@ -215,7 +217,8 @@ local function newScene( scene_name )
 
 			native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
 		end
-		worona:add_action( "connection_not_available", loadSavedListData, 10, "loadSavedListData")
+		
+		worona:add_action( "connection_not_available", loadSavedListData)
 
 		local function refreshTableViewContent( params )
 			content = worona.content:getPostList("post")
@@ -226,7 +229,8 @@ local function newScene( scene_name )
 			transition.to( tableView, { time=1000, alpha=1.0 } )
 			worona.log:info("scene-list - refreshTableViewContent()")
 		end
-		worona:add_action( "content_file_updated", refreshTableViewContent, 10, "refreshTableViewContent" )
+		
+		worona:add_action( "content_file_updated", refreshTableViewContent)
 
 
 
@@ -270,8 +274,8 @@ local function newScene( scene_name )
 			-- Insert code here to make the scene come alive.
 			-- Example: start timers, begin animation, play audio, etc.
 
-			worona:add_action("navbar_right_button_pushed", downloadContent, 10)
-			worona:add_action("navbar_left_button_pushed", loadAboutScene, 10)	 
+			worona:add_action("navbar_right_button_pushed", downloadContent)
+			worona:add_action("navbar_left_button_pushed", loadAboutScene)	 
 		end
 	end
 
@@ -288,6 +292,8 @@ local function newScene( scene_name )
 
 			worona:remove_action("navbar_right_button_pushed", downloadContent)
 			worona:remove_action("navbar_left_button_pushed", loadAboutScene)
+			-- worona:remove_action( "connection_not_available", loadSavedListData)
+			-- worona:remove_action( "content_file_updated", refreshTableViewContent)
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.

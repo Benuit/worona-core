@@ -14,7 +14,7 @@ local function newPostScene( scene_name )
     -- -----------------------------------------------------------------------------------------------------------------
 
   local function left_button_handler()
-    worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
+  	worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
   end
 
     -- "scene:create()"
@@ -53,20 +53,20 @@ local function newPostScene( scene_name )
 
        elseif ( phase == "did" ) then
           
-          -- Called when the scene is now on screen.
+    	    -- Called when the scene is now on screen.
 
-          --: personalise behavior of navbar
-          worona:add_action( "navbar_left_button_pushed", left_button_handler )
+	        --: personalise behavior of navbar
+        	worona:add_action( "navbar_left_button_pushed", left_button_handler )
 
-          local style = worona.style:get( "webview" )
-          webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-          webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+        	local style = worona.style:get( "webview" )
+    	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
+	        webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
 
-       end
-  end
+       	end
+  	end
 
     -- "scene:hide()"
-  function scene:hide( event )
+  	function scene:hide( event )
 
       local sceneGroup = self.view
       local phase = event.phase
@@ -89,7 +89,7 @@ local function newPostScene( scene_name )
           if webview ~= nil then 
             webview:request( "about:blank" ) 
             webview:stop()
-            timer.performWithDelay( 1000,   function() display.remove( webview ) end )
+            timer.performWithDelay( 1000,   function() display.remove( webview ) webview = nil end )
           end
        end
   end
