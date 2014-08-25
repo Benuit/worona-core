@@ -131,9 +131,13 @@ local function newContentService()
 				else
 					worona.log:info ( "content/content.lua - fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
 				end
-				worona.content:readContentFile( content_type ) --. read content file once downloaded.
-				checkContentUrls(content_type)
-				worona:do_action("content_file_updated", {content_file_path = content_file_path} )
+				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
+				if read_success == -1 then
+					worona:do_action( "connection_not_available" )
+				else
+					checkContentUrls(content_type)
+					worona:do_action("content_file_updated", {content_file_path = content_file_path} )
+				end
 			end
 		end
 		
