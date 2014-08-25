@@ -109,7 +109,7 @@ local function worona_load( blood_name )
 		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
 		
 		if worona.log ~= nil then
-			worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the action list with priority " .. priority )
+			worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the '" .. hook_name .. "' hook with priority " .. priority )
 		end
 	end 
 

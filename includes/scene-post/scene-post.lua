@@ -89,7 +89,7 @@ local function newPostScene( scene_name )
           if webview ~= nil then 
             webview:request( "about:blank" ) 
             webview:stop()
-            timer.performWithDelay( 1000,   function() display.remove( webview ) webview = nil end )
+            timer.performWithDelay( 100,   function() display.remove( webview ); webview = nil end )
           end
        end
   end
