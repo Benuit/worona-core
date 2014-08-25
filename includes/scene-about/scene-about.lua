@@ -37,24 +37,40 @@ local function newScene( scene_name )
 		--: load the navbar
 		local basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
-			text              = "About",
+			text              = worona.app_about_title,
 			left_button_icon  = worona.style:get("icons").back
 		})
 
-		local text_options = 
+		local user_text_options = 
 		{	
 			parent = sceneGroup,
 		    text     = worona.app_about_description,
 		    x        = 10,
-		    y        = 60,
+		    y        = 70,
 		    width    = display.contentWidth - 20,     --required for multi-line and alignment
 		    -- font     = style.title.font_type,
 		    -- fontSize = style.title.font_size
 		}
-		local text = display.newText( text_options )
-		text:setFillColor( 0 )
-		text.anchorX = 0
-		text.anchorY = 0
+		local user_text = display.newText( user_text_options )
+		user_text:setFillColor( 0 )
+		user_text.anchorX = 0
+		user_text.anchorY = 0
+
+
+		local powered_text_options = 
+		{	
+			parent = sceneGroup,
+		    text     = "- Powered by Worona -",
+		    x        = display.contentWidth - 10,
+		    y        = display.contentHeight - 40,
+		   -- width    = display.contentWidth - 20,     --required for multi-line and alignment
+		    -- font     = style.title.font_type,
+		    -- fontSize = style.title.font_size
+		}
+		local powered_text = display.newText( powered_text_options )
+		powered_text:setFillColor( 0 )
+		powered_text.anchorX = 1
+		powered_text.anchorY = 0
 		
 
 		worona:do_action( "after_creating_scene" )
