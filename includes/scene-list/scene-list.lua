@@ -103,9 +103,10 @@ local function newScene( scene_name )
 			end
 
 			local function onRowTouch( event )
-				if event.phase == "tap" then
+				if event.phase == "release" or event.phase == "tap" then
 					local params = event.target.params
 					worona:do_action( "load_url", { url = params.content.link } )
+					return true
 				end
 			end
 
