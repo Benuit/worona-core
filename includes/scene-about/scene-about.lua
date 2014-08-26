@@ -3,7 +3,7 @@ local widget = require "widget"
 
 
 local function loadSceneList()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "fromLeft", time = 500 } )
+	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 200 } )
 end
 
 
