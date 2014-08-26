@@ -13,7 +13,7 @@ worona:add_action( "init", LoadListScene )
 
 local function loadAboutScene()
 	worona.log:info("scene-list - loadAboutScene()")
-	worona:do_action( "go_to_scene", { scene_type = "scene-about", effect = "slideLeft", time = 500 } )
+	worona:do_action( "go_to_scene", { scene_type = "scene-about", effect = "slideRight", time = 200 } )
 end
 
 
