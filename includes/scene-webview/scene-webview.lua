@@ -3,8 +3,31 @@ local worona = require "worona"
 local function newScene( scene_name )
 
   local composer = require "composer"
-  local webview, params
   local scene = composer.newScene( scene_name )
+
+  local webview
+  local first_url, last_url
+
+  local left_button_handler = function()
+
+    first_url = string.match( first_url, "^(.-)/?$" )
+    last_url  = string.match( last_url,  "^(.-)/?$" )
+
+    if last_url == first_url then
+      worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
+    else
+      worona.log:info( "scene-webview: User is going back" )
+      webview:back()
+    end
+  end
+
+  local function webListener( event )
+      
+      if event.url then
+          worona.log:info( "scene-webview: User is visiting: '" .. event.url .. "'" )
+          last_url = event.url
+      end
+  end
 
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -13,22 +36,20 @@ local function newScene( scene_name )
     -- "scene:create()"
   function scene:create( event )
 
-       local sceneGroup = self.view
+    local sceneGroup = self.view
 
-       local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
+    worona:do_action( "before_creating_scene", params )
 
-       params            = event.params
-       params.sceneGroup = sceneGroup
-       params.pagetitle  = params.websitetitle
+    local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
+    --: load the navbar
+    local basic_navbar = worona.ui:newBasicNavBar({
+     parent            = sceneGroup,
+     text              = "Webview",
+     left_button_icon  = worona.style:get("icons").back
+    })
 
-       worona:do_action( "before_creating_scene", params )
-
-       -- Initialize the scene here.
-       -- Example: add display objects to "sceneGroup", add touch listeners, etc.
-
-       
-
+    worona:do_action( "before_creating_scene", params ) 
   end
 
     -- "scene:show()"
@@ -50,7 +71,12 @@ local function newScene( scene_name )
           -- Example: start timers, begin animation, play audio, etc.
           local style = worona.style:get( "webview" )
           webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-          webview:request( params.url or "about:blank" )
+          first_url = worona.scene:getCurrentSceneUrl()
+          webview:request( first_url or "about:blank" )
+
+          webview:addEventListener( "urlRequest", webListener )
+
+          worona:add_action( "navbar_left_button_pushed", left_button_handler )
           
        end
   end
@@ -66,16 +92,18 @@ local function newScene( scene_name )
           -- Insert code here to "pause" the scene.
           -- Example: stop timers, stop animation, stop audio, etc.	
 
-      if webview ~= nil then 
-  		webview.x = display.contentWidth * 2
-  	end
+        if webview ~= nil then 
+  		    webview.x = display.contentWidth * 2
+  	    end
+
+      worona:remove_action( "navbar_left_button_pushed", left_button_handler )
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
           if webview ~= nil then 
   	        webview:request( "about:blank" ) 
   	        webview:stop()
-          	timer.performWithDelay( 1000, 	function() display.remove( webview ) end )
+          	timer.performWithDelay( 100, 	function() display.remove( webview ) end )
           end
        end
   end
@@ -103,4 +131,4 @@ local function newScene( scene_name )
   return scene
 end
 
-worona:do_action( "register_scene", { scene_type = "webview", creator = newScene } )
+worona:do_action( "register_scene", { scene_type = "scene-webview", creator = newScene } )
