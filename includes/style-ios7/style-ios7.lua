@@ -121,7 +121,8 @@ local function newStyle()
 			y         = 0,
 			width     = display.contentWidth - 20,
 			font_type = native.systemFont,
-			font_size = 16
+			font_size = 16,
+			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		},
 		table_view = {
 			left = - 20,
@@ -131,7 +132,9 @@ local function newStyle()
 			hideScrollBar = true
 		},
 		top = display.topStatusBarContentHeight + style.navbar.height
+
 	}
+
 
 	---- ABOUT ----
 	--style
@@ -144,7 +147,8 @@ local function newStyle()
 			x         = 10,
 			y         = display.topStatusBarContentHeight + style.navbar.height + 10,
 			font_size = 16,
-			font_type = native.systemFont
+			font_type = native.systemFont,
+			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		}
 	}
 	style.about.text.width = display.contentWidth - 2 * style.about.text.x

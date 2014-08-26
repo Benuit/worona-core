@@ -93,7 +93,7 @@ local function newScene( scene_name )
 			        fontSize = style.title.font_size
 			    }
 			    local rowTitle = display.newText( title_options )
-			    rowTitle:setFillColor( 0 )
+			    rowTitle:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
 			    -- Align the label left and vertically centered
 			    rowTitle.anchorX = 0.5
