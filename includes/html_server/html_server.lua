@@ -37,32 +37,6 @@ local function newService()
         return parsed
 	end
 
-	local function setArgs( args )
-	        local path = system.pathForFile( "content/html/args.json", system.DocumentsDirectory  )
-	        local file, errStr = io.open( path, "w+b" )
-	        if file then
-	                local newstr = ""
-	                for k,v in pairs(args) do
-	                        if k ~= nil and v ~= nil then
-	                                if newstr ~= "" then
-	                                        newstr = newstr .. ", "
-	                                end
-	                                local val = ""
-	                                if type(v) == "boolean" or tonumber(v) ~= nil then
-	                                        val = tostring(v) 
-	                                else
-	                                        val = "\"" .. v .. "\""
-	                                end
-	                                newstr = newstr .. "\"" .. k .. "\": " .. val 
-	                        end
-	                end
-	                local content = "{ " .. newstr .. " }"
-	                file:write( content )
-	                file:close() 
-	                return true
-	        end
-	end
-
 	local function createTCPServer( port )
         local socket = require("socket")
         
@@ -95,10 +69,8 @@ local function newService()
 	end
 
 	--: public methods
-	function html_server:startServer( args )
+	function html_server:startServer()
 
-        setArgs( args ) 
-        
         if runTCPServer ~= nil then
             Runtime:removeEventListener( "enterFrame" , runTCPServer )
         end
@@ -118,7 +90,7 @@ local function newService()
                         local xArgPos = string.find( myMessage, "?" )
                         if xArgPos then
                             local newargs = getArgs(string.sub( myMessage, xArgPos+1 ))    
-                            worona.log:debug( "HAN HECHO CLICK EN LA URL '" .. newargs.url .. "'" )
+                            worona.log:info( "html_server: User clicked on a link with url '" .. newargs.url .. "'" )
                         end                                                                                                                                              
                     end
             end
@@ -139,7 +111,7 @@ worona:do_action( "register_service", { service = "html_server", creator = newSe
 --: start the server
 local function startHtmlServer()
 	worona.log:info( "html_server: about to start the html server" )
-	worona.html_server:startServer( { arg = "Luis" } )
+	worona.html_server:startServer()
 end
 
 worona:add_action( "init", startHtmlServer )

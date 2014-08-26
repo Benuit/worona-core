@@ -1,33 +1,21 @@
 local worona = require "worona"
-local widget = require "widget" 
-local style
-
-
-
-local function LoadListScene()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "fade", time = 500 } )
-end
-worona:add_action( "init", LoadListScene )
-
-
-
-local function loadAboutScene()
-	worona.log:info("scene-list - loadAboutScene()")
-	worona:do_action( "go_to_scene", { scene_type = "scene-about", effect = "slideRight", time = 200 } )
-end
-
-
-
-worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
-
 
 local function newScene( scene_name )
 
-	local composer     = require "composer"
-	local scene        = composer.newScene( scene_name )
-	style  = worona.style:get("list")
-	local spinner
-	local tableView
+	local composer = require "composer"
+	local widget   = require "widget" 
+	local scene    = composer.newScene( scene_name )
+	local style    = worona.style:get("list")
+	
+	local spinner, tableView
+
+	local function loadAboutScene()
+		worona.log:info("scene-list - loadAboutScene()")
+		worona:do_action( "go_to_scene", { scene_type = "scene-about", effect = "slideRight", time = 200 } )
+	end
+
+
+	worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
 
 	local function downloadContent()
 		worona.log:info("scene-list - downloadContent()")

@@ -89,19 +89,21 @@ local function newSceneService()
 		]]--
 	local function loadPreviousScene( params )
 
-		local scene_to_load = scenes_history[ #scenes_history - 1 ].scene_with_url
+		local scene_to_load = scenes_history[ #scenes_history - 1 ]
 
 		if scene_to_load ~= nil then
 
 			if composer.getScene( scene_to_load ) == nil then
-				registered_scenes[ params.scene ]( scene_to_load ) 
+				registered_scenes[ params.scene ]( scene_to_load.scene_with_url ) 
 			end
 
-			worona.log:info("scene: About to load the scene '" .. scene_to_load .. "'" )
+			worona.log:info("scene: About to load the scene '" .. scene_to_load.scene_with_url .. "'" )
 
 			composer.gotoScene( scene_to_load, { effect = params.effect, time = params.time, params = params.params } )
 
 			scenes_history[ #scenes_history ] = nil
+		else
+			worona.log:warning("scene:loadPreviousScene: Can't load the previous scene. Nothing to load.")
 		end
 	end
 	worona:add_action( "load_previous_scene", loadPreviousScene )
