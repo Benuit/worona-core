@@ -4,7 +4,7 @@ local function newDeviceService()
 
 	device = {}
 
-	device.PLATFORM_VERSION = "7.0"
+	device.PLATFORM_VERSION = nil--"7.0"
 
 	function device:getOrientation()
 		--: Return: portrait or landscape :--
