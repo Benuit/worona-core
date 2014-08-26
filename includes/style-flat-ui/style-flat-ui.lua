@@ -149,7 +149,7 @@ local function newStyle()
 	style.webview = {}
 
 	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight
+	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.width
 
 
 	---- CUSTOMCONTENT ----
@@ -218,7 +218,7 @@ local function newStyle()
 	style.post = {}
 
 	style.post.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.post.y      = style.navbar.height + style.post.height / 2 + display.topStatusBarContentHeight
+	style.post.y      = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width + style.post.height / 2
 
 	style.post.background = {
 		image = images_folder .. "/post/customcontentBG.png"
@@ -285,13 +285,11 @@ local function newStyle()
 		},
 		table_view = {
 			left = - 20,
-			top = display.topStatusBarContentHeight + style.navbar.height,
+			top = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width,
 			height = display.contentHeight - 50,
 			width = display.contentWidth + 40,
 			hideScrollBar = true
-		},
-		top = display.topStatusBarContentHeight + style.navbar.height
-
+		}
 	}
 
 
