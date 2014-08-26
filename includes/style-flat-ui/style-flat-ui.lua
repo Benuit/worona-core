@@ -6,6 +6,11 @@ local function newStyle()
 	-- style
 	local style = {}
 
+	-- show status bar on Android
+	if worona.device:getPlatformName() == "Android" then
+		display.setStatusBar( display.DefaultStatusBar )
+	end
+
 	-- paths
 	local images_folder = "worona/includes/style-flat-ui/images"
 	local icons_folder  = "worona/includes/style-flat-ui/icons"

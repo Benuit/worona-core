@@ -31,8 +31,9 @@ local function newBasicNavBar( self, params )
 	background:setFillColor( attributes.background_color[1], attributes.background_color[2], attributes.background_color[3], attributes.background_color[4] )
 	navbar:insert(background)
 
-	local stroke = display.newRect( navbar, attributes.navbar_x, attributes.navbar_height + attributes.background_stroke_width / 2 - attributes.background_stroke_width, attributes.navbar_width, attributes.background_stroke_width )
+	local stroke = display.newRect( attributes.navbar_x, attributes.navbar_center_point + ( style.height + attributes.background_stroke_width ) / 2, attributes.navbar_width, attributes.background_stroke_width )
 	stroke:setFillColor( attributes.background_stroke_color[1], attributes.background_stroke_color[2], attributes.background_stroke_color[3], attributes.background_stroke_color[4] )
+	navbar:insert(stroke)
 
 	local left_button_width = 0
 	if params.left_button_icon ~= nil then
