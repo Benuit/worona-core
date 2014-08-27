@@ -91,15 +91,15 @@ local function newSceneService()
 
 		local scene_to_load = scenes_history[ #scenes_history - 1 ]
 
-		if scene_to_load ~= nil then
+		if scene_to_load.scene_with_url ~= nil then
 
-			if composer.getScene( scene_to_load ) == nil then
-				registered_scenes[ params.scene ]( scene_to_load.scene_with_url ) 
+			if composer.getScene( scene_to_load.scene_with_url ) == nil then
+				registered_scenes[ scene_to_load.scene_type ]( scene_to_load.scene_with_url ) 
 			end
 
 			worona.log:info("scene: About to load the scene '" .. scene_to_load.scene_with_url .. "'" )
 
-			composer.gotoScene( scene_to_load, { effect = params.effect, time = params.time, params = params.params } )
+			composer.gotoScene( scene_to_load.scene_with_url, { effect = params.effect, time = params.time, params = params.params } )
 
 			scenes_history[ #scenes_history ] = nil
 		else
