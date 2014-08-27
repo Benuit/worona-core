@@ -91,6 +91,7 @@ local function newService()
                         if xArgPos then
                             local newargs = getArgs(string.sub( myMessage, xArgPos+1 ))    
                             worona.log:info( "html_server: User clicked on a link with url '" .. newargs.url .. "'" )
+                            worona:do_action( "load_url", { url = newargs.url } )
                         end                                                                                                                                              
                     end
             end
