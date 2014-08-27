@@ -12,6 +12,21 @@ local function newContentService()
 	local content_urls_table = {} --. array with the urls that are pages or posts included in content. Its intended to be a url cache, so is can be checked whether a url belongs to content or not.
 								  --. structure: { "url1" = content_type1 , "url2" = content_type2 , ... }
 	--. PRIVATE FUNCTIONS .--
+	
+	--[[	
+		checkConnection 
+		
+		Checks if there´s internet connection available.
+		 	
+		@type: type
+		@date: 06/2014 or so
+		@since: 0.6
+	
+		@param: -
+		@return: true if connection available, false if not
+	
+		@example: local connection_available = checkConnection()
+	]]--
 	local function checkConnection()
 
 	    --: private variables :--
@@ -55,7 +70,20 @@ local function newContentService()
 	
 
 	--. PUBLIC METHODS .--
-
+	--[[	
+		urlCustomPostType 
+		
+		Returns the type of the custom post type of a certain url
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: url from which type is requested
+		@return: type of the custom post type, or false.
+	
+		@example: scene_type = worona.content:urlCustomPostType(url)
+	]]--
 	function content:urlCustomPostType( url ) 
 		for k,v in pairs (content_urls_table) do
 			if k == url then
@@ -66,6 +94,21 @@ local function newContentService()
 	end
 
 
+	--[[	
+		readContentFile 
+		
+		Reads the content file from a certain content_type, and stores a table with the content of the file
+		in content_table.
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: content_type ("post", "customcontent")
+		@return: true if reading went ok, -1 if error ocurred.
+	
+		@example: local read_ok = worona.readContentFile("post")
+	]]--
 	function content:readContentFile( content_type )
 
 		local json_file, json_table
@@ -88,7 +131,21 @@ local function newContentService()
 		end
 	end
 
-
+	--[[	
+		update 
+		
+		Syncronizes the content of a certain content_type from a specific url.
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: content_type (string) : content type to be updated
+				url (string) : url from which the content will be downloaded.
+		@return: -
+	
+		@example: worona.content:update("post", "http://www.worona.org")
+	]]--
 	function content:update( content_type, url )
 
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
@@ -119,6 +176,7 @@ local function newContentService()
 		-- 	end
 		-- end
 
+		--. download function callback
 		local function fileNetworkListener( event )
 			if ( event.isError ) then
 				worona.log:error ( "content/content.lua - fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
@@ -207,19 +265,3 @@ local function newContentService()
 end
 
 worona:do_action( "register_service", { service = "content", creator = newContentService } )
-
-
-local function readContent()
-	local content_types_array = { "post", "customcontent" }
-	
-	for i=1, #content_types_array do
-		worona.log:info("content/main.lua - Reading content type: '" .. content_types_array[i] .. "'")
-		worona.content:readContentFile( content_file_path )
-	end
-end
--- worona:add_action( "init", readContent )
-
-
-
-
-
