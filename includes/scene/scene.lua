@@ -5,6 +5,7 @@ local function newSceneService()
 
 	--: service table
 	local scene = {}
+	local random = math.random()
 
 	--: private variables
 	local registered_scenes   = {}
@@ -59,6 +60,8 @@ local function newSceneService()
 			end
 			scene_with_url = scene_with_url .. "_" .. url_in_numbers
 		end
+
+		scene_with_url = scene_with_url .. random
 
 		if composer.getScene( scene_with_url ) == nil then
 			registered_scenes[ params.scene_type ]( scene_with_url )
