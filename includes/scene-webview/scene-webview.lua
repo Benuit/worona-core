@@ -6,26 +6,25 @@ local function newScene( scene_name )
   local scene = composer.newScene( scene_name )
 
   local webview
-  local first_url, last_url
+  local url
+  local webview_counter = 0
 
   local left_button_handler = function()
 
-    first_url = string.match( first_url, "^(.-)/?$" )
-    last_url  = string.match( last_url,  "^(.-)/?$" )
-
-    if last_url == first_url then
+    if webview_counter <= 0 then
       worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
     else
       worona.log:info( "scene-webview: User is going back" )
+      webview_counter = webview_counter - 1
       webview:back()
     end
   end
 
   local function webListener( event )
       
-      if event.url then
-          worona.log:info( "scene-webview: User is visiting: '" .. event.url .. "'" )
-          last_url = event.url
+      if event.url and event.type == "link" then
+        worona.log:info( "scene-webview: User has visited: " .. event.url )
+        webview_counter = webview_counter + 1
       end
   end
 
@@ -40,12 +39,14 @@ local function newScene( scene_name )
 
     worona:do_action( "before_creating_scene", params )
 
+    url = worona.scene:getCurrentSceneUrl()
+
     local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
     --: load the navbar
     local basic_navbar = worona.ui:newBasicNavBar({
      parent            = sceneGroup,
-     text              = "Webview",
+     text              = string.match( url, "^https?://w?w?w?%.?([a-zA-Z0-9-]+%.%a+)" ),
      left_button_icon  = worona.style:get("icons").back
     })
 
@@ -71,8 +72,7 @@ local function newScene( scene_name )
           -- Example: start timers, begin animation, play audio, etc.
           local style = worona.style:get( "webview" )
           webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-          first_url = worona.scene:getCurrentSceneUrl()
-          webview:request( first_url or "about:blank" )
+          webview:request( url or "about:blank" )
 
           webview:addEventListener( "urlRequest", webListener )
 
@@ -103,7 +103,7 @@ local function newScene( scene_name )
           if webview ~= nil then 
   	        webview:request( "about:blank" ) 
   	        webview:stop()
-          	timer.performWithDelay( 100, 	function() display.remove( webview ) end )
+          	timer.performWithDelay( 1000, 	function() display.remove( webview ) end )
           end
        end
   end
