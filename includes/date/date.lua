@@ -4,6 +4,20 @@ local function newDateService()
 
 	date = {}
 
+	--[[	
+		convertDateToTimestamp 
+		
+		Converts dates from: "Monday, 20/03/2014 14:43:32 GMT" to Unix Timestamp
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: dateString -> "Monday, 20/03/2014 14:43:32 GMT"
+		@return: unixTimeStamp (int)		
+	
+		@example: local time_stamp = worona.convertDateToTimestamp("Monday, 20/03/2014 14:43:32 GMT")
+	]]--
 	function date:convertDateToTimestamp( dateString )
 
 		local stringParameters="%a+, (%d+) (%a+) (%d+) (%d+):(%d+):(%d+) (%a+)"
@@ -21,6 +35,20 @@ local function newDateService()
 		return unixTimestamp
 	end
 
+	--[[	
+		convertTimestampToDate 
+		
+		Converts unixTimesTamp to: "Monday, 20/03/2014 14:43:32 GMT"
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: unixTimestamp (int)
+		@return: dateString (Ex: "Monday, 20/03/2014 14:43:32 GMT")	
+	
+		@example: local time_stamp = worona.convertTimestampToDate(15464612)
+	]]--
 	function date:convertTimestampToDate ( unixTimestamp )
 		local date = os.date("*t", unixTimestamp);
 		
@@ -32,6 +60,20 @@ local function newDateService()
 		return dateString
 	end
 
+	--[[	
+		convertWpDateToTimestamp 
+		
+		Converts dates from WordPress format: "2014-03-20T14:43:32 GMT" to Unix Timestamp
+		 	
+		@type: service
+		@date: 06/2014
+		@since: 0.6
+	
+		@param: dateString -> "2014-03-20T14:43:32 GMT"
+		@return: unixTimeStamp (int)		
+	
+		@example: local time_stamp = worona.convertWpDateToTimestamp("2014-03-20T14:43:32 GMT")
+	]]--
 	function date:convertWpDateToTimestamp( dateString )
 
 		local stringParameters="([0-9]+)-([0-9]+)-([0-9]+)T([0-9]+):([0-9]+):([0-9]+)"

@@ -4,6 +4,7 @@ local function newFileService()
 
 	local file = {}
 
+	--. Returns true if "file_or_folder" is a folder, and false if its a file.
 	function file:isFolder( file_or_folder )
 
 		local file_type = string.match(file_or_folder, "\..+$")
@@ -133,7 +134,7 @@ local function newFileService()
 		end	
 	end	
 
-
+	--. Returns the base directory of a file located in "file_path"
 	function file:locateFileBaseDirectory ( file_path )
 
 		local system_path
@@ -201,7 +202,7 @@ local function newFileService()
 		return -1
 	end
 
-
+	--. Copies file "srcName" located in "srcPath" path to destination "dstName" located in "dstPath"
 	function file:copyFile( srcName, srcPath, dstName, dstPath, overwrite )
 
 	        -- assume no errors
