@@ -4,8 +4,25 @@ local function newDeviceService()
 
 	device = {}
 
+	--: If you want to test ios7 on the simulator choose an Apple device and equal this to "7.0", "7.1" and so on
 	device.PLATFORM_VERSION = nil--"7.0"
 
+
+	--[[	
+		getOrientation 
+		
+		This function returns the current orientation of the device, but only "portrait" and "landscape". It is useful to be used for styling.
+		 	
+		@type: service
+		@date: 28/08/2014
+		@since: 0.6
+	
+		@param: N/A
+		@return: "portrait" or "landscape"
+	
+		@example: local orientation = worona.device:getOrientation()
+	]]--
+	
 	function device:getOrientation()
 		--: Return: portrait or landscape :--
 
@@ -17,6 +34,22 @@ local function newDeviceService()
 	   	end
 	end
 
+
+	--[[	
+		getPlatformName 
+		
+		This function returns always "iPhone OS" or "Android" even if you are in the simulator. Corona in the simulator returns "Win" and "Mac OS" instead.
+		 	
+		@type: service
+		@date: 28/08/2014
+		@since: 0.6
+	
+		@param: N/A
+		@return: "iPhone OS" or "Android"
+	
+		@example: local platform_name = worona.device:getPlatformName()
+	]]--
+	
 	function device:getPlatformName()
 		local env = system.getInfo( "environment" )
 		local model = system.getInfo( "model" )
@@ -32,6 +65,22 @@ local function newDeviceService()
 		end
 	end
 
+
+	--[[	
+		getInches 
+		
+		This function returns the exact inches of the device screen, even if you are on the simulator.
+		 	
+		@type: service
+		@date: 28/08/2014
+		@since: 0.6
+	
+		@param: param
+		@return: return
+	
+		@example: example
+	]]--
+	
 	function device:getInches()
 
 		local env          = system.getInfo( "environment" )

@@ -8,6 +8,7 @@ local function worona_load( blood_name )
     					"scene",
     					"log",
     					"style",
+    					"ui",
 
     					-- libraries
     					"date",

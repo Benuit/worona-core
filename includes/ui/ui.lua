@@ -1,7 +1,7 @@
-local blood = require "blood"
+local worona = require "worona"
 
-blood.ui = {}
+local function newUiService()
+	return {}
+end
 
-blood.ui.newLocalImage  = display.newImageRect
-blood.ui.newText        = require "worona.includes.ui.newText"
-blood.ui.newBasicTabBar = require "worona.includes.ui.newBasicTabBar"
+worona:do_action( "register_service", { service = "ui", creator = newUiService } )

@@ -27,12 +27,7 @@ local function newDateService()
 
 		local unixTimestamp = os.time({tz=tz, day=day, month=month, year=year, hour=hour, min=min, sec=sec})
 
-		--. A-HACK!
-		if unixTimestamp == nil then
-			unixTimestamp = 0
-		end
-
-		return unixTimestamp
+		return unixTimestamp or 0
 	end
 
 	--[[	
