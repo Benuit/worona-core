@@ -40,7 +40,7 @@ $(function(){
 	           	$(this).click( function(e) {
 	           		e.preventDefault();
                     var xobj = new XMLHttpRequest();
-                    xobj.open('GET', "http://127.0.0.1:8087?url=" + href + "&", true);
+                    xobj.open('GET', "http://127.0.0.1:8087?url=" + href, true);
                     xobj.send(null);
 	           	});
 	     });

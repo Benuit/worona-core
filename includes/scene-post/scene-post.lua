@@ -60,7 +60,7 @@ local function newPostScene( scene_name )
 
         	local style = worona.style:get( "webview" )
     	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-	        webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+	        webview:request( "http://127.0.0.1:8087?render=" .. content.slug .. "", system.DocumentsDirectory )
 
        	end
   	end
