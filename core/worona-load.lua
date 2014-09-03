@@ -24,6 +24,7 @@ local function worona_load( blood_name )
 
     					-- actions
     					"load_url",
+    					"event_hooks",
     					
     					-- scenes
     					"scene-list",

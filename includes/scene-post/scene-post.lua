@@ -64,6 +64,7 @@ local function newPostScene( scene_name )
 
 	        --: personalise behavior of navbar
         	worona:add_action( "navbar_left_button_pushed", left_button_handler )
+          worona:add_action( "android_back_button_pushed", left_button_handler )
 
         	local style = worona.style:get( "webview" )
     	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
@@ -91,6 +92,7 @@ local function newPostScene( scene_name )
 
           --: personalise behavior of navbar
           worona:remove_action( "navbar_left_button_pushed", left_button_handler )
+          worona:remove_action( "android_back_button_pushed", left_button_handler ) 
 
           --: move webview out of the screen
           if webview ~= nil then 
