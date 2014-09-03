@@ -9,6 +9,13 @@ local function newPostScene( scene_name )
   local webview, content, url
   local postHtmlRender = require "worona.includes.scene-post.html-render"
 
+  local function androidListener( event )
+    if event.type == "link" then
+      worona.log:info( "html_server: We are on Android and user clicked on a link with url '" .. event.url .. "'" )
+      worona:do_action( "load_url", { url = event.url } )
+    end
+  end
+
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
     -- -----------------------------------------------------------------------------------------------------------------
@@ -60,7 +67,13 @@ local function newPostScene( scene_name )
 
         	local style = worona.style:get( "webview" )
     	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-	        webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+	        
+          if worona.device:getPlatformName() == "Android" then
+            webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+            webview:addEventListener( "urlRequest", androidListener )
+          else
+            webview:request( "http://localhost:1024?render=" .. content.slug )
+          end
 
        	end
   	end
