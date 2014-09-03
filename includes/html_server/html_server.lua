@@ -46,8 +46,8 @@ local function newService()
 
       --: defaults
       local options = options         or {}
-      local host    = options.host    or "*"
-      local port    = options.port    or "8087"
+      local host    = options.host    or "localhost"
+      local port    = options.port    or "1024"
       local backlog = options.backlog or 32
       local timeout = options.timeout or 0 
 
@@ -152,7 +152,7 @@ local function newService()
                     client:send( headers .. html_Data )
                     client:close()
                 elseif args.url ~= nil then
-                    worona.log:info( "html_server: User clicked on a link with url '" .. args.url .. "'" )
+                    worona.log:info( "html_server: We are on iPhone and user clicked on a link with url '" .. args.url .. "'" )
                     worona:do_action( "load_url", { url = args.url } )
                 end
 

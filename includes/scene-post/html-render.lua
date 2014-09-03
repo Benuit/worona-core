@@ -3,7 +3,7 @@ local worona = require "worona"
 local htmlRender = {}
 
 function htmlRender:prepareHtmlFile( options )
-	
+
 	--: create the folder to store htmls files
 	worona.file:createFolder( "content/html", system.DocumentsDirectory )
 
@@ -54,7 +54,13 @@ function htmlRender:prepareHtmlFile( options )
 	local plugins_js_Data = "<script>" .. plugins_js_File:read( "*a" ) .. "</script>"
 	plugins_js_File:close()
 
-	local main_js_Path = system.pathForFile( "worona/includes/scene-post/html/js/main.js.txt", system.ResourceDirectory )
+	--: get the device os
+	local main_js_Name = "main.iphone.js.txt"
+	if worona.device:getPlatformName() == "Android" then
+		main_js_Name = "main.android.js.txt"
+	end
+
+	local main_js_Path = system.pathForFile( "worona/includes/scene-post/html/js/" .. main_js_Name, system.ResourceDirectory )
 	local main_js_File = io.open( main_js_Path, "r" )
 	local main_js_Data = "<script>" .. main_js_File:read( "*a" ) .. "</script>"
 	main_js_File:close()
