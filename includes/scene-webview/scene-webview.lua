@@ -21,7 +21,7 @@ local function newScene( scene_name )
   end
 
   local function webListener( event )
-      
+
       if event.url and event.type == "link" then
         worona.log:info( "scene-webview: User has visited: " .. event.url )
         webview_counter = webview_counter + 1
@@ -77,6 +77,7 @@ local function newScene( scene_name )
           webview:addEventListener( "urlRequest", webListener )
 
           worona:add_action( "navbar_left_button_pushed", left_button_handler )
+          worona:add_action( "android_back_button_pushed", left_button_handler )
           
        end
   end
@@ -97,6 +98,7 @@ local function newScene( scene_name )
   	    end
 
       worona:remove_action( "navbar_left_button_pushed", left_button_handler )
+      worona:remove_action( "android_back_button_pushed", left_button_handler )
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
