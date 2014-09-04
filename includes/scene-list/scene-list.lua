@@ -7,7 +7,7 @@ local function newScene( scene_name )
 	local scene    = composer.newScene( scene_name )
 	local style    = worona.style:get("list")
 	
-	local spinner, tableView
+	local spinner, tableView, no_posts_text
 
 	local function loadAboutScene()
 		worona.log:info("scene-list - loadAboutScene()")
@@ -20,6 +20,9 @@ local function newScene( scene_name )
 	local function downloadContent()
 		worona.log:info("scene-list - downloadContent()")
 		tableView.alpha = 0
+
+		display.remove(no_posts_text)
+		
 		spinner:start()
 		spinner.alpha = 1
 		worona.content:update( "post", worona.wp_url )
@@ -55,7 +58,7 @@ local function newScene( scene_name )
 		spinner.alpha = 0
 		sceneGroup:insert(spinner)
 
-
+		
 		local function createTableView( parent_group )
 
 			local table_view
@@ -118,6 +121,7 @@ local function newScene( scene_name )
 
 			return table_view
 		end
+		
 		local function insertContentInTableView(table_view)
 
 			--. Create a list with posts IDs ordered by date:
@@ -155,6 +159,7 @@ local function newScene( scene_name )
 			end
 
 			--. Insert rows with content into table_view
+			worona.log:debug("#content = " .. #content)
 			for i = 1, #content do
 
 			    local isCategory = false
@@ -204,7 +209,19 @@ local function newScene( scene_name )
 			end
 
 			worona.log:info("scene-list - loadSavedListData()")
-			transition.to( tableView, { time=1000, alpha=1.0 } )
+			worona.log:debug("scene-list - loadSavedListData()")
+			
+			if content == -1 or #content == 0 then
+				worona.log:debug("cambiando alpha = 1 en no_posts_text")
+				no_posts_text = display.newText( { 
+					text = "Sorry, no posts available", 
+					x = style.no_posts_text.x, 
+					y = style.no_posts_text.y } )
+				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
+				sceneGroup:insert( no_posts_text )
+			else
+				transition.to( tableView, { time=1000, alpha=1.0 } )
+			end
 
 			native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
 		end
@@ -217,22 +234,35 @@ local function newScene( scene_name )
 			insertContentInTableView( tableView )
 			spinner:stop()
 			spinner.alpha = 0
-			transition.to( tableView, { time=1000, alpha=1.0 } )
+			
+			worona.log:debug("refreshTableViewContent")
+			if content == -1 or #content == 0 then
+				
+				no_posts_text = display.newText( { 
+					text = "Sorry, no posts available", 
+					x = style.no_posts_text.x, 
+					y = style.no_posts_text.y } )
+				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
+				sceneGroup:insert( no_posts_text )
+
+
+				worona.log:debug("scene-list/refreshTableViewContent - content = -1")
+			else
+				transition.to( tableView, { time=1000, alpha=1.0 } )
+				
+				display.remove(no_posts_text)
+				
+				worona.log:debug("scene-list/refreshTableViewContent - content != -1 ")
+			end
 			worona.log:info("scene-list - refreshTableViewContent()")
 		end
-		
 		worona:add_action( "content_file_updated", refreshTableViewContent)
 
 
-
-		if content == -1 then
-			local no_posts = display.newText( { 
-				text = "Sorry, no posts available", 
-				x = display.contentWidth/2, 
-				y = display.contentHeight/2  } )
-			no_posts:setFillColor( 1, 1, 1, 1 )
-			sceneGroup:insert( no_posts )
+		if content == -1 or #content == 0 then
+			worona.log:debug("scene-list: content = -1 or #content == 0")
 		else
+			worona.log:debug("scene-list: content != -1")
 			insertContentInTableView(tableView)
 		end
 
