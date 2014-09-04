@@ -117,22 +117,24 @@ local function newStyle()
 	--style
 	style.list = {
 		title = {
-			x         = 40,
-			y         = 0,
-			width     = display.contentWidth - 20,
-			font_type = native.systemFont,
-			font_size = 16,
+			x          = 40,
+			y          = 0,
+			width      = display.contentWidth - 20,
+			font_type  = native.systemFont,
+			font_size  = 16,
 			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		},
 		table_view = {
-			left = - 20,
-			top = display.topStatusBarContentHeight + style.navbar.height,
-			height = display.contentHeight - 50,
-			width = display.contentWidth + 40,
+			left          = - 20,
+			top           = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width,
+			height        = display.contentHeight - 50,
+			width         = display.contentWidth + 40,
 			hideScrollBar = true
 		},
-		top = display.topStatusBarContentHeight + style.navbar.height
-
+		no_posts_text = {
+			x = display.contentWidth / 2,
+			y = style.navbar.height + 50
+		}
 	}
 
 
