@@ -58,20 +58,17 @@ local function newScene( scene_name )
 		user_text.anchorY = 0
 
 
-		local powered_text_options = 
-		{	
-			parent = sceneGroup,
-			text   = "- Powered by Worona -",
-			x      = display.contentWidth - 10,
-			y      = display.contentHeight - 40,
-		   -- width    = display.contentWidth - 20,     --required for multi-line and alignment
-		    -- font     = style.title.font_type,
-		    -- fontSize = style.title.font_size
-		}
-		local powered_text = display.newText( powered_text_options )
-		powered_text:setFillColor( style.text.font_color.r, style.text.font_color.g, style.text.font_color.b  )
-		powered_text.anchorX = 1
-		powered_text.anchorY = 0
+
+		local powered_img = display.newImage( "worona/includes/scene-about/img/worona-logo.png" )
+		local powered_img_height = powered_img.height
+		local powered_img_width = powered_img.width
+		powered_img.anchorX = 1
+		powered_img.anchorY = 1
+		powered_img.x = display.contentWidth - 10
+		powered_img.y = display.contentHeight - 10
+		powered_img.width = display.contentWidth / 3
+		powered_img.height = powered_img.width / powered_img_width * powered_img_height
+		sceneGroup:insert(powered_img)
 		
 
 		worona:do_action( "after_creating_scene" )
