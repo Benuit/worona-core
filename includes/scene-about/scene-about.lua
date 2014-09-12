@@ -59,15 +59,11 @@ local function newScene( scene_name )
 
 
 
-		local powered_img = display.newImage( "worona/includes/scene-about/img/worona-logo.png" )
-		local powered_img_height = powered_img.height
-		local powered_img_width = powered_img.width
-		powered_img.anchorX = 1
+		local powered_img = display.newImageRect( "worona/includes/scene-about/img/Worona-badge.png", 300, 120 )
+		powered_img.anchorX = 0.5
 		powered_img.anchorY = 1
-		powered_img.x = display.contentWidth - 10
+		powered_img.x = display.contentWidth / 2
 		powered_img.y = display.contentHeight - 10
-		powered_img.width = display.contentWidth / 3
-		powered_img.height = powered_img.width / powered_img_width * powered_img_height
 		sceneGroup:insert(powered_img)
 		
 
