@@ -48,9 +48,9 @@ local function newScene( scene_name )
 		    text     = worona.app_about_description,
 		    x        = style.text.x,
 		    y        = style.text.y,
-		    width    = style.text.width,     --required for multi-line and alignment
+		    width    = display.contentWidth - 20,     --required for multi-line and alignment
 		    -- font  = style.text.font_type,
-		    fontSize = style.text.font_size
+		    fontSize = 14
 		}
 		local user_text = display.newText( user_text_options )
 		user_text:setFillColor( style.text.font_color.r, style.text.font_color.g, style.text.font_color.b )
@@ -65,6 +65,9 @@ local function newScene( scene_name )
 		powered_img.x = display.contentWidth / 2
 		powered_img.y = display.contentHeight - 10
 		sceneGroup:insert(powered_img)
+
+		--: open safari with worona.org when they tap on the badge
+		powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
 		
 
 		worona:do_action( "after_creating_scene" )
