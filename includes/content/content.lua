@@ -157,7 +157,8 @@ local function newContentService()
 		url = url .."/wp-json/posts?type=" .. content_type
 
 		--: this solves a problem with OSX cache.db
-		if system.getInfo( "platformName" ) == "Mac OS X" then
+		local platformName = system.getInfo( "platformName" )
+		if platformName == "Mac OS X" or platformName == "iPhone OS" then
 			url = url .. "&rnd=" .. os.time()
 		end
 		
