@@ -27,10 +27,10 @@ local function newContentService()
 	
 		@example: local connection_available = checkConnection()
 	]]--
-	local function checkConnection()
+	local function checkConnection(website)
 
 	    --: private variables :--
-	    local website = string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
+	    local website = website or "www.google.com" -- if you want to test your site instea, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
 	    local timeout = 3
 		local connection_available
 
@@ -120,13 +120,13 @@ local function newContentService()
 		if json_file ~= -1 then
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
-			worona.log:info( "content-main/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
+			worona.log:info( "content.lua/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
 			content_table[content_type] = json_table
 			checkContentUrls( content_type )
 			return true
 		else
 			--: error, file doesn't exist :--
-			worona.log:fatal("content-main/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
+			worona.log:warning("content.lua/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
 			return -1
 		end
 	end
@@ -164,30 +164,32 @@ local function newContentService()
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		-- local connection_available = checkConnection()
-		-- local checkConnection_delay = 10000
+		local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
+		if internet_available == false then
+			worona.log:warning("content.lua/update: Internet connection is not available.")
+		else
+			local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
+			if wp_url_connection == false then
+				worona.log:warning("content.lua/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
+			else
+				worona.log:warning("content.lua/update: Successful connection to: '" .. worona.wp_url .. "'.")
+			end
+		end
 
-		-- if connection_available == false then
-		-- 	if checkConnection_delay ~= 0 then
-		-- 		worona.log:info( "content/content.lua - update: Checking if there is connection or not (delay: '" .. checkConnection_delay .. "')" )
-		-- 		timer.performWithDelay( checkConnection_delay, checkConnection )
-		-- 	else
-		-- 		checkConnection()
-		-- 	end
-		-- end
+
 
 		--. download function callback
 		local function fileNetworkListener( event )
 			if ( event.isError ) then
-				worona.log:error ( "content/content.lua - fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
+				worona.log:warning ( "content.lua/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
 				worona:do_action( "connection_not_available" )
 			elseif ( event.phase == "began" ) then
-				worona.log:debug( "content/content.lua - fileNetworkListener: download began from url = '" .. url .. "'" )
+				worona.log:debug( "content.lua/fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
 				if event.response.filename ~= nil then
-					worona.log:info ( "content/content.lua - fileNetworkListener: download ended. File name: " .. event.response.filename )
+					worona.log:info ( "content.lua/fileNetworkListener: download ended. File name: " .. event.response.filename )
 				else
-					worona.log:info ( "content/content.lua - fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+					worona.log:info ( "content.lua/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
 				end
 				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				if read_success == -1 then
