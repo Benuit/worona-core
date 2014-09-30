@@ -7,7 +7,7 @@ return {
 	   	es = "Error de conexión"
 	},
 	popup1_description = {
-	   	en = "Content could not be downloaded due to a connection error.",
+	   	en = "Sorry, the content is not available. Please check your internet connection.",
 	   	es = "El contenido no se ha podido descargar debido a un error de conexión."
 	},
 	popup_button_1 = {

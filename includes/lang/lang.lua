@@ -5,7 +5,7 @@ local function newLangService()
 
 	--: private variables
 	local lang_list = {}
-	local device_lang = "es"--system.getPreference( "locale", "language" )
+	local device_lang = system.getPreference( "locale", "language" ) or "en<"
 
 	--[[	
 		lang:load 
