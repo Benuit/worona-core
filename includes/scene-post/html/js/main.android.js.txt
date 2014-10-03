@@ -6,5 +6,13 @@ $(function(){
                                             window.stop()
                                         }, 1 );
                 });
-         });
+    });
+    $('img').each(function(){
+    	var online_src  = $(this).attr('src');
+    	var offline_src = online_src.replace(/.+\/\/.+?\//, "");
+    	$(this).on('error', function () {  
+    	    $(this).attr('src', online_src);  
+    	});
+    	$(this).attr('src', offline_src);  
+    });
 });

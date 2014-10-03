@@ -154,7 +154,9 @@ local function newContentService()
 			content_type = content_type.content_type
 		end
 
-		url = url .."/wp-json/posts?type=" .. content_type
+		url = "http://www.civitatis-api.dev" .. worona.api_url .. "?type=" .. content_type
+		--local api_url = worona.api_url or "/wp-json/posts"
+		--url = url ..  . "?type=" .. content_type
 
 		--: this solves a problem with OSX cache.db
 		local platformName = system.getInfo( "platformName" )
