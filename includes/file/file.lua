@@ -7,8 +7,8 @@ local function newFileService()
 	--. Returns true if "file_or_folder" is a folder, and false if its a file.
 	function file:isFolder( file_or_folder )
 
-		local file_type = string.match(file_or_folder, "%..+$")
-		if file_type == file_or_folder then
+		local dot_in_file = string.match(file_or_folder, "%.")
+		if dot_in_file == nil then
 			return true
 		end
 		return false
