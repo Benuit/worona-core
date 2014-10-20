@@ -13,7 +13,7 @@ end
 local function stats()
 
 	if system.getInfo("environment") == "simulator" and worona.local_options:get("stats") ~= true and worona.stats ~= false then
-		network.request( "http://www.worona.dev/stats.php?event=app_execution&wp_url="..urlencode(worona.wp_url).."&app_title="..urlencode(worona.app_title).."&id="..urlencode(system.getInfo("deviceID")), "GET", nil )
+		network.request( "http://www.worona.org/stats.php?event=app_execution&wp_url="..urlencode(worona.wp_url).."&app_title="..urlencode(worona.app_title).."&id="..urlencode(system.getInfo("deviceID")), "GET", nil )
 		worona.local_options:set("stats",true)
 	end
 
