@@ -55,7 +55,7 @@ local function worona_load( blood_name )
 		end
 	end
 	
-	local function initializeExtensions( extensions )
+	local function initializeExtensions( extensions_folder )
 		
 
 		local file = io.open( system.pathForFile( "package.json", system.ResourceDirectory ), "r" )
@@ -67,10 +67,10 @@ local function worona_load( blood_name )
 			local package = json.decode( file_content )
 			io.close( file )	--: close the file after using it :--
 
-			local extensions_array = package[ extensions ]
+			local extensions_array = package[ extensions_folder ]
 			
 			for i = 1, #extensions_array do
-				local require_path = extensions .. "." .. extensions_array[i] .. "." .. extensions_array[i]
+				local require_path = extensions_folder .. "." .. extensions_array[i] .. "." .. extensions_array[i]
 				require (require_path)
 			end
 		end
