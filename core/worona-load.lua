@@ -58,7 +58,7 @@ local function worona_load( blood_name )
 	local function initializeExtensions( extensions_folder )
 		
 
-		local file = io.open( system.pathForFile( "package.json", system.ResourceDirectory ), "r" )
+		local file = io.open( system.pathForFile( "extensions.json", system.ResourceDirectory ), "r" )
 
 		if file then
 			--: read all contents of file into a string :--
