@@ -28,6 +28,9 @@ local function newScene( scene_name )
 		worona.content:update( "post", worona.wp_url )
 	end
 
+	local function exitApp()
+		native.requestExit()
+	end
 
 	-- -----------------------------------------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -296,7 +299,8 @@ local function newScene( scene_name )
 			-- Example: start timers, begin animation, play audio, etc.
 
 			worona:add_action("navbar_right_button_pushed", downloadContent)
-			worona:add_action("navbar_left_button_pushed", loadAboutScene)	 
+			worona:add_action("navbar_left_button_pushed", loadAboutScene)
+			worona:add_action("android_back_button_pushed", exitApp)	 
 		end
 	end
 
@@ -313,8 +317,7 @@ local function newScene( scene_name )
 
 			worona:remove_action("navbar_right_button_pushed", downloadContent)
 			worona:remove_action("navbar_left_button_pushed", loadAboutScene)
-			-- worona:remove_action( "connection_not_available", loadSavedListData)
-			-- worona:remove_action( "content_file_updated", refreshTableViewContent)
+			worona:remove_action("android_back_button_pushed", exitApp)	 
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.
