@@ -6,7 +6,7 @@ local function newPostScene( scene_name )
   local scene    = composer.newScene( scene_name )
 
   --: private variables
-  local webview, content, url
+  local webview, content, url, scene_on_screen
   local postHtmlRender = require "worona.includes.scene-post.html-render"
 
   local function androidListener( event )
@@ -76,6 +76,8 @@ local function newPostScene( scene_name )
             webview:request( "http://localhost:1024?render=" .. content.slug )
           end
 
+          scene_on_screen = true
+
        	end
   	end
 
@@ -99,12 +101,19 @@ local function newPostScene( scene_name )
               webview.x = display.contentWidth * 2
           end
 
+          scene_on_screen = false
+
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
           if webview ~= nil then 
             webview:request( "about:blank" ) 
             webview:stop()
-            timer.performWithDelay( 1000,   function() display.remove( webview ); webview = nil end )
+            timer.performWithDelay( 1000, function() 
+              if scene_on_screen ~= true then
+                display.remove( webview )
+                webview = nil 
+              end
+            end )
           end
        end
   end
