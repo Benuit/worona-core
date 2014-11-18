@@ -154,7 +154,7 @@ local function newContentService()
 			content_type = content_type.content_type
 		end
 
-		url = "http://www.civitatis-api.dev" .. worona.api_url .. "?type=" .. content_type
+		url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
 		--local api_url = worona.api_url or "/wp-json/posts"
 		--url = url ..  . "?type=" .. content_type
 
