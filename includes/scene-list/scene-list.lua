@@ -28,6 +28,9 @@ local function newScene( scene_name )
 		worona.content:update( "post", worona.wp_url )
 	end
 
+	local function exitApp()
+		native.requestExit()
+	end
 
 	-- -----------------------------------------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
@@ -214,7 +217,7 @@ local function newScene( scene_name )
 			if content == -1 or #content == 0 then
 				worona.log:debug("cambiando alpha = 1 en no_posts_text")
 				no_posts_text = display.newText( { 
-					text = "Sorry, no posts available", 
+					text = worona.lang:get("no_posts_available", "scene-list"), 
 					x = style.no_posts_text.x, 
 					y = style.no_posts_text.y } )
 				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
@@ -223,7 +226,7 @@ local function newScene( scene_name )
 				transition.to( tableView, { time=1000, alpha=1.0 } )
 			end
 
-			native.showAlert(worona.lang:get("popup1_title", "scene-list"), worona.lang:get("popup1_description", "scene-list") , { worona.lang:get("popup_button_1", "scene-list"), worona.lang:get("popup_button_2", "scene-list") }, nativeAlertListener )
+			native.showAlert(worona.lang:get("popup_connection_error_title", "scene-list"), worona.lang:get("popup_connection_error_description", "scene-list") , { worona.lang:get("popup_connection_error_button_1", "scene-list"), worona.lang:get("popup_connection_error_button_2", "scene-list") }, nativeAlertListener )
 		end
 		
 		worona:add_action( "connection_not_available", loadSavedListData)
@@ -239,7 +242,7 @@ local function newScene( scene_name )
 			if content == -1 or #content == 0 then
 				
 				no_posts_text = display.newText( { 
-					text = "Sorry, no posts available", 
+					text = worona.lang:get("no_posts_available", "scene-list"), 
 					x = style.no_posts_text.x, 
 					y = style.no_posts_text.y } )
 				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
@@ -296,7 +299,8 @@ local function newScene( scene_name )
 			-- Example: start timers, begin animation, play audio, etc.
 
 			worona:add_action("navbar_right_button_pushed", downloadContent)
-			worona:add_action("navbar_left_button_pushed", loadAboutScene)	 
+			worona:add_action("navbar_left_button_pushed", loadAboutScene)
+			worona:add_action("android_back_button_pushed", exitApp)	 
 		end
 	end
 
@@ -313,8 +317,7 @@ local function newScene( scene_name )
 
 			worona:remove_action("navbar_right_button_pushed", downloadContent)
 			worona:remove_action("navbar_left_button_pushed", loadAboutScene)
-			-- worona:remove_action( "connection_not_available", loadSavedListData)
-			-- worona:remove_action( "content_file_updated", refreshTableViewContent)
+			worona:remove_action("android_back_button_pushed", exitApp)	 
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.

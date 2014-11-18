@@ -30,7 +30,7 @@ local function newContentService()
 	local function checkConnection(website)
 
 	    --: private variables :--
-	    local website = website or "www.google.com" -- if you want to test your site instea, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
+	    local website = website or "www.google.com" -- if you want to test your site instead, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
 	    local timeout = 3
 		local connection_available
 
@@ -42,10 +42,10 @@ local function newContentService()
 		local testResult = test:connect( website, 80) 
 		 
 		if testResult ~= nil then
-			worona.log:info("content-main/checkConnection: Internet access is available")
+			worona.log:info("content/checkConnection: Internet access is available")
 		    connection_available = true
 		else
-			worona.log:info("content-main/checkConnection: Internet access is not available")
+			worona.log:info("content/checkConnection: Internet access is not available")
 		    connection_available = false
 		end
 
@@ -196,6 +196,7 @@ local function newContentService()
 				end
 				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				if read_success == -1 then
+					worona.log:info("content.lua/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
 					worona:do_action( "connection_not_available" )
 				else
 					checkContentUrls(content_type)
