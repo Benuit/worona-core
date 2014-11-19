@@ -15,7 +15,7 @@ local function newScene( scene_name )
 	end
 
 
-	worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
+	worona.lang:load("worona-core.includes.scene-list.lang.scene-list-lang", "scene-list")
 
 	local function downloadContent()
 		worona.log:info("scene-list - downloadContent()")

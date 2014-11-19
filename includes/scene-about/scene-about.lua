@@ -59,7 +59,7 @@ local function newScene( scene_name )
 
 
 
-		local powered_img = display.newImageRect( "worona/includes/scene-about/img/Worona-badge.png", 300, 120 )
+		local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 300, 120 )
 		powered_img.anchorX = 0.5
 		powered_img.anchorY = 1
 		powered_img.x = display.contentWidth / 2
