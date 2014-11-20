@@ -50,7 +50,7 @@ local function worona_load( blood_name )
 	local function initializeIncludes()
 
 		for i = 1, #includes do
-			local require_path = "worona.includes." .. includes[i] .. "." .. includes[i]
+			local require_path = "worona-core.includes." .. includes[i] .. "." .. includes[i]
 			require ( require_path )
 		end
 	end

@@ -12,8 +12,8 @@ local function newStyle()
 	end
 
 	-- paths
-	local images_folder = "worona/includes/style-flat-ui/images"
-	local icons_folder  = "worona/includes/style-flat-ui/icons"
+	local images_folder = "worona-core/includes/style-flat-ui/images"
+	local icons_folder  = "worona-core/includes/style-flat-ui/icons"
 
 	-- colors
 	local light_blue = { 0.203125, 0.59375, 0.85546875, 1 }

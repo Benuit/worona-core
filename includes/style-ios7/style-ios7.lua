@@ -7,7 +7,7 @@ local function newStyle()
 	local style = {}
 
 	-- paths
-	local images_folder = "worona/includes/style-ios7/images"
+	local images_folder = "worona-core/includes/style-ios7/images"
 
 	-- colors
 	local light_grey = { 0.968, 0.968, 0.968, 1 }
