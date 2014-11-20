@@ -126,7 +126,7 @@ local function newContentService()
 			return true
 		else
 			--: error, file doesn't exist :--
-			worona.log:warning("content.lua/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
+			worona.log:info("content.lua/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
 			return -1
 		end
 	end
@@ -146,17 +146,20 @@ local function newContentService()
 	
 		@example: worona.content:update("post", "http://www.worona.org")
 	]]--
-	function content:update( content_type, url )
+	function content:update( options )
 
-		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
-		if type(content_type) == "table" then
-			url = content_type.url
-			content_type = content_type.content_type
+		local content_type, url
+
+		--. Function arguments compatible with table (worona.content:update( { content_type = "customcontent", url = "testing.turismob.com"} ))
+		if type(options) ~= "table" then
+			content_type = options
+			url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
+		else
+			content_type = options.content_type
+			url = options.url or "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
+			--local api_url = worona.api_url or "/wp-json/posts"
+			--url = url ..  . "?type=" .. content_type
 		end
-
-		url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
-		--local api_url = worona.api_url or "/wp-json/posts"
-		--url = url ..  . "?type=" .. content_type
 
 		--: this solves a problem with OSX cache.db
 		local platformName = system.getInfo( "platformName" )
@@ -175,7 +178,7 @@ local function newContentService()
 			if wp_url_connection == false then
 				worona.log:warning("content.lua/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 			else
-				worona.log:warning("content.lua/update: Successful connection to: '" .. worona.wp_url .. "'.")
+				worona.log:info("content.lua/update: Successful connection to: '" .. worona.wp_url .. "'.")
 			end
 		end
 
@@ -187,7 +190,7 @@ local function newContentService()
 				worona.log:warning ( "content.lua/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
 				worona:do_action( "connection_not_available" )
 			elseif ( event.phase == "began" ) then
-				worona.log:debug( "content.lua/fileNetworkListener: download began from url = '" .. url .. "'" )
+				worona.log:info( "content.lua/fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
 				if event.response.filename ~= nil then
 					worona.log:info ( "content.lua/fileNetworkListener: download ended. File name: " .. event.response.filename )
@@ -200,7 +203,7 @@ local function newContentService()
 					worona:do_action( "connection_not_available" )
 				else
 					checkContentUrls(content_type)
-					worona:do_action("content_file_updated", {content_file_path = content_file_path} )
+					worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
 				end
 			end
 		end
