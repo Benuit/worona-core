@@ -3,6 +3,7 @@ local json   = require "json"
 
 local content_type = "post" --. insert content type ( "customcontent" / "post" )
 
+
 local function newContentService()
 
 	local content = {}
@@ -62,8 +63,12 @@ local function newContentService()
 		--. 	content_type: "post" or "customcontent"
 	local function checkContentUrls( content_type )
 
-		for k,v in pairs( content_table[ content_type ] ) do
-			content_urls_table[v.link] = content_type
+		if content_table[ content_type ] ~= nil then
+			for k,v in pairs( content_table[ content_type ] ) do
+				content_urls_table[v.link] = content_type
+			end
+		else
+			worona.log:error("content/checkContentUrls: content_table[ content_type ] = nil")
 		end
 	
 	end
@@ -120,13 +125,37 @@ local function newContentService()
 		if json_file ~= -1 then
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
-			worona.log:info( "content.lua/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
+			if json_table == nil then
+				
+				worona.lang:load("worona-core.includes.content.lang.content-lang", "content")
+				native.showAlert(	worona.lang:get("popup_empty_content_error_title", "content"), 
+								 	worona.lang:get("popup_empty_content_error_description", "content"), 
+								 	{	
+								 		worona.lang:get("popup_empty_content_error_button_1", "content")
+								 	}, 
+								 	nativeAlertListener 
+								)
+
+				worona.log:warning("content/readContentFile: json_table = 'nil'" )
+
+				local function nativeAlertListener( event )
+				    if "clicked" == event.action then
+				        if event.index ~= nil then
+				        	worona.log:info("content/readContentFile: nativeAlertListener() - option 1 selected")
+				        end
+				    end
+				end
+
+				
+			
+			end
+			worona.log:info( "content/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
 			content_table[content_type] = json_table
 			checkContentUrls( content_type )
 			return true
 		else
 			--: error, file doesn't exist :--
-			worona.log:warning("content.lua/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
+			worona.log:warning("content/readContentFile: Unable to open JSON file (`" .. content_file_path .. "`)" )
 			return -1
 		end
 	end
@@ -167,13 +196,31 @@ local function newContentService()
 
 		local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 		if internet_available == false then
-			worona.log:warning("content.lua/update: Internet connection is not available.")
+			worona.log:warning("content/update: Internet connection is not available.")
+			native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
+								worona.lang:get("popup_connection_error_1_description", "content") , 
+								{ 
+									worona.lang:get("popup_connection_error_1_button_1", "content"), 
+									worona.lang:get("popup_connection_error_1_button_2", "content") 
+								}, 
+								nativeAlertListener 
+							)
 		else
 			local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
 			if wp_url_connection == false then
-				worona.log:warning("content.lua/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
+				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
+				
+				native.showAlert(	worona.lang:get("popup_connection_error_2_title", "content"), 	
+									worona.lang:get("popup_connection_error_2_description", "content") , 
+									{ 
+										worona.lang:get("popup_connection_error_2_button_1", "content"), 
+										worona.lang:get("popup_connection_error_2_button_2", "content") 
+									}, 
+									nativeAlertListener 
+								)
+
 			else
-				worona.log:warning("content.lua/update: Successful connection to: '" .. worona.wp_url .. "'.")
+				worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
 			end
 		end
 
@@ -182,19 +229,19 @@ local function newContentService()
 		--. download function callback
 		local function fileNetworkListener( event )
 			if ( event.isError ) then
-				worona.log:warning ( "content.lua/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
+				worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
 				worona:do_action( "connection_not_available" )
 			elseif ( event.phase == "began" ) then
-				worona.log:debug( "content.lua/fileNetworkListener: download began from url = '" .. url .. "'" )
+				worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
 			elseif ( event.phase == "ended" ) then
 				if event.response.filename ~= nil then
-					worona.log:info ( "content.lua/fileNetworkListener: download ended. File name: " .. event.response.filename )
+					worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
 				else
-					worona.log:info ( "content.lua/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+					worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
 				end
 				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
 				if read_success == -1 then
-					worona.log:info("content.lua/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
+					worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
 					worona:do_action( "connection_not_available" )
 				else
 					checkContentUrls(content_type)

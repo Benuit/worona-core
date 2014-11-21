@@ -50,7 +50,11 @@ local function newScene( scene_name )
 		--. View elements
 		local sceneGroup = self.view
 
-		local background = display.newRect( display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
+		local background = display.newRect	( 	display.contentWidth / 2, 
+												display.contentHeight / 2, 
+												display.contentWidth, 
+												display.contentHeight 
+											)
 		sceneGroup:insert( background )
 
 		spinner = widget.newSpinner
@@ -148,40 +152,48 @@ local function newScene( scene_name )
 				end
 			end
 
-			--. Loop content to identify published posts and insert them in the array post_list_ordered.
-			for k,v in pairs(content) do	
-				v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
-				
-				if v.status == "publish" then
-					if #post_list_ordered ~= 0 then
-						insertCurrentPostInOrder(v, 1)
-					else
-						post_list_ordered[1] = v
+			if content ~= nil then
+				--. Loop content to identify published posts and insert them in the array post_list_ordered.
+				for k,v in pairs(content) do	
+					v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
+					
+					if v.status == "publish" then
+						if #post_list_ordered ~= 0 then
+							insertCurrentPostInOrder(v, 1)
+						else
+							post_list_ordered[1] = v
+						end
 					end
 				end
+			else
+				worona.log:error("scene-list/insertContentInTableView: content = nil")
 			end
 
-			--. Insert rows with content into table_view
-			worona.log:debug("#content = " .. #content)
-			for i = 1, #content do
+			
+			if content ~= nil then
+				--. Insert rows with content into table_view
+				for i = 1, #content do
 
-			    local isCategory = false
-			    local rowHeight  = 50
-			    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
-			    local lineColor  = { 0.5, 0.5, 0.5 }
-			    local params     = {
-			    						content = content[i]
-									}
-			    -- Insert a row into the tableView
-			    table_view:insertRow(
-			        {
-			            isCategory = isCategory,
-			            rowHeight  = rowHeight,
-			            rowColor   = rowColor,
-			            lineColor  = lineColor,
-			            params     = params
-			        }
-			    )
+				    local isCategory = false
+				    local rowHeight  = 50
+				    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
+				    local lineColor  = { 0.5, 0.5, 0.5 }
+				    local params     = {
+				    						content = content[i]
+										}
+				    -- Insert a row into the tableView
+				    table_view:insertRow(
+				        {
+				            isCategory = isCategory,
+				            rowHeight  = rowHeight,
+				            rowColor   = rowColor,
+				            lineColor  = lineColor,
+				            params     = params
+				        }
+				    )
+				end
+			else
+				worona.log:error("scene-list/insertContentInTableView: content = nil")
 			end
 		end
 		tableView = createTableView(sceneGroup)
@@ -190,6 +202,18 @@ local function newScene( scene_name )
 
 		
 		downloadContent(tableView, spinner)
+
+
+		local function showNoPostsAvailable()
+			no_posts_text = display.newText( { 
+				text = worona.lang:get("no_posts_available", "scene-list"), 
+				fontSize = 20,
+				x = style.no_posts_text.x, 
+				y = style.no_posts_text.y } )
+			no_posts_text:setFillColor( 0, 0, 0, 0.8 )
+			sceneGroup:insert( no_posts_text )
+		end
+
 
 
 		--. Configure hooks to content-download-type actions
@@ -214,19 +238,19 @@ local function newScene( scene_name )
 			worona.log:info("scene-list - loadSavedListData()")
 			worona.log:debug("scene-list - loadSavedListData()")
 			
-			if content == -1 or #content == 0 then
-				worona.log:debug("cambiando alpha = 1 en no_posts_text")
-				no_posts_text = display.newText( { 
-					text = worona.lang:get("no_posts_available", "scene-list"), 
-					x = style.no_posts_text.x, 
-					y = style.no_posts_text.y } )
-				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
-				sceneGroup:insert( no_posts_text )
+			if content ~= nil then
+				if content == -1 or #content == 0 then
+					worona.log:error("scene-list/loadSavedListData: content = -1 or #content = 0")
+					showNoPostsAvailable()				
+				else
+					transition.to( tableView, { time=1000, alpha=1.0 } )
+				end
 			else
-				transition.to( tableView, { time=1000, alpha=1.0 } )
+				worona.log:error("scene-list/loadSavedListData: content = nil")
+				showNoPostsAvailable()
 			end
 
-			native.showAlert(worona.lang:get("popup_connection_error_title", "scene-list"), worona.lang:get("popup_connection_error_description", "scene-list") , { worona.lang:get("popup_connection_error_button_1", "scene-list"), worona.lang:get("popup_connection_error_button_2", "scene-list") }, nativeAlertListener )
+			
 		end
 		
 		worona:add_action( "connection_not_available", loadSavedListData)
@@ -239,34 +263,38 @@ local function newScene( scene_name )
 			spinner.alpha = 0
 			
 			worona.log:debug("refreshTableViewContent")
-			if content == -1 or #content == 0 then
-				
-				no_posts_text = display.newText( { 
-					text = worona.lang:get("no_posts_available", "scene-list"), 
-					x = style.no_posts_text.x, 
-					y = style.no_posts_text.y } )
-				no_posts_text:setFillColor( 0, 0, 0, 0.8 )
-				sceneGroup:insert( no_posts_text )
 
-
-				worona.log:debug("scene-list/refreshTableViewContent - content = -1")
+			if content ~= nil then
+				if content == -1 or #content == 0 then
+					worona.log:debug("scene-list/refreshTableViewContent - content = -1 or #content = 0")
+					showNoPostsAvailable()
+				else
+					transition.to( tableView, { time=1000, alpha=1.0 } )
+					
+					display.remove(no_posts_text)
+					
+					worona.log:debug("scene-list/refreshTableViewContent - content != -1 ")
+				end
 			else
-				transition.to( tableView, { time=1000, alpha=1.0 } )
-				
-				display.remove(no_posts_text)
-				
-				worona.log:debug("scene-list/refreshTableViewContent - content != -1 ")
+				worona.log:error("scene-list/refreshTableViewContent: content = nil")
+				showNoPostsAvailable()
 			end
+
 			worona.log:info("scene-list - refreshTableViewContent()")
+		
 		end
 		worona:add_action( "content_file_updated", refreshTableViewContent)
 
 
-		if content == -1 or #content == 0 then
-			worona.log:debug("scene-list: content = -1 or #content == 0")
+		if content ~= nil then
+			if content == -1 or #content == 0 then
+				worona.log:debug("scene-list: content = -1 or #content == 0")
+			else
+				worona.log:debug("scene-list: content != -1")
+				insertContentInTableView(tableView)
+			end
 		else
-			worona.log:debug("scene-list: content != -1")
-			insertContentInTableView(tableView)
+			worona.log:error("scene-list/create: content = nil")
 		end
 
 
