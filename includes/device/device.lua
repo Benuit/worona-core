@@ -4,7 +4,7 @@ local function newDeviceService()
 
 	device = {}
 
-	device.PLATFORM_VERSION = nil--"7.0"
+	device.PLATFORM_VERSION = "8.0"
 
 	function device:getOrientation()
 		--: Return: portrait or landscape :--
@@ -78,7 +78,7 @@ local function newDeviceService()
 	end
 
 	function device:getDevice()
-		--: Return: iphone3, iphone4, iphone5, ipadnormal, ipadretina, android5, android8, android10 :--
+		--: Return: iphone3, iphone4, iphone5, iphone6, iphone6plus, ipadnormal, ipadretina, android5, android8, android10 :--
 
 		local platformName    = device:getPlatformName()
 		local platformVersion = system.getInfo( "platformVersion" )
@@ -98,8 +98,12 @@ local function newDeviceService()
 					return "iphone3"
 				elseif display.pixelHeight <= 960 then
 					return "iphone4"
-				else
+				elseif display.pixelHeight <= 1136 then
 					return "iphone5"
+				elseif display.pixelHeight <= 1334 then
+					return "iphone6"
+				else
+					return "iphone6plus"
 				end
 			end
 		else
@@ -119,7 +123,9 @@ local function newDeviceService()
 		local platformVersion = device.PLATFORM_VERSION or system.getInfo( "platformVersion" )
 
 		
-		if platformName == "iPhone OS" and string.find( platformVersion, "7." ) == 1 then
+		if platformName == "iPhone OS" and string.find( platformVersion, "8." ) == 1 then
+		    return "ios8"
+		elseif platformName == "iPhone OS" and string.find( platformVersion, "7." ) == 1 then
 		    return "ios7"
 		elseif platformName == "iPhone OS" and string.find( platformVersion, "6." ) == 1 then
 		    return "ios6"
