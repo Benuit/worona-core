@@ -7,7 +7,7 @@ local function newPostScene( scene_name )
 
   --: private variables
   local webview, content, url, scene_on_screen
-  local postHtmlRender = require "worona.includes.scene-post.html-render"
+  local postHtmlRender = require "worona-core.includes.scene-post.html-render"
 
   local function androidListener( event )
     if event.type == "link" then

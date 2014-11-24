@@ -19,7 +19,7 @@ local function newLangService()
 		@param: path = path of the lang file, plugin_name = name of the plugin where lang file will be used.
 		@return: -
 	
-		@example: worona.lang:load("worona.includes.scene-list.lang.scene-list-lang", "scene-list")
+		@example: worona.lang:load("worona-core.includes.scene-list.lang.scene-list-lang", "scene-list")
 	]]--
 	function lang:load( path, plugin_name )
 
