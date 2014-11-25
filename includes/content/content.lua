@@ -7,6 +7,7 @@ local content_type = "post" --. insert content type ( "customcontent" / "post" )
 local function newContentService()
 
 	local content = {}
+	
 
 	--. PRIVATE VARIABLES .--
 	local content_table = {}  --. content table stores all the content from any kind of the app: content_table = { customcontent = {} , posts = [] }
@@ -126,8 +127,6 @@ local function newContentService()
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
 			if json_table == nil then
-				
-				worona.lang:load("worona-core.includes.content.lang.content-lang", "content")
 				native.showAlert(	worona.lang:get("popup_empty_content_error_title", "content"), 
 								 	worona.lang:get("popup_empty_content_error_description", "content"), 
 								 	{	
@@ -182,12 +181,12 @@ local function newContentService()
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
 			content_type = options
-			url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
+			url = worona.wp_url .. "/wp-json/posts?type=" .. content_type
+			
 		else
 			content_type = options.content_type
-			url = options.url or "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
-			--local api_url = worona.api_url or "/wp-json/posts"
-			--url = url ..  . "?type=" .. content_type
+			local base_url = options.url or worona.wp_url
+			url = base_url .. "/wp-json/posts?type=" .. content_type
 		end
 
 		--: this solves a problem with OSX cache.db
@@ -316,6 +315,8 @@ local function newContentService()
 
 		if read_success == -1 then return -1 else return content_table[ content_type ] end
 	end
+
+	worona:add_action( "init", function() worona.lang:load("worona-core.includes.content.lang.content-lang", "content") end )
 
 	return content
 end

@@ -11,11 +11,14 @@ local function newBasicNavBar( self, params )
 
 	local style = worona.style:get("navbar")
 
+	local ios7and8_y      = ( display.topStatusBarContentHeight + style.height ) / 2
+	local ios7and8_height = style.height + display.topStatusBarContentHeight
+
 	local attributes = {
 		navbar_x                = display.contentWidth / 2,
-		navbar_y                = worona.style:getSetting( { ios7 = ( display.topStatusBarContentHeight + style.height ) / 2, default = display.topStatusBarContentHeight + style.height / 2 } ),
+		navbar_y                = worona.style:getSetting( { ios7 = ios7and8_y, ios8 = ios7and8_y, default = display.topStatusBarContentHeight + style.height / 2 } ),
 		navbar_center_point     = display.topStatusBarContentHeight + style.height / 2,
-		navbar_height           = worona.style:getSetting( { ios7 = style.height + display.topStatusBarContentHeight, default = style.height } ),
+		navbar_height           = worona.style:getSetting( { ios7 = ios7and8_height, ios8 = ios7and8_height, default = style.height } ),
 		navbar_width            = style.width or display.contentWidth,
 		background_color        = style.background.color,
 		background_stroke_color = style.background.stroke.color,
