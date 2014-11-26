@@ -181,8 +181,8 @@ local function newContentService()
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
 			content_type = options
-			url = worona.wp_url .. "/wp-json/posts?type=" .. content_type
-			
+			--url = worona.wp_url .. "/wp-json/posts?type=" .. content_type
+			url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
 		else
 			content_type = options.content_type
 			local base_url = options.url or worona.wp_url
