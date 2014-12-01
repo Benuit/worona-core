@@ -43,7 +43,7 @@ local function newSceneService()
 		-  @date	21/08/14
 		-  @since	0.6.0
 		-
-		-  @param	{ scene_type = "name of custom post type or scene", scene_url = "unique url of the post, it is optional", effect = "effect name", time = miliseconds }
+		-  @params	{ scene_type = "name of custom post type or scene", scene_url = "unique url of the post, it is optional", effect = "effect name", time = miliseconds }
 		-  @return	N/A
 		-
 		-  @example: worona:do_action( "go_to_scene", { scene_type = "post", scene_url = "http://www.example.org/name-of-the-post/", effect = "fade", time = 100 } )

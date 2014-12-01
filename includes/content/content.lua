@@ -285,7 +285,7 @@ local function newContentService()
 		
 		for k,v in pairs( content_table[ content_type ] ) do
 			if v.link == page_url then
-				return v --. Â¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts 
+				return v 
 			end
 		end
 
