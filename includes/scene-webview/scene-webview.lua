@@ -50,7 +50,7 @@ local function newScene( scene_name )
      left_button_icon  = worona.style:get("icons").back
     })
 
-    worona:do_action( "before_creating_scene", params ) 
+    worona:do_action( "before_creating_scene", params )
   end
 
     -- "scene:show()"
@@ -61,12 +61,11 @@ local function newScene( scene_name )
 
        if ( phase == "will" ) then
           -- Called when the scene is still off screen (but is about to come on screen).
-          --blood:do_action( "add_tabbar", { parent = sceneGroup } )
-          --blood:do_action( "add_navbar", { text = params.websitetitle, parent = sceneGroup } )
-          
+          worona:do_action( "add_tabbar" )
+
 
        elseif ( phase == "did" ) then
-          
+
           -- Called when the scene is now on screen.
           -- Insert code here to make the scene come alive.
           -- Example: start timers, begin animation, play audio, etc.
@@ -78,7 +77,7 @@ local function newScene( scene_name )
 
           worona:add_action( "navbar_left_button_pushed", left_button_handler )
           worona:add_action( "android_back_button_pushed", left_button_handler )
-          
+
        end
   end
 
@@ -91,9 +90,9 @@ local function newScene( scene_name )
       if ( phase == "will" ) then
           -- Called when the scene is on screen (but is about to go off screen).
           -- Insert code here to "pause" the scene.
-          -- Example: stop timers, stop animation, stop audio, etc.	
+          -- Example: stop timers, stop animation, stop audio, etc.
 
-        if webview ~= nil then 
+        if webview ~= nil then
   		    webview.x = display.contentWidth * 2
   	    end
 
@@ -102,8 +101,8 @@ local function newScene( scene_name )
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
-          if webview ~= nil then 
-  	        webview:request( "about:blank" ) 
+          if webview ~= nil then
+  	        webview:request( "about:blank" )
   	        webview:stop()
           	timer.performWithDelay( 1000, 	function() display.remove( webview ) end )
           end

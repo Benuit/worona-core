@@ -38,7 +38,7 @@ local function newStyle()
 	style.navbar = {
 		height = 50
 	}
-		
+
 	style.navbar.background = {
 		color = light_blue
 	}
@@ -66,7 +66,7 @@ local function newStyle()
 	---- TABBAR ----
 	--style
 	style.tabbar = {
-		height = 0--68
+		height = 68
 	}
 
 	style.tabbar.background = {
@@ -148,8 +148,8 @@ local function newStyle()
 	--style
 	style.webview = {}
 
-	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.width
+	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height - 2
+	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + 3
 
 
 	---- CUSTOMCONTENT ----
@@ -314,7 +314,7 @@ local function newStyle()
 		}
 	}
 	style.about.text.width = display.contentWidth - 2 * style.about.text.x
-	
+
 
 	return style
 end
