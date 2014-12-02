@@ -11,7 +11,7 @@ local function newSceneService()
 	local registered_scenes   = {}
 	local scenes_history      = {}
 
-	
+
 	--: PRIVATE FUNCTIONS
 
 	--[[-  registerScene
@@ -49,9 +49,9 @@ local function newSceneService()
 		-  @example: worona:do_action( "go_to_scene", { scene_type = "post", scene_url = "http://www.example.org/name-of-the-post/", effect = "fade", time = 100 } )
 		]]--
 	local function gotoScene( params )
-		
+
 		local scene_with_url = params.scene_type
-		
+
 		local url = params.scene_url
 		if url ~= nil then
 			local url_in_numbers = ""
@@ -69,10 +69,15 @@ local function newSceneService()
 
 
 		worona.log:info("scene: About to load the scene '" .. scene_with_url .. "'" )
-		
-		scenes_history[ #scenes_history + 1 ] = { scene_type = params.scene_type, scene_url = params.scene_url, scene_with_url = scene_with_url }
+
+		local scene_params = { scene_type = params.scene_type, scene_url = params.scene_url, scene_with_url = scene_with_url }
+
+		scenes_history[ #scenes_history + 1 ] = scene_params
+
+		worona:do_action( "before_going_to_scene", scene_params )
 
 		composer.gotoScene( scene_with_url, { effect = params.effect, time = params.time, params = params.params } )
+
 	end
 	worona:add_action( "go_to_scene", gotoScene )
 
@@ -97,8 +102,10 @@ local function newSceneService()
 		if scene_to_load ~= nil then
 
 			if composer.getScene( scene_to_load.scene_with_url ) == nil then
-				registered_scenes[ scene_to_load.scene_type ]( scene_to_load.scene_with_url ) 
+				registered_scenes[ scene_to_load.scene_type ]( scene_to_load.scene_with_url )
 			end
+
+			worona:do_action( "before_going_to_scene", scene_to_load )
 
 			worona.log:info("scene: About to load the scene '" .. scene_to_load.scene_with_url .. "'" )
 
