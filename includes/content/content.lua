@@ -127,13 +127,13 @@ local function newContentService()
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
 			if json_table == nil then
-				native.showAlert(	worona.lang:get("popup_empty_content_error_title", "content"), 
-								 	worona.lang:get("popup_empty_content_error_description", "content"), 
-								 	{	
-								 		worona.lang:get("popup_empty_content_error_button_1", "content")
-								 	}, 
-								 	nativeAlertListener 
-								)
+				-- native.showAlert(	worona.lang:get("popup_empty_content_error_title", "content"), 
+				-- 				 	worona.lang:get("popup_empty_content_error_description", "content"), 
+				-- 				 	{	
+				-- 				 		worona.lang:get("popup_empty_content_error_button_1", "content")
+				-- 				 	}, 
+				-- 				 	nativeAlertListener 
+				-- 				)
 
 				worona.log:warning("content/readContentFile: json_table = 'nil'" )
 
@@ -201,27 +201,27 @@ local function newContentService()
 		local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 		if internet_available == false then
 			worona.log:warning("content/update: Internet connection is not available.")
-			native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
-								worona.lang:get("popup_connection_error_1_description", "content") , 
-								{ 
-									worona.lang:get("popup_connection_error_1_button_1", "content"), 
-									worona.lang:get("popup_connection_error_1_button_2", "content") 
-								}, 
-								nativeAlertListener 
-							)
+			-- native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
+			-- 					worona.lang:get("popup_connection_error_1_description", "content") , 
+			-- 					{ 
+			-- 						worona.lang:get("popup_connection_error_1_button_1", "content"), 
+			-- 						worona.lang:get("popup_connection_error_1_button_2", "content") 
+			-- 					}, 
+			-- 					nativeAlertListener 
+			-- 				)
 		else
 			local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
 			if wp_url_connection == false then
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 				
-				native.showAlert(	worona.lang:get("popup_connection_error_2_title", "content"), 	
-									worona.lang:get("popup_connection_error_2_description", "content") , 
-									{ 
-										worona.lang:get("popup_connection_error_2_button_1", "content"), 
-										worona.lang:get("popup_connection_error_2_button_2", "content") 
-									}, 
-									nativeAlertListener 
-								)
+				-- native.showAlert(	worona.lang:get("popup_connection_error_2_title", "content"), 	
+				-- 					worona.lang:get("popup_connection_error_2_description", "content") , 
+				-- 					{ 
+				-- 						worona.lang:get("popup_connection_error_2_button_1", "content"), 
+				-- 						worona.lang:get("popup_connection_error_2_button_2", "content") 
+				-- 					}, 
+				-- 					nativeAlertListener 
+				-- 				)
 
 			else
 				worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
