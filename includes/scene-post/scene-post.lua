@@ -56,10 +56,11 @@ local function newPostScene( scene_name )
 
        if ( phase == "will" ) then
           -- Called when the scene is still off screen (but is about to come on screen).
-          
+          worona:do_action( "add_tabbar" )
+
 
        elseif ( phase == "did" ) then
-          
+
     	    -- Called when the scene is now on screen.
 
 	        --: personalise behavior of navbar
@@ -68,7 +69,7 @@ local function newPostScene( scene_name )
 
         	local style = worona.style:get( "webview" )
     	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-	        
+
           if worona.device:getPlatformName() == "Android" then
             webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
             webview:addEventListener( "urlRequest", androidListener )
@@ -90,14 +91,14 @@ local function newPostScene( scene_name )
       if ( phase == "will" ) then
           -- Called when the scene is on screen (but is about to go off screen).
           -- Insert code here to "pause" the scene.
-          -- Example: stop timers, stop animation, stop audio, etc. 
+          -- Example: stop timers, stop animation, stop audio, etc.
 
           --: personalise behavior of navbar
           worona:remove_action( "navbar_left_button_pushed", left_button_handler )
-          worona:remove_action( "android_back_button_pushed", left_button_handler ) 
+          worona:remove_action( "android_back_button_pushed", left_button_handler )
 
           --: move webview out of the screen
-          if webview ~= nil then 
+          if webview ~= nil then
               webview.x = display.contentWidth * 2
           end
 
@@ -105,13 +106,13 @@ local function newPostScene( scene_name )
 
        elseif ( phase == "did" ) then
           -- Called immediately after scene goes off screen.
-          if webview ~= nil then 
-            webview:request( "about:blank" ) 
+          if webview ~= nil then
+            webview:request( "about:blank" )
             webview:stop()
-            timer.performWithDelay( 1000, function() 
+            timer.performWithDelay( 1000, function()
               if scene_on_screen ~= true then
                 display.remove( webview )
-                webview = nil 
+                webview = nil
               end
             end )
           end
