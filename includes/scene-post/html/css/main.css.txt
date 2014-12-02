@@ -271,3 +271,18 @@ p {
         page-break-after: avoid;
     }
 }
+
+
+
+ol,ul{list-style:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4{font-weight:bold;text-align:left;}
+strong{font-weight:bold;}
+p{margin-bottom:10px;text-align:justify;}
+a{text-decoration:none;color:#F80497;}
+a:hover{background-color:#F80497;color:#FFF;}
+body{text-align:left;font-family:Arial, Helvetica, sans-serif;color:#444;}
+h1{color:#00AAD2;margin-bottom:10px;}
+h2{color:#F27F00;margin-bottom:7px;}
+h3{color:#00AAD2;margin-bottom:5px;}
+h4{color:#00AAD2;margin-bottom:3px;}
