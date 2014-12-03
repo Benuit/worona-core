@@ -2,41 +2,8 @@ local worona = require "worona"
 
 local function newService()
 
-    local socket = require "socket"
+  local socket = require "socket"
 	local html_server = {}
-
-    -- Parse values from query
-    local function getArgs( query )
-
-            query_pos = string.find( query, "/?" ) --: get position of the ?
-            query = string.sub( query, query_pos+2 ) --: remove everything before that
-
-            local parsed = {}
-            local pos = 0
-
-            query = string.gsub(query, "&amp;", "&")
-            query = string.gsub(query, "&lt;", "<")
-            query = string.gsub(query, "&gt;", ">")
-
-            local function ginsert(qstr)
-                    local first, last = string.find(qstr, "=")
-                    if first then
-                            parsed[string.sub(qstr, 0, first-1)] = string.sub(qstr, first+1)
-                    end
-            end
-
-            while true do
-                    local first, last = string.find(query, "&", pos)
-                    if first then
-                            ginsert(string.sub(query, pos, first-1));
-                            pos = last+1
-                    else
-                            ginsert(string.sub(query, pos));
-                            break;
-                    end
-            end
-            return parsed
-    end
 
     --: creates a retrieves a new server
     function html_server:newServer( options )
@@ -49,7 +16,7 @@ local function newService()
       local host    = options.host    or "localhost"
       local port    = options.port    or "1024"
       local backlog = options.backlog or 32
-      local timeout = options.timeout or 0 
+      local timeout = options.timeout or 0
 
       --: start the tcp server
       server, err = socket.tcp()
@@ -58,7 +25,7 @@ local function newService()
       server:setoption( "reuseaddr" , true )
 
       if server ~= nil then
-        
+
         worona.log:info("html_server: starting initialization")
 
         --: define a host and port for the server
@@ -88,7 +55,7 @@ local function newService()
 
               --: add the server to the html_server table
               html_server.server = server
-              
+
                 --: return the server and end function
               return server
 
@@ -139,7 +106,7 @@ local function newService()
 
                 local method, uri, protocol = string.match( message, "([A-Z]+) (.+) (.+)" )
 
-                local args = getArgs( uri )
+                local args = worona.network:getArgs( uri )
 
                 worona.log:info("html_server: received. " .. message )
 
@@ -157,7 +124,7 @@ local function newService()
                 end
 
                 return
-              
+
             end
 
           else
@@ -187,9 +154,9 @@ local function startHtmlServer()
 
     if server ~= nil then
       Runtime:addEventListener( "enterFrame", worona.html_server:processPetition() )
-    else 
+    else
       worona.log:warning("html_server: failed to start due to error " .. err )
-    end  
+    end
 end
 
 worona:add_action( "init", startHtmlServer )

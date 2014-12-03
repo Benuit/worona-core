@@ -1,5 +1,5 @@
 local function worona_load( blood_name )
-    
+
     local worona = {}    -- the new instance
 
     local includes = {
@@ -10,6 +10,7 @@ local function worona_load( blood_name )
     					"style",
 
     					-- libraries
+              "network",
     					"date",
     					"device",
     					"file",
@@ -26,13 +27,13 @@ local function worona_load( blood_name )
     					"load_url",
     					"stats",
     					"event_hooks",
-    					
+
     					-- scenes
     					"scene-list",
     					"scene-post",
     					"scene-about",
     					"scene-webview",
-    					
+
     					-- styles
     					"style-flat-ui",
     					"style-ios7",
@@ -54,9 +55,9 @@ local function worona_load( blood_name )
 			require ( require_path )
 		end
 	end
-	
+
 	local function initializeExtensions( extensions_folder )
-		
+
 
 		local file = io.open( system.pathForFile( "extensions.json", system.ResourceDirectory ), "r" )
 
@@ -68,7 +69,7 @@ local function worona_load( blood_name )
 			io.close( file )	--: close the file after using it :--
 
 			local extensions_array = package[ extensions_folder ]
-			
+
 			for i = 1, #extensions_array do
 				local require_path = extensions_folder .. "." .. extensions_array[i] .. "." .. extensions_array[i]
 				require (require_path)
@@ -85,9 +86,9 @@ local function worona_load( blood_name )
 
 	local action_list = {}
 
-	
+
 	function worona:add_action( hook_name, func, priority )
-		
+
 		priority = priority or 10 --: default
 
 		--: initializates the hook_name table
@@ -100,9 +101,9 @@ local function worona_load( blood_name )
 
 		--: initializates the priority_table
 		if hook_name_list[ priority ] == nil then
-			
+
 			hook_name_list[ priority ] = {}
-			
+
 			local hook_name_list_priorities = hook_name_list.priorities --: localise
 			hook_name_list_priorities[ #hook_name_list_priorities + 1 ] = priority
 			table.sort( hook_name_list_priorities )	--: sort the priorities list so we can use it later
@@ -110,14 +111,14 @@ local function worona_load( blood_name )
 
 		--: actually add the function
 		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
-		
+
 		if worona.log ~= nil then
 			worona.log:info( "add_action: Function '" .. tostring( func ) .. "' added to the '" .. hook_name .. "' hook with priority " .. priority )
 		end
-	end 
+	end
 
 	function worona:do_action( hook_name, ... )
-		
+
 		if action_list[ hook_name ] ~= nil then
 			local hook_name_list = action_list[ hook_name ] --: localise
 			--: iterate thru the priorities table
@@ -134,13 +135,13 @@ local function worona_load( blood_name )
 					if worona.log ~= nil then
 						worona.log:removeIndent()
 					end
-				end				
+				end
 			end
 		end
 	end
 
 	function worona:remove_action( hook_name, func )
-		
+
 		local hook_name_list = action_list[ hook_name ]
 
 		if hook_name_list ~= nil then
@@ -166,9 +167,9 @@ local function worona_load( blood_name )
 
 	local filter_list = {}
 
-	
+
 	function worona:add_filter( hook_name, func, priority )
-		
+
 		priority = priority or 10 --: default
 
 		--: initializates the hook_name table
@@ -181,9 +182,9 @@ local function worona_load( blood_name )
 
 		--: initializates the priority_table
 		if hook_name_list[ priority ] == nil then
-			
+
 			hook_name_list[ priority ] = {}
-			
+
 			local hook_name_list_priorities = hook_name_list.priorities --: localise
 			hook_name_list_priorities[ #hook_name_list_priorities + 1 ] = priority
 			table.sort( hook_name_list_priorities )	--: sort the priorities list so we can use it later
@@ -191,14 +192,14 @@ local function worona_load( blood_name )
 
 		--: actually add the function
 		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
-		
+
 		if worona.log ~= nil then
 			worona.log:info( "add_filter: Function '" .. tostring( func ) .. "' added to the '" .. hook_name .. "' hook with priority " .. priority )
 		end
-	end 
+	end
 
 	function worona:do_filter( hook_name, filtered_variable, ... )
-		
+
 		if filter_list[ hook_name ] ~= nil then
 			local hook_name_list = filter_list[ hook_name ] --: localise
 			--: iterate thru the priorities table
@@ -215,7 +216,7 @@ local function worona_load( blood_name )
 					if worona.log ~= nil then
 						worona.log:removeIndent()
 					end
-				end				
+				end
 			end
 		end
 		-- return the filtered_variable even if nothing has changed
@@ -223,7 +224,7 @@ local function worona_load( blood_name )
 	end
 
 	function worona:remove_filter( hook_name, func )
-		
+
 		local hook_name_list = filter_list[ hook_name ]
 
 		if hook_name_list ~= nil then
@@ -247,7 +248,7 @@ local function worona_load( blood_name )
 	--------------------------------------------------------------
 	--------------------------------------------------------------
 
-	function worona:initializeWoronaExtensions()	
+	function worona:initializeWoronaExtensions()
 
 		-- Initialize includes and extensions
 		initializeIncludes()
