@@ -194,7 +194,7 @@ local function newContentService()
 		if platformName == "Mac OS X" or platformName == "iPhone OS" then
 			url = url .. "&rnd=" .. os.time()
 		end
-
+		
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
@@ -225,43 +225,46 @@ local function newContentService()
 
 			else
 				worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
+
+				--. download function callback
+				local function fileNetworkListener( event )
+					if ( event.isError ) then
+						worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
+						worona:do_action( "connection_not_available" )
+					elseif ( event.phase == "began" ) then
+						worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
+					elseif ( event.phase == "ended" ) then
+						if event.response.filename ~= nil then
+							worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
+						else
+							worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+						end
+						local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
+						if read_success == -1 then
+							worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
+							worona:do_action( "connection_not_available" )
+						else
+							checkContentUrls(content_type)
+							worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
+						end
+					end
+				end
+				
+				local download_options = {
+					url                      = url   , --. URL
+					target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
+					method                   = "GET"   , --. "GET" or "HEAD"
+					target_baseDirectory     = system.DocumentsDirectory  , --. system.DocumentsDirectory or system.TemporaryDirectoy
+					listenerFunction         = fileNetworkListener    --. the listener function
+				}
+				worona.file:download( download_options )
+				
 			end
 		end
 
 
 
-		--. download function callback
-		local function fileNetworkListener( event )
-			if ( event.isError ) then
-				worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
-				worona:do_action( "connection_not_available" )
-			elseif ( event.phase == "began" ) then
-				worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
-			elseif ( event.phase == "ended" ) then
-				if event.response.filename ~= nil then
-					worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
-				else
-					worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
-				end
-				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
-				if read_success == -1 then
-					worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
-					worona:do_action( "connection_not_available" )
-				else
-					checkContentUrls(content_type)
-					worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
-				end
-			end
-		end
-
-		local download_options = {
-			url                      = url   , --. URL
-			target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
-			method                   = "GET"   , --. "GET" or "HEAD"
-			target_baseDirectory     = system.DocumentsDirectory  , --. system.DocumentsDirectory or system.TemporaryDirectoy
-			listenerFunction         = fileNetworkListener    --. the listener function
-		}
-		worona.file:download( download_options )
+		
 	end
 
 
