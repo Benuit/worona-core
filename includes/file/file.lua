@@ -158,9 +158,11 @@ local function newFileService()
 					return system.DocumentsDirectory
 				else  --. If the file is not there, we check in system.ResourceDirectory
 					system_path = system.pathForFile( file_path, system.ResourceDirectory )
-					file_exists = io.open(system_path, "r")
-					if file_exists ~= nil then  --. If base_directory is system.ResourceDirectory and file does not exist, system.pathForFile returns nil .--
-						return system.ResourceDirectory
+					if system_path ~= nil then
+						file_exists = io.open(system_path, "r")
+						if file_exists ~= nil then  --. If base_directory is system.ResourceDirectory and file does not exist, system.pathForFile returns nil .--
+							return system.ResourceDirectory
+						end
 					end
 				end
 			end
