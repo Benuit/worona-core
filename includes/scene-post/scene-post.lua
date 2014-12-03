@@ -12,7 +12,11 @@ local function newPostScene( scene_name )
   local function androidListener( event )
     if event.type == "link" then
       worona.log:info( "html_server: We are on Android and user clicked on a link with url '" .. event.url .. "'" )
-      worona:do_action( "load_url", { url = event.url } )
+      local params = worona.network:getArgs( event.url )
+      if params == nil then
+        params = { url = event.url }
+      end
+      worona:do_action( "load_url", params )
     end
   end
 

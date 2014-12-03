@@ -29,11 +29,11 @@ local function newContentService()
 	
 		@example: local connection_available = checkConnection()
 	]]--
-	local function checkConnection(website)
+	local function checkConnection(website, timeout)
 
 	    --: private variables :--
 	    local website = website or "www.google.com" -- if you want to test your site instead, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
-	    local timeout = 3
+	    local timeout = timeout or 3
 		local connection_available
 
 		local socket = require("socket")
