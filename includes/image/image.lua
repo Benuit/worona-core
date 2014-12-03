@@ -251,6 +251,7 @@ local function newService()
 
 		--: check if this image has already been downloaded, if it's not, locateFileBaseDirectory returns -1
 		local image_baseDirectory = worona.file:locateFileBaseDirectory( "content/images/" .. folders_string .. filename )
+		worona.log:debug("image_baseDirectory = " .. image_baseDirectory)
 
 		--: set function to apply the parameters to the image, not matter if it's in the phone or has been downloaded
 		local function applyParameters ( img )
@@ -303,7 +304,11 @@ local function newService()
 		else
 			worona.log:info("newImage: Image '" .. filename .. "' is in the phone, lets display it.")
 			img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
-			applyParameters( img )
+			if img ~= nil then
+				applyParameters( img )
+			else
+				worona.log:error("newImage: the image is not in the phone, but Corona tries to load it as if it were")
+			end
 		end
 		
 		return container

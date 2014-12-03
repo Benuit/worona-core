@@ -144,9 +144,11 @@ local function newFileService()
 		if file_path ~= nil then
 			--. First we check in system.TemporaryDirectory
 			system_path = system.pathForFile( file_path, system.TemporaryDirectory ) 
+			worona.log:debug("system_path = " .. system_path)
 			
 			file_exists = io.open(system_path, "r")
-			
+			worona.log:debug("file_exists = " .. file_exists)
+
 			if file_exists ~= nil then
 				io.close(file_exists)
 				return system.TemporaryDirectory
