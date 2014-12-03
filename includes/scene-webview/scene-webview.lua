@@ -7,6 +7,7 @@ local function newScene( scene_name )
 
   local webview
   local url
+  local scene_on_screen
   local webview_counter = 0
 
   local left_button_handler = function()
@@ -78,6 +79,8 @@ local function newScene( scene_name )
           worona:add_action( "navbar_left_button_pushed", left_button_handler )
           worona:add_action( "android_back_button_pushed", left_button_handler )
 
+          scene_on_screen = true
+
        end
   end
 
@@ -99,13 +102,20 @@ local function newScene( scene_name )
       worona:remove_action( "navbar_left_button_pushed", left_button_handler )
       worona:remove_action( "android_back_button_pushed", left_button_handler )
 
+      scene_on_screen = false
+
        elseif ( phase == "did" ) then
-          -- Called immediately after scene goes off screen.
+          -- Called immediately after scene goes off screen.          
           if webview ~= nil then
-  	        webview:request( "about:blank" )
-  	        webview:stop()
-          	timer.performWithDelay( 1000, 	function() display.remove( webview ) end )
-          end
+            webview:request( "about:blank" )
+            webview:stop()
+            timer.performWithDelay( 1000, function()
+              if scene_on_screen ~= true then
+                display.remove( webview )
+                webview = nil
+              end
+              end )
+            end
        end
   end
 
