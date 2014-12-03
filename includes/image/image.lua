@@ -7,16 +7,16 @@ local function newService()
 	--: private functions
 
 	local function getFoldersArrayFromUrl( url )
-		
+
 		local folder_array = {}
 
-		local replace = ".+://" 
-		local pattr   = "(.-)/" 
+		local replace = ".+://"
+		local pattr   = "(.-)/"
 
 		url = string.gsub( url, replace, "" ) --: remove http:// or https://
 
 		--: gets any string before a "/" character
-		for folder in string.gmatch( url, pattr ) do 
+		for folder in string.gmatch( url, pattr ) do
 			folder = string.gsub( folder, "[.]", "" )
 			folder_array[ #folder_array + 1 ] = folder
 		end
@@ -75,11 +75,11 @@ local function newService()
 
 	function image:getImageSize( options )
 			--. calculate the scale ratio of the device to know which images should we render .--
-			local scale_ratio = display.pixelWidth / SCREENWIDTH	
+			local scale_ratio = display.pixelWidth / SCREENWIDTH
 			local real_width  = options.width * scale_ratio
 			local sizes_array = {100, 200, 400, 800, 1600}
 			local image_size
-			
+
 			for i=1, #sizes_array do
 				if i == 1 then
 					if real_width <= sizes_array[1] then
@@ -89,11 +89,11 @@ local function newService()
 					image_size = sizes_array[i]
 				end
 			end
-			
+
 			if image_size == nil then
 				image_size = sizes_array[#sizes_array]
 			end
-			
+
 			return image_size
 	end
 
@@ -101,7 +101,7 @@ local function newService()
 	--. - image_object: the image object as returned by the wordpress json API
 	--. - parent: the display group to be inserted
 	--. - image_path: path of the image. Ex: "rsrc/images/"
-	--. - shape: 
+	--. - shape:
 	--.		- "normal" (with and height can be equal or not)
 	--.		- "square" (forces width = height by cropping the image using a container)
 	--.     NOTE: if shape == "square" and width ~= height, it always takes WIDTH as reference.
@@ -119,12 +119,12 @@ local function newService()
 		options.shape      = options.shape or "normal"
 		options.directory  = options.directory or system.TemporaryDirectory
 		options.parent     = options.parent or display.getCurrentStage()
-		
+
 		local image_size = options.shape .. "-" .. image:getImageSize(options)
 
 		local image_file_name = string.match( options.image_object.sizes[image_size], '([^/]+)$')
 		local image_file_path = options.image_path .. image_file_name
-		
+
 		local image_baseDirectory = worona.file:locateFileBaseDirectory(image_file_path)
 
 		local real_width  = image_size .. "-width"
@@ -141,17 +141,17 @@ local function newService()
 		local function makeImageSquare ()
 
 			container.height = options.width
-		
+
 			if real_width == real_height then
 				--. do nothing
-			elseif real_width > real_height then			
+			elseif real_width > real_height then
 				img.height = options.width
 				img.width = options.height/real_height * real_width
-				
+
 			else
 				img.width = options.width
 				img.height = options.width/real_width * real_height
-				
+
 			end
 		end
 
@@ -165,16 +165,16 @@ local function newService()
 				makeImageSquare()
 			end
 		end
-		
+
 		local function downloadImageListener( event )
 			if ( event.isError ) then
 				print ( "Network error - download failed" )
 			else
 				event.target.alpha = 0
 				transition.to( event.target, { alpha = 1.0 } )
-				
+
 				img = event.target
-				
+
 				applyParameters()
 
 				if loading_rectangle ~= nil then
@@ -183,13 +183,13 @@ local function newService()
 				end
 			end
 		end
-		
+
 		if image_baseDirectory == nil then --. Image has not been downloaded yet
 			loading_rectangle = display.newRect( 0, 0, options.width, options.height )
 			container:insert(loading_rectangle)
 			if options.shape == "square" then
 				loading_rectangle.height = options.width
-			end 
+			end
 			loading_rectangle:setFillColor(0.5)
 			display.loadRemoteImage( options.image_object.sizes[image_size], "GET", downloadImageListener, image_file_path, options.directory)
 		else
@@ -210,7 +210,7 @@ local function newService()
 			end,
 			__newindex = function(table, key, value)
 		    	if key == "width" or key == "height" then
-		    		
+
 		    		img[key] = value
 		    		container[key] = value
 			    else
@@ -223,8 +223,8 @@ local function newService()
 	end
 
 	--[[ options table:
-		url: 
-		real_width: 
+		url:
+		real_width:
 		real_height:
 		width: (optional, but either width or height present)
 		height: (optional, but either width or height present)
@@ -251,7 +251,6 @@ local function newService()
 
 		--: check if this image has already been downloaded, if it's not, locateFileBaseDirectory returns -1
 		local image_baseDirectory = worona.file:locateFileBaseDirectory( "content/images/" .. folders_string .. filename )
-		worona.log:debug("image_baseDirectory = " .. image_baseDirectory)
 
 		--: set function to apply the parameters to the image, not matter if it's in the phone or has been downloaded
 		local function applyParameters ( img )
@@ -264,11 +263,11 @@ local function newService()
 
 		--: if image is not here, we have to download it
 		if image_baseDirectory == -1 then
-			
+
 			--: callback for downloader
 			local function downloadImageClosure( loading_rectangle )
 				local function callback( event )
-				
+
 					if ( event.isError ) then
 						worona.log:warning( "image:newImage: Network error - download of '" .. event.response .. "' failed." )
 					else
@@ -276,7 +275,7 @@ local function newService()
 
 						img.alpha = 0
 						transition.to( img, { alpha = 1.0 } )
-				
+
 						applyParameters( img )
 
 						display.remove( loading_rectangle )
@@ -310,7 +309,7 @@ local function newService()
 				worona.log:error("newImage: the image is not in the phone, but Corona tries to load it as if it were")
 			end
 		end
-		
+
 		return container
 
 	end
