@@ -18,8 +18,8 @@ local function worona_load( blood_name )
     					"html_server",
 
     					-- proxies
-    					"content",
     					"lang",
+    					"content",
     					"local_options",
 
     					-- actions
@@ -50,7 +50,7 @@ local function worona_load( blood_name )
 	local function initializeIncludes()
 
 		for i = 1, #includes do
-			local require_path = "worona.includes." .. includes[i] .. "." .. includes[i]
+			local require_path = "worona-core.includes." .. includes[i] .. "." .. includes[i]
 			require ( require_path )
 		end
 	end
@@ -142,6 +142,89 @@ local function worona_load( blood_name )
 	function worona:remove_action( hook_name, func )
 		
 		local hook_name_list = action_list[ hook_name ]
+
+		if hook_name_list ~= nil then
+			--: search for the func in
+			local priorities_list = hook_name_list.priorities
+			for i = 1, #priorities_list do
+				local func_list = hook_name_list[ priorities_list[ i ] ] --: localise
+				for j = 1, #func_list do
+					if func_list[j] == func then
+						worona.log:info( "remove_action: Hook '" .. hook_name .. "', removing function '" .. tostring( func_list[j] ) .. "'." )
+						table.remove(func_list, j)
+					end
+				end
+			end
+		end
+	end
+
+	--------------------------------------------------------------
+	--------------------------------------------------------------
+	---------------------- FILTERS -------------------------------
+	--------------------------------------------------------------
+	--------------------------------------------------------------
+
+	local filter_list = {}
+
+	
+	function worona:add_filter( hook_name, func, priority )
+		
+		priority = priority or 10 --: default
+
+		--: initializates the hook_name table
+		if filter_list[ hook_name ] == nil then
+			filter_list[ hook_name ] = {}
+			filter_list[ hook_name ][ "priorities" ] = {}
+		end
+
+		local hook_name_list = filter_list[ hook_name ] --: localise
+
+		--: initializates the priority_table
+		if hook_name_list[ priority ] == nil then
+			
+			hook_name_list[ priority ] = {}
+			
+			local hook_name_list_priorities = hook_name_list.priorities --: localise
+			hook_name_list_priorities[ #hook_name_list_priorities + 1 ] = priority
+			table.sort( hook_name_list_priorities )	--: sort the priorities list so we can use it later
+		end
+
+		--: actually add the function
+		hook_name_list[ priority ][ # hook_name_list[ priority ] + 1 ] = func
+		
+		if worona.log ~= nil then
+			worona.log:info( "add_filter: Function '" .. tostring( func ) .. "' added to the '" .. hook_name .. "' hook with priority " .. priority )
+		end
+	end 
+
+	function worona:do_filter( hook_name, filtered_variable, ... )
+		
+		if filter_list[ hook_name ] ~= nil then
+			local hook_name_list = filter_list[ hook_name ] --: localise
+			--: iterate thru the priorities table
+			local priorities_list = hook_name_list.priorities --: localise
+			for i = 1, #priorities_list do
+				--: iterate thru the functions table
+				local func_list = hook_name_list[ priorities_list[ i ] ] --: localise
+				for j = 1, #func_list do
+					if worona.log ~= nil then
+						worona.log:info( "do_filter: Hook '" .. hook_name .. "', calling function '" .. tostring( func_list[j] ) .. "'." )
+						worona.log:addIndent()
+					end
+					filtered_variable = func_list[ j ]( filtered_variable, unpack( arg ) ) --: call the function with the filtered_variable as first argument
+					if worona.log ~= nil then
+						worona.log:removeIndent()
+					end
+				end				
+			end
+		end
+		-- return the filtered_variable even if nothing has changed
+		return filtered_variable
+	end
+
+	function worona:remove_filter( hook_name, func )
+		
+		local hook_name_list = filter_list[ hook_name ]
 
 		if hook_name_list ~= nil then
 			--: search for the func in

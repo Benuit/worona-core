@@ -153,7 +153,7 @@ local function newService()
                     client:close()
                 elseif args.url ~= nil then
                     worona.log:info( "html_server: We are on iPhone and user clicked on a link with url '" .. args.url .. "'" )
-                    worona:do_action( "load_url", { url = args.url } )
+                    worona:do_action( "load_url", args )
                 end
 
                 return

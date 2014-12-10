@@ -42,7 +42,7 @@ local function newStyleService()
 	function style:getSetting( array )
 		--: Accepts: 	iphone3, iphone4, iphone5, iphone
 		--:				ipadnormal, ipadretina, ipad
-		--:				ios7, ios6, ios
+		--:				ios8, ios7, ios6, ios
 		--:
 		--: 			android5, android8, android10, android
 		--:
@@ -69,7 +69,9 @@ local function newStyleService()
 
 		if device == "iphone3"
 		or device == "iphone4"
-		or device == "iphone5" then
+		or device == "iphone5"
+		or device == "iphone6"
+		or device == "iphone6plus" then
 				value = array[device .. orientation] 
 					 or array[device]
 					 or array["screen5" .. orientation]

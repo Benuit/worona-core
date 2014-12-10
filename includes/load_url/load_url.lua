@@ -13,7 +13,9 @@ function loadUrl( params )
 
 	local scene_type = worona.content:urlCustomPostType(url) or "scene-webview"
 
-	worona.log:info("load_url: loading the URL: " .. url )
-	worona:do_action( "go_to_scene", { scene_type = scene_type, scene_url = url, effect = "slideLeft", time = 100 } )
+	scene_type = worona:do_filter( "load_url_scene_type_filter", scene_type, params )
+
+	worona.log:info("load_url: loading the URL '" .. url .. "' with the scene type '" .. scene_type .. "'" )
+	worona:do_action( "go_to_scene", { scene_type = scene_type, scene_url = url, effect = "slideLeft", time = 100, params = params } )
 end
 worona:add_action( "load_url", loadUrl )
