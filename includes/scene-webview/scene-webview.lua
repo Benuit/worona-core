@@ -43,6 +43,8 @@ local function newScene( scene_name )
 
     local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
+    
+
     --: load the navbar
     local basic_navbar = worona.ui:newBasicNavBar({
      parent            = sceneGroup,
@@ -71,10 +73,29 @@ local function newScene( scene_name )
           -- Insert code here to make the scene come alive.
           -- Example: start timers, begin animation, play audio, etc.
           local style = worona.style:get( "webview" )
-          webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
-          webview:request( url or "about:blank" )
 
-          webview:addEventListener( "urlRequest", webListener )
+          if system.getInfo("platformName") == "Win" then
+            rectangle = display.newRect( sceneGroup, display.contentWidth / 2, style.y, display.contentWidth, style.height  )
+            rectangle:setFillColor( 0.5 )
+
+            local text = display.newText( {
+              parent   = sceneGroup,
+              text     = "Everything is working fine, but...\n\nThe post view is not supported by Corona Simulator in Windows.\n\nYou must build your app for Android (File -> Build for Android, or Ctrl + B), or run Corona Simulator in MacOS to be able to see your posts.\n\nFor more info, please visit: http://docs.coronalabs.com/guide/distribution/androidBuild/index.html",
+              x        = display.contentWidth / 2,
+              y        = 250,
+              width    = display.contentWidth - 20 ,     --required for multi-line and alignment
+              font     = native.systemFontBold,
+              fontSize = 18,
+              align    = "center"  --new alignment parameter
+            } )
+            text:setFillColor( 1, 1, 1 )
+          else
+            
+            webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
+            webview:request( url or "about:blank" )
+
+            webview:addEventListener( "urlRequest", webListener )
+          end
 
           worona:add_action( "navbar_left_button_pushed", left_button_handler )
           worona:add_action( "android_back_button_pushed", left_button_handler )
