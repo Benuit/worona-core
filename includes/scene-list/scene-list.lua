@@ -25,7 +25,7 @@ local function newScene( scene_name )
 		
 		spinner:start()
 		spinner.alpha = 1
-		worona.content:update( "post", worona.wp_url )
+		worona.content:update( { content_type = "post", url = worona.wp_url } )
 	end
 
 	local function exitApp()
