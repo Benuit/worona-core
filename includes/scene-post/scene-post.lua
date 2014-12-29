@@ -146,5 +146,5 @@ local function newPostScene( scene_name )
   return scene
 end
 worona:do_action( "register_scene", { scene_type = "post", creator = newPostScene } )
-worona:add_action( "init", function() worona.content:readContentFile("post") end )
-worona:add_action( "init", function() worona.content:update("post") end )
+--worona:add_action( "init", function() worona.content:readContentFile("post") end )
+--worona:add_action( "init", function() worona.content:update("post") end )

@@ -13,49 +13,6 @@ local function newContentService()
 	local content_table = {}  --. content table stores all the content from any kind of the app: content_table = { customcontent = {} , posts = [] }
 	local content_urls_table = {} --. array with the urls that are pages or posts included in content. Its intended to be a url cache, so is can be checked whether a url belongs to content or not.
 								  --. structure: { "url1" = content_type1 , "url2" = content_type2 , ... }
-	--. PRIVATE FUNCTIONS .--
-
-	--[[
-		checkConnection
-
-		Checks if there´s internet connection available.
-
-		@type: type
-		@date: 06/2014 or so
-		@since: 0.6
-
-		@param: -
-		@return: true if connection available, false if not
-
-		@example: local connection_available = checkConnection()
-	]]--
-	local function checkConnection(website, timeout)
-
-	    --: private variables :--
-	    local website = website or "www.google.com" -- if you want to test your site instead, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
-	    local timeout = timeout or 3
-		local connection_available
-
-		local socket = require("socket")
-
-		local test = socket.tcp()
-		test:settimeout( timeout )
-
-		local testResult = test:connect( website, 80)
-
-		if testResult ~= nil then
-			worona.log:info("content/checkConnection: Internet access is available")
-		    connection_available = true
-		else
-			worona.log:info("content/checkConnection: Internet access is not available")
-		    connection_available = false
-		end
-
-		test:close()
-		test = nil
-
-		return connection_available
-	end
 
 
 	--. Checks a content file of content_type type, and stores the URLs of the pages in content_urls_table = {"URL" = "content_type"} .--
@@ -183,6 +140,7 @@ local function newContentService()
 		if type(options) ~= "table" then
 			content_type = options
 			url = worona.wp_url .. api_url .. "?type=" .. content_type
+			--url = "http://www.civitatis-api.dev/civitatis-api.php?type=" .. content_type
 		else
 			content_type = options.content_type
 			local base_url = options.url or worona.wp_url
@@ -194,11 +152,11 @@ local function newContentService()
 		if platformName == "Mac OS X" or platformName == "iPhone OS" then
 			url = url .. "&rnd=" .. os.time()
 		end
-		
+
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
+		local internet_available = true-- worona.network:checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 		if internet_available == false then
 			worona.log:warning("content/update: Internet connection is not available.")
 			-- native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"),
@@ -210,7 +168,7 @@ local function newContentService()
 			-- 					nativeAlertListener
 			-- 				)
 		else
-			local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
+			local wp_url_connection = true--worona.network:checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
 			if wp_url_connection == false then
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 
@@ -224,7 +182,7 @@ local function newContentService()
 				-- 				)
 
 			else
-				worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
+				--worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
 
 				--. download function callback
 				local function fileNetworkListener( event )
@@ -249,7 +207,7 @@ local function newContentService()
 						end
 					end
 				end
-				
+
 				local download_options = {
 					url                      = url   , --. URL
 					target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
@@ -258,13 +216,13 @@ local function newContentService()
 					listenerFunction         = fileNetworkListener    --. the listener function
 				}
 				worona.file:download( download_options )
-				
+
 			end
 		end
 
 
 
-		
+
 	end
 
 

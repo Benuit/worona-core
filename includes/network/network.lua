@@ -39,6 +39,34 @@ local function newNetworkService()
     end
   end
 
+  function network:checkConnection(website, timeout)
+
+    --: private variables :--
+    local website = website or "www.google.com" -- if you want to test your site instead, use: string.gsub( worona.wp_url, "[htps]*://", "") -- Note that the test does not work if we put http:// in front
+    local timeout = timeout or 3
+    local connection_available
+
+    local socket = require("socket")
+
+    local test = socket.tcp()
+    test:settimeout( 3 )
+
+    local testResult = test:connect( website, 80)
+
+    if testResult ~= nil then
+      worona.log:info("content/checkConnection: Internet access to " .. website .. " is available")
+      connection_available = true
+    else
+      worona.log:info("content/checkConnection: Internet access to " .. website .. " is not available")
+      connection_available = false
+    end
+
+    test:close()
+    test = nil
+
+    return connection_available
+  end
+
   return network
 
 end

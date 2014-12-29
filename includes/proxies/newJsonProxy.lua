@@ -2,14 +2,14 @@ local worona = require "worona"
 local json   = require "json"
 
 local function newJsonProxy()
-    
+
     local that = {}
-    
+
     local data, file_path
 
     function that:save( target_file_path )
 
-        if target_file_path == nil and file_path ~= nil then 
+        if target_file_path == nil and file_path ~= nil then
             target_file_path = file_path
         end
 
@@ -22,7 +22,7 @@ local function newJsonProxy()
             io.close( file )
             return true
         end
-        
+
         worona.log:error("newJsonProxy/save: File '" .. target_file_path .. "' cannot be oppened")
         return -1
     end
@@ -31,7 +31,7 @@ local function newJsonProxy()
 
         file_path = json_file_path --. file_path is a local value above!
         local json_content = worona.file:getFileContent( json_file_path )
-        
+
         if json_content ~= -1 then
             data = json.decode( json_content )
             worona.log:info( "newJsonProxy/read: Json File '" .. json_file_path .. "' read succesfully." )
@@ -44,7 +44,11 @@ local function newJsonProxy()
 
     function that:get ( field )
 
-    	return data[ field ]
+      if data[field] ~= nil then
+        return data[ field ]
+      else
+        return nil
+      end
     end
 
     function that:set ( field, value )
@@ -60,10 +64,10 @@ local function newJsonProxy()
     end
 
     function that:append ( field, value )
-
-        for k,v in pairs(value) do 
-            data[field][k] = v
-        end
+    
+      for k,v in pairs(value) do
+          data[field][k] = v
+      end
     end
 
     return that

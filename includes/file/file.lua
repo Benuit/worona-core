@@ -93,12 +93,10 @@ local function newFileService()
 		--. Check if options.target_file_name_or_path is a file name or a file path .--
 		if #isPath == 1 then --. is file name .--
 			targetFilePath = ""
-			worona.log:info("file:download - is file name")
 		elseif #isPath > 1 then  --. is file path .--
 			targetFilePath = options.target_file_name_or_path
-			worona.log:info("file:download - is path")
 		else
-			worona.log:fatal("file:download - options.target_file_name_or_path = #" .. options.target_file_name_or_path)
+			worona.log:fatal("file:download - options.target_file_name_or_path = '" .. options.target_file_name_or_path .. "'")
 		end
 
 		--. Create the directory where the file is going to be placed. .--
@@ -111,15 +109,13 @@ local function newFileService()
 				folderString = folderString .. "/"
 			end
 		end
-
-		worona.log:info("file:download - folderString = #" .. folderString)
-		worona.log:info("file:download - targetFilePath = #" .. targetFilePath)
+		worona.log:info("file:download - Downloading '" .. targetFilePath .. "'")
 
 		local folderCreated = file:createFolder( folderString, options.target_baseDirectory)
 
 		if folderCreated ~= -1 then
 
-			worona.log:info("file:download - download method is GET - URL = #" .. options.url)
+			worona.log:info("file:download - download method is GET - URL = '" .. options.url .. "'")
 
 			local params = {}
 		    params.progress = true
