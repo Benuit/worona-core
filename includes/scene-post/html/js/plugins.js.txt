@@ -22,8 +22,8 @@
 }());
 
 // Place any jQuery/helper plugins in here.
-$(function(){
-  $("img").error(function () {
-      $(this).css({visibility: "hidden", "max-height" : "1px"});
-    });
-});
+// $(function(){
+//   $("img").error(function () {
+//       $(this).css({visibility: "hidden", "max-height" : "1px"});
+//     });
+// });

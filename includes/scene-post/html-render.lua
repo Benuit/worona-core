@@ -55,15 +55,16 @@ function htmlRender:prepareHtmlFile( options )
 	plugins_js_File:close()
 
 	--: get the device os
-	local main_js_Name = "main.iphone.js.txt"
+	local main_js_Name = "main-iphone-js"
 	if worona.device:getPlatformName() == "Android" then
-		main_js_Name = "main.android.js.txt"
+		main_js_Name = "main.android.js"
 	end
 
-	local main_js_Path = system.pathForFile( "worona-core/includes/scene-post/html/js/" .. main_js_Name, system.ResourceDirectory )
-	local main_js_File = io.open( main_js_Path, "r" )
-	local main_js_Data = "<script>" .. main_js_File:read( "*a" ) .. "</script>"
-	main_js_File:close()
+	-- local main_js_Path = system.pathForFile( "worona-core/includes/scene-post/html/js/" .. main_js_Name, system.ResourceDirectory )
+	-- local main_js_File = io.open( main_js_Path, "r" )
+	-- local main_js_Data = "<script>" .. main_js_File:read( "*a" ) .. "</script>"
+	-- main_js_File:close()
+	local main_js_Data = require( "worona-core.includes.scene-post.html.js." .. main_js_Name )
 
 	local footer_2_Path = system.pathForFile( "worona-core/includes/scene-post/html/footer2.html.txt", system.ResourceDirectory )
 	local footer_2_File = io.open( footer_2_Path, "r" )
