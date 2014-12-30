@@ -145,8 +145,8 @@ local function newService()
 				local function callback( event )
 
 					if ( event.isError ) then
-						worona.log:warning( "image:newImage: Network error - download of '" .. event.response .. "' failed." )
-					else
+						worona.log:warning( "image:newImage: Network error - download failed." )
+					elseif img ~= nil then
 						img = event.target
 
 						img.alpha = 0
