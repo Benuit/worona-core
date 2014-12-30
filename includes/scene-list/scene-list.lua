@@ -79,25 +79,15 @@ local function newScene( scene_name )
 			    local rowHeight = row.contentHeight
 			    local rowWidth = row.contentWidth
 
-			    --. POST TITLE
-			    local title_options = 
-			    {	
-			    	parent = row,
-			        text     = row.params.content.title,
-			        x        = style.title.x,
-			        y        = style.title.y,
-			        width    = style.title.width,     --required for multi-line and alignment
-			        font     = style.title.font_type,
-			        fontSize = style.title.font_size
-			    }
-			    local rowTitle = display.newText( title_options )
-			    rowTitle:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+			    row:insert(row.params.rowTitle)
+
+			    
 
 			    -- Align the label left and vertically centered
-			    rowTitle.anchorX = 0.5
-			    rowTitle.x = rowWidth / 2
-			    rowTitle.anchorY = 0.5
-			    rowTitle.y = rowHeight / 2
+			    row.params.rowTitle.anchorX = 0.5
+			    row.params.rowTitle.x = rowWidth / 2
+			    row.params.rowTitle.anchorY = 0.5
+			    row.params.rowTitle.y = rowHeight / 2
 			end
 
 			local function onRowTouch( event )
@@ -174,13 +164,34 @@ local function newScene( scene_name )
 				--. Insert rows with content into table_view
 				for i = 1, #content do
 
+					--. POST TITLE
+					local title_options = 
+					{	
+					    text     = content[i].title,
+					    x        = style.title.x,
+					    y        = style.title.y,
+					    width    = style.title.width,     --required for multi-line and alignment
+					    font     = style.title.font_type,
+					    fontSize = style.title.font_size
+					}
+					local rowTitle = display.newText( title_options )
+					rowTitle:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+
 				    local isCategory = false
-				    local rowHeight  = 50
+				    local rowHeight  = 70 --. Default row height for posts list
+				    local rowHeightOffset = 30
 				    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
 				    local lineColor  = { 0.5, 0.5, 0.5 }
 				    local params     = {
-				    						content = content[i]
+				    						content = content[i],
+				    						rowTitle = rowTitle
 										}
+
+					if rowTitle.height >= rowHeight - rowHeightOffset then
+						rowHeight = rowTitle.height + rowHeightOffset
+					end
+
+
 				    -- Insert a row into the tableView
 				    table_view:insertRow(
 				        {
