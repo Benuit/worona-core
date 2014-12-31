@@ -79,11 +79,13 @@ local function newScene( scene_name )
 			    local rowHeight = row.contentHeight
 			    local rowWidth = row.contentWidth
 
+			    local unescaped_title = worona.string:unescape(row.params.content.title)
+
 			    --. POST TITLE
 			    local title_options = 
 			    {	
 			    	parent   = row,
-			        text     = row.params.content.title,
+			        text     = unescaped_title,
 			        x        = style.title.x,
 			        y        = style.title.y,
 			        width    = style.title.width,     --required for multi-line and alignment
