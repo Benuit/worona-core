@@ -253,7 +253,7 @@ local function newScene( scene_name )
 			
 		end
 		
-		worona:add_action( "connection_not_available", loadSavedListData)
+		worona:add_action( "content_file_not_updated", loadSavedListData)
 
 		local function refreshTableViewContent( params )
 			content = worona.content:getPostList("post")

@@ -188,23 +188,25 @@ local function newContentService()
 				local function fileNetworkListener( event )
 					if ( event.isError ) then
 						worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
-						worona:do_action( "connection_not_available" )
+						worona:do_action( "content_file_not_updated", { content_file_path = content_file_path, content_type = content_type } )
 					elseif ( event.phase == "began" ) then
 						worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
 					elseif ( event.phase == "ended" ) then
 						if event.response.filename ~= nil then
 							worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
+							local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded to see if its is correct.
+							if read_success == -1 then
+								worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
+								worona:do_action( "content_file_not_updated", { content_file_path = content_file_path, content_type = content_type } )
+							else
+								checkContentUrls(content_type)
+								worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
+							end
 						else
 							worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+							worona:do_action( "content_file_not_updated", { content_file_path = content_file_path, content_type = content_type } )
 						end
-						local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
-						if read_success == -1 then
-							worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
-							worona:do_action( "connection_not_available" )
-						else
-							checkContentUrls(content_type)
-							worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
-						end
+						
 					end
 				end
 
