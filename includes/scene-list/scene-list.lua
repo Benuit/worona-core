@@ -194,7 +194,6 @@ local function newScene( scene_name )
 				    local lineColor  = { 0.5, 0.5, 0.5 }
 				    local params     = {
 				    						content = content[i]
-				    						rowTitle = rowTitle
 										}
 				    -- Insert a row into the tableView
 				    table_view:insertRow(
