@@ -57,7 +57,7 @@ function htmlRender:prepareHtmlFile( options )
 	--: get the device os
 	local main_js_Name = "main-iphone-js"
 	if worona.device:getPlatformName() == "Android" then
-		main_js_Name = "main.android.js"
+		main_js_Name = "main-android-js"
 	end
 
 	-- local main_js_Path = system.pathForFile( "worona-core/includes/scene-post/html/js/" .. main_js_Name, system.ResourceDirectory )
