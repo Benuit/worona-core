@@ -82,7 +82,7 @@ local function newScene( scene_name )
 			    --. POST TITLE
 			    local title_options = 
 			    {	
-			    	parent = row,
+			    	parent   = row,
 			        text     = row.params.content.title,
 			        x        = style.title.x,
 			        y        = style.title.y,
@@ -174,8 +174,22 @@ local function newScene( scene_name )
 				--. Insert rows with content into table_view
 				for i = 1, #content do
 
+					local title_options = 
+					{	
+					    text     = content[i].title,
+					    x        = style.title.x,
+					    y        = style.title.y,
+					    width    = style.title.width,     --required for multi-line and alignment
+					    font     = style.title.font_type,
+					    fontSize = style.title.font_size
+					}
+					local rowTitle = display.newText( title_options )
+					rowTitle.alpha = 0
+					local text_height = rowTitle.height
+					display.remove( rowTitle )
+
 				    local isCategory = false
-				    local rowHeight  = 50
+				    local rowHeight  = text_height + 30
 				    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
 				    local lineColor  = { 0.5, 0.5, 0.5 }
 				    local params     = {
