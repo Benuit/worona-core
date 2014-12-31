@@ -168,31 +168,30 @@ local function newContentService()
 		@date: 06/2014
 		@since: 0.6
 	
-		@param: content_type (string) : content type to be updated
-				url (string) : url from which the content will be downloaded.
+		@param: options.content_type (string) : content type to be updated
+				options.url (string) : url from which the content will be downloaded.
 		@return: -
 	
 		@example: worona.content:update("post", "http://www.worona.org")
 	]]--
 	function content:update( options )
 
-		local content_type, url
+		local content_type, base_url
 
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
 			content_type = options
-
-			if worona.app_number_of_posts == nil or type(worona.app_number_of_posts) ~= "number" then
-				worona.app_number_of_posts = 20
-			end
-
-			url = worona.wp_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "type=" .. content_type
-			
+			base_url = worona.wp_url
 		else
 			content_type = options.content_type
-			local base_url = options.url or worona.wp_url
-			url = base_url .. "/wp-json/posts?type=" .. content_type
+			base_url = options.url or worona.wp_url
 		end
+
+		if worona.app_number_of_posts == nil or type(worona.app_number_of_posts) ~= "number" then
+			worona.app_number_of_posts = 20
+		end
+
+		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "?type=" .. content_type
 
 		--: this solves a problem with OSX cache.db
 		local platformName = system.getInfo( "platformName" )

@@ -281,7 +281,7 @@ local function newStyle()
 			y          = 0,
 			width      = display.contentWidth - 20,
 			font_type  = native.systemFont,
-			font_size  = 16,
+			font_size  = 18,
 			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		},
 		table_view = {
