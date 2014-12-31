@@ -1,4 +1,5 @@
 return [[
+<script>
 $(function(){
     $('a').each(function(){
         var href = $(this).attr('href');
@@ -12,7 +13,7 @@ $(function(){
     $('img').each(function(){
       var web_src = $(this).attr('src');
       //$(this).attr('src', "sadfasdfa.jpg");
-      var phone_src = "file://]] .. system.pathForFile("", system.DocumentsDirectory ) .. [[/content/html/images/";
+      var phone_src = "images/";
 
       // get filename
       var filename = web_src.replace( /.+\//, "");
@@ -42,14 +43,17 @@ $(function(){
 
       console.log( phone_src );
 
-      // if the image is not on the phone, use the web_src
+      //if the image is not on the phone, use the web_src
       var check_one_time = false;
       $(this).on('error', function () {
       	if ( check_one_time === false ) {
-        		$(this).attr('src', web_src);
-        		check_one_time = true;
-        	}
+    		$(this).attr('src', web_src);
+    		check_one_time = true;
+        } else {
+            $(this).css({visibility: "hidden", "max-height" : "1px"});
+        }   
       });
     });
 });
+</script>
 ]]
