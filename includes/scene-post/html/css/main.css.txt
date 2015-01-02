@@ -286,3 +286,5 @@ h1{color:#00AAD2;margin-bottom:10px;}
 h2{color:#F27F00;margin-bottom:7px;}
 h3{color:#00AAD2;margin-bottom:5px;}
 h4{color:#00AAD2;margin-bottom:3px;}
+.listadoQueVer{padding-left:0px}
+.listadoEnlaces li, .listado li {list-style:initial}
