@@ -38,10 +38,11 @@ local function newPostScene( scene_name )
 
        postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
 
+       local unescaped_title = worona.string:unescape(content.title)
        --: load the navbar
        local basic_navbar = worona.ui:newBasicNavBar({
         parent            = sceneGroup,
-        text              = content.title,
+        text              = unescaped_title,
         left_button_icon  = worona.style:get("icons").back
        })
 
