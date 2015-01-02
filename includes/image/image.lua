@@ -146,7 +146,7 @@ local function newService()
 
 					if ( event.isError ) then
 						worona.log:warning( "image:newImage: Network error - download failed." )
-					elseif img ~= nil then
+					else
 						img = event.target
 
 						img.alpha = 0
@@ -157,7 +157,7 @@ local function newService()
 						display.remove( loading_rectangle )
 						loading_rectangle = nil
 
-						worona.log:info( "image:newImage: Success - download of '" .. event.response .. "' succeed." )
+						worona.log:info( "image:newImage: Download Success." )
 					end
 				end
 				return callback
