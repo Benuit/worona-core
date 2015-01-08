@@ -79,27 +79,30 @@ local function newScene( scene_name )
 			    local rowHeight = row.contentHeight
 			    local rowWidth = row.contentWidth
 
-			    local unescaped_title = worona.string:unescape(row.params.content.title)
+			    worona:do_action( "on_list_row_render_start", { row = row } )
 
 			    --. POST TITLE
 			    local title_options = 
 			    {	
 			    	parent   = row,
-			        text     = unescaped_title,
-			        x        = style.title.x,
-			        y        = style.title.y,
-			        width    = style.title.width,     --required for multi-line and alignment
-			        font     = style.title.font_type,
-			        fontSize = style.title.font_size
+			        text     = row.params.title_options.text,    
+			        x        = row.params.title_options.x,   
+			        y        = row.params.title_options.y,       
+			        width    = row.params.title_options.width,   
+			        font     = row.params.title_options.font,    
+			        fontSize = row.params.title_options.fontSize
 			    }
-			    local rowTitle = display.newText( title_options )
-			    rowTitle:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+			    title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+			    local row_title = display.newText( title_options )
+			    row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
 			    -- Align the label left and vertically centered
-			    rowTitle.anchorX = 0.5
-			    rowTitle.x = rowWidth / 2
-			    rowTitle.anchorY = 0.5
-			    rowTitle.y = rowHeight / 2
+			    row_title.anchorX = 0.5
+			    row_title.x = rowWidth / 2
+			    row_title.anchorY = 0.5
+			    row_title.y = rowHeight / 2
+
+			    worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
 			end
 
 			local function onRowTouch( event )
@@ -112,18 +115,25 @@ local function newScene( scene_name )
 				return true
 			end
 
-			-- Create the widget
-			table_view = widget.newTableView
+			local tableview_options = 
 			{
-			    left = style.table_view.left,
-			    top = style.table_view.top,
-			    height = style.table_view.height,
-			    width = style.table_view.width,
-			    hideScrollBar = style.table_view.hideScrollBar,
-			    onRowRender = onRowRender,
-			    onRowTouch = onRowTouch,
-			    listener = scrollListener
+				left = style.table_view.left,
+				top = style.table_view.top,
+				height = style.table_view.height,
+				width = style.table_view.width,
+				hideScrollBar = style.table_view.hideScrollBar,
+				onRowRender = onRowRender,
+				onRowTouch = onRowTouch,
+				listener = scrollListener,
+				bottomPadding = 50
 			}
+			tableview_options = worona:do_filter( "list_tableview_options_filter", tableview_options )
+
+			local borrar = 0
+
+			-- Create the widget
+			table_view = widget.newTableView(tableview_options)
+
 			if parent_group ~= nil then
 				parent_group:insert(table_view)
 			end
@@ -176,37 +186,48 @@ local function newScene( scene_name )
 				--. Insert rows with content into table_view
 				for i = 1, #content do
 
+					local unescaped_title = worona.string:unescape(content[i].title)
+
 					local title_options = 
 					{	
-					    text     = content[i].title,
+					    text     = unescaped_title,
 					    x        = style.title.x,
 					    y        = style.title.y,
 					    width    = style.title.width,     --required for multi-line and alignment
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
 					}
-					local rowTitle = display.newText( title_options )
-					rowTitle.alpha = 0
-					local text_height = rowTitle.height
-					display.remove( rowTitle )
+					title_options = worona:do_filter( "list_row_dummy_title_options_filter", title_options )
+					local dummy_text = display.newText( title_options )
+					dummy_text.alpha = 0
+					local text_height = dummy_text.height
+					display.remove( dummy_text )
 
-				    local isCategory = false
-				    local rowHeight  = text_height + 30
-				    local rowColor   = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } }
-				    local lineColor  = { 0.5, 0.5, 0.5 }
-				    local params     = {
-				    						content = content[i]
+					local row_options = {
+
+				    	is_category  = false,
+				    	row_height   = text_height + 30,
+				    	row_color    = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } },
+				    	line_color   = { 0.5, 0.5, 0.5 },
+				    	params       = {
+				    						content = content[i],
+				    						title_options = title_options
 										}
+					}
+
+					row_options = worona:do_filter( "list_row_options_filter", row_options )
+
 				    -- Insert a row into the tableView
 				    table_view:insertRow(
 				        {
-				            isCategory = isCategory,
-				            rowHeight  = rowHeight,
-				            rowColor   = rowColor,
-				            lineColor  = lineColor,
-				            params     = params
+				            isCategory = row_options.is_category,
+				            rowHeight  = row_options.row_height,
+				            rowColor   = row_options.row_color,
+				            lineColor  = row_options.line_color,
+				            params     = row_options.params
 				        }
 				    )
+				
 				end
 			else
 				worona.log:error("scene-list/insertContentInTableView: content = nil")
@@ -252,7 +273,7 @@ local function newScene( scene_name )
 			end
 
 			worona.log:info("scene-list - loadSavedListData()")
-			worona.log:debug("scene-list - loadSavedListData()")
+			
 			
 			if content ~= nil then
 				if content == -1 or #content == 0 then
@@ -278,18 +299,18 @@ local function newScene( scene_name )
 			spinner:stop()
 			spinner.alpha = 0
 			
-			worona.log:debug("refreshTableViewContent")
+			
 
 			if content ~= nil then
 				if content == -1 or #content == 0 then
-					worona.log:debug("scene-list/refreshTableViewContent - content = -1 or #content = 0")
+					
 					showNoPostsAvailable()
 				else
 					transition.to( tableView, { time=1000, alpha=1.0 } )
 					
 					display.remove(no_posts_text)
 					
-					worona.log:debug("scene-list/refreshTableViewContent - content != -1 ")
+					
 				end
 			else
 				worona.log:error("scene-list/refreshTableViewContent: content = nil")
@@ -304,9 +325,9 @@ local function newScene( scene_name )
 
 		if content ~= nil then
 			if content == -1 or #content == 0 then
-				worona.log:debug("scene-list: content = -1 or #content == 0")
+				
 			else
-				worona.log:debug("scene-list: content != -1")
+				
 				insertContentInTableView(tableView)
 			end
 		else
