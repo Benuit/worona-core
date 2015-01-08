@@ -273,7 +273,7 @@ local function newStyle()
 	}
 
 
-	---- LIST ----
+	---- POST LIST ----
 	--style
 	style.list = {
 		title = {
