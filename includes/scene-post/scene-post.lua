@@ -38,10 +38,11 @@ local function newPostScene( scene_name )
 
        postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
 
+       local unescaped_title = worona.string:unescape(content.title)
        --: load the navbar
        local basic_navbar = worona.ui:newBasicNavBar({
         parent            = sceneGroup,
-        text              = content.title,
+        text              = unescaped_title,
         left_button_icon  = worona.style:get("icons").back
        })
 
@@ -64,34 +65,35 @@ local function newPostScene( scene_name )
 
 	        --: personalise behavior of navbar
         	worona:add_action( "navbar_left_button_pushed", left_button_handler )
-          worona:add_action( "android_back_button_pushed", left_button_handler )
+          	worona:add_action( "android_back_button_pushed", left_button_handler )
 
         	local style = worona.style:get( "webview" )
 
-          if system.getInfo("platformName") == "Win" then
-            rectangle = display.newRect( sceneGroup, display.contentWidth / 2, style.y, display.contentWidth, style.height  )
-            rectangle:setFillColor( 0.5 )
+          	if system.getInfo("platformName") == "Win" then
+            	rectangle = display.newRect( sceneGroup, display.contentWidth / 2, style.y, display.contentWidth, style.height  )
+            	rectangle:setFillColor( 0.5 )
 
-            local text = display.newText( {
-              parent   = sceneGroup,
-              text     = "Everything is working fine, but...\n\nThe post view is not supported by Corona Simulator in Windows.\n\nYou must build your app for Android (File -> Build for Android, or Ctrl + B), or run Corona Simulator in MacOS to be able to see your posts.\n\nFor more info, please visit: http://docs.coronalabs.com/guide/distribution/androidBuild/index.html",
-              x        = display.contentWidth / 2,
-              y        = 250,
-              width    = display.contentWidth - 20 ,     --required for multi-line and alignment
-              font     = native.systemFontBold,
-              fontSize = 18,
-              align    = "center"  --new alignment parameter
-            } )
-            text:setFillColor( 1, 1, 1 )
-          else
-      	    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
+            	local text = display.newText( {
+              		parent   = sceneGroup,
+              		text     = "Everything is working fine, but...\n\nThe post view is not supported by Corona Simulator in Windows.\n\nYou must build your app for Android (File -> Build for Android, or Ctrl + B), or run Corona Simulator in MacOS to be able to see your posts.\n\nFor more info, please visit: http://docs.coronalabs.com/guide/distribution/androidBuild/index.html",
+              		x        = display.contentWidth / 2,
+              		y        = 250,
+              		width    = display.contentWidth - 20 ,     --required for multi-line and alignment
+              		font     = native.systemFontBold,
+              		fontSize = 18,
+              		align    = "center"  --new alignment parameter
+            	} )
+            	text:setFillColor( 1, 1, 1 )
+          	else
+      	    	webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
   	        
-            if worona.device:getPlatformName() == "Android" then
-              webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
-              webview:addEventListener( "urlRequest", androidListener )
-            else
-              webview:request( "http://localhost:1024?render=" .. content.slug )
+            	if worona.device:getPlatformName() == "Android" then
+              		webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+              		webview:addEventListener( "urlRequest", androidListener )
+            	else
+              	webview:request( "http://localhost:1024?render=" .. content.slug )
             end
+          
           end
           scene_on_screen = true
 
