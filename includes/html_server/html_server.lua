@@ -49,7 +49,7 @@ local function newService()
       local host    = options.host    or "localhost"
       local port    = options.port    or "1024"
       local backlog = options.backlog or 32
-      local timeout = options.timeout or 0 
+      local timeout = options.timeout or 0
 
       --: start the tcp server
       server, err = socket.tcp()
@@ -58,7 +58,7 @@ local function newService()
       server:setoption( "reuseaddr" , true )
 
       if server ~= nil then
-        
+
         worona.log:info("html_server: starting initialization")
 
         --: define a host and port for the server
@@ -88,7 +88,7 @@ local function newService()
 
               --: add the server to the html_server table
               html_server.server = server
-              
+
                 --: return the server and end function
               return server
 
@@ -157,7 +157,7 @@ local function newService()
                 end
 
                 return
-              
+
             end
 
           else
@@ -178,18 +178,27 @@ end
 
 worona:do_action( "register_service", { service = "html_server", creator = newService } )
 
+local function initialiseServer()
+    worona.log:info( "html_server: about to start the html server" )
+    local server, err = worona.html_server:newServer()
+    if server ~= nil then
+        Runtime:addEventListener( "enterFrame", worona.html_server:processPetition() )
+    else
+        worona.log:warning("html_server: failed to start due to error " .. err )
+    end
+end
+
 --: start the server
 local function startHtmlServer()
 
-	worona.log:info( "html_server: about to start the html server" )
+	initialiseServer()
 
-    local server, err = worona.html_server:newServer()
-
-    if server ~= nil then
-      Runtime:addEventListener( "enterFrame", worona.html_server:processPetition() )
-    else 
-      worona.log:warning("html_server: failed to start due to error " .. err )
-    end  
+    local function onSystemEvent( event )
+        if event.type == "applicationResume" then
+            initialiseServer()
+        end
+    end
+    Runtime:addEventListener( "system", onSystemEvent )
 end
 
 worona:add_action( "init", startHtmlServer )
