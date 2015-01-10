@@ -168,18 +168,27 @@ end
 
 worona:do_action( "register_service", { service = "html_server", creator = newService } )
 
+local function initialiseServer()
+    worona.log:info( "html_server: about to start the html server" )
+    local server, err = worona.html_server:newServer()
+    if server ~= nil then
+        Runtime:addEventListener( "enterFrame", worona.html_server:processPetition() )
+    else
+        worona.log:warning("html_server: failed to start due to error " .. err )
+    end
+end
+
 --: start the server
 local function startHtmlServer()
 
-	worona.log:info( "html_server: about to start the html server" )
+    initialiseServer()
 
-	local server, err = worona.html_server:newServer()
-
-	if server ~= nil then
-	  Runtime:addEventListener( "enterFrame", worona.html_server:processPetition() )
-	else
-	  worona.log:warning("html_server: failed to start due to error " .. err )
-	end
+    local function onSystemEvent( event )
+        if event.type == "applicationResume" then
+            initialiseServer()
+        end
+    end
+    Runtime:addEventListener( "system", onSystemEvent )
 end
 
 worona:add_action( "init", startHtmlServer )
