@@ -16,11 +16,11 @@ local function newFileService()
 
 	--. Creates a or various folders in base_directory  (previously known as createDirectory).--
 		--. RETURN: true if success, -1 if error
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	folder_path    = path for the directory to be created
 		--. 	base_directory = target Base Directory (Documents or Temporary)
 	function file:createFolder( folder_path, base_directory )
-		
+
 		local base_directory = base_directory or system.DocumentsDirectory
 		local lfs = require "lfs"
 
@@ -69,7 +69,7 @@ local function newFileService()
 
 	--. Downloads a file from an URL Address and stores it in the options.target_file_name_or_path in target_baseDirectory .--
 		--. RETURN: -
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	url                       = URL
 		--.  	target_file_name_or_path  = name of the file file will be stored.
 		--. 	method                    = "GET" or "HEAD"
@@ -93,12 +93,10 @@ local function newFileService()
 		--. Check if options.target_file_name_or_path is a file name or a file path .--
 		if #isPath == 1 then --. is file name .--
 			targetFilePath = ""
-			worona.log:info("file:download - is file name")
 		elseif #isPath > 1 then  --. is file path .--
 			targetFilePath = options.target_file_name_or_path
-			worona.log:info("file:download - is path")
 		else
-			worona.log:fatal("file:download - options.target_file_name_or_path = #" .. options.target_file_name_or_path)
+			worona.log:fatal("file:download - options.target_file_name_or_path = '" .. options.target_file_name_or_path .. "'")
 		end
 
 		--. Create the directory where the file is going to be placed. .--
@@ -111,82 +109,81 @@ local function newFileService()
 				folderString = folderString .. "/"
 			end
 		end
-
-		worona.log:info("file:download - folderString = #" .. folderString)
-		worona.log:info("file:download - targetFilePath = #" .. targetFilePath)
+		worona.log:info("file:download - Downloading '" .. targetFilePath .. "'")
 
 		local folderCreated = file:createFolder( folderString, options.target_baseDirectory)
 
 		if folderCreated ~= -1 then
 
-			worona.log:info("file:download - download method is GET - URL = #" .. options.url)
+			worona.log:info("file:download - download method is GET - URL = '" .. options.url .. "'")
 
 			local params = {}
 		    params.progress = true
+		    params.timeout = 10
 		    --params.header   = { ["Cache-Control"] = "no-cache, no-store, must-revalidate", Pragma = "no-cache", Expires = 0 }
 
-			network.download( 
-				options.url, 
-				options.method, 
-				options.listenerFunction, 
+			network.download(
+				options.url,
+				options.method,
+				options.listenerFunction,
 				params,
-				targetFilePath, 
-				options.target_baseDirectory )	
-		end	
-	end	
+				targetFilePath,
+				options.target_baseDirectory )
+		end
+	end
 
 	--. Returns the base directory of a file located in "file_path"
 	function file:locateFileBaseDirectory ( file_path )
 
 		local system_path
 		local file_exists
-		
+
 		if file_path ~= nil then
 			--. First we check in system.TemporaryDirectory
-			system_path = system.pathForFile( file_path, system.TemporaryDirectory ) 
-			
+			system_path = system.pathForFile( file_path, system.TemporaryDirectory )
 			file_exists = io.open(system_path, "r")
-			
+
 			if file_exists ~= nil then
 				io.close(file_exists)
 				return system.TemporaryDirectory
-				
+
 			else  --. If the file is not there, we check in system.DocumentsDirectory
 				system_path = system.pathForFile( file_path, system.DocumentsDirectory )
-
 				file_exists = io.open(system_path, "r")
-				
 				if file_exists ~= nil then
 					io.close(file_exists)
-					return system.DocumentsDirectory				
+					return system.DocumentsDirectory
 				else  --. If the file is not there, we check in system.ResourceDirectory
 					system_path = system.pathForFile( file_path, system.ResourceDirectory )
-					if system_path then  --. If base_directory is system.ResourceDirectory and file does not exist, system.pathForFile returns nil .--
-						return system.ResourceDirectory
+					if system_path ~= nil then
+						file_exists = io.open(system_path, "r")
+						if file_exists ~= nil then  --. If base_directory is system.ResourceDirectory and file does not exist, system.pathForFile returns nil .--
+							return system.ResourceDirectory
+						end
 					end
 				end
-			end 
+			end
 		end
-		
+
 		return -1  --. if file DOES NOT EXIST, return -1
 	end
 
 	--. Returns content as a string from a file .--
 		--. RETURN: content as a string
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	file_path: path of the file.
 	function file:getFileContent( file_path )
-			
+
 		local base_directory = file:locateFileBaseDirectory( file_path )
 		local system_file_path
 
 		if base_directory ~= -1 and file_path ~= -1 then
 			--: create a file path for corona i/o :--
 			system_file_path = system.pathForFile( file_path, base_directory )
-			
+
 			--: will hold contents of file :--
 			local contents
-			
+
 			if system_file_path ~= nil then
 				--: io.open opens a file at path. returns nil if no file found :--
 				local file = io.open( system_file_path, "r" )
@@ -195,11 +192,11 @@ local function newFileService()
 				   contents = file:read( "*a" )
 				   io.close( file )	--: close the file after using it :--
 				end
-			
+
 				return contents
 			end
 		end
-		
+
 		return -1
 	end
 
@@ -218,7 +215,7 @@ local function newFileService()
 
 	        if  not wfh then
 	                print( "writeFileName open error!")
-	                results = false 
+	                results = false
 	        else
 	                -- Read the file from the Resource directory and write it to the destination directory
 	                local data = rfh:read( "*a" )
@@ -227,7 +224,7 @@ local function newFileService()
 	                    results = false     -- error
 	                else
 	                    if not wfh:write( data ) then
-	                        print( "write error!" ) 
+	                        print( "write error!" )
 	                        results = false -- error
 	                    end
 	                end
@@ -236,7 +233,7 @@ local function newFileService()
 	        -- Clean up our file handles
 	        rfh:close()
 	        wfh:close()
-	        return results  
+	        return results
 	end
 
 	return file
