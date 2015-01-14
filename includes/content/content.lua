@@ -202,20 +202,21 @@ local function newContentService()
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
-		if internet_available == false then
-			worona.log:warning("content/update: Internet connection is not available.")
-			native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
-								worona.lang:get("popup_connection_error_1_description", "content") , 
-								{ 
-									worona.lang:get("popup_connection_error_1_button_1", "content"), 
-									worona.lang:get("popup_connection_error_1_button_2", "content") 
-								}, 
-								nativeAlertListener 
-							)
-		else
-			local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", ""))
-			if wp_url_connection == false then
+		local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", "")) --. checking connection to wp_url
+		
+		if wp_url_connection == false then
+			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
+			if internet_available == false then
+				worona.log:warning("content/update: Internet connection is not available.")
+				native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
+									worona.lang:get("popup_connection_error_1_description", "content") , 
+									{ 
+										worona.lang:get("popup_connection_error_1_button_1", "content"), 
+										worona.lang:get("popup_connection_error_1_button_2", "content") 
+									}, 
+									nativeAlertListener 
+								)
+			else
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 				
 				native.showAlert(	worona.lang:get("popup_connection_error_2_title", "content"), 	
@@ -226,46 +227,43 @@ local function newContentService()
 									}, 
 									nativeAlertListener 
 								)
-
-			else
-				worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
 			end
-		end
+		else
+			worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
 
-
-
-		--. download function callback
-		local function fileNetworkListener( event )
-			if ( event.isError ) then
-				worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
-				worona:do_action( "connection_not_available" )
-			elseif ( event.phase == "began" ) then
-				worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
-			elseif ( event.phase == "ended" ) then
-				if event.response.filename ~= nil then
-					worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
-				else
-					worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
-				end
-				local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
-				if read_success == -1 then
-					worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
+			--. download function callback
+			local function fileNetworkListener( event )
+				if ( event.isError ) then
+					worona.log:warning ( "content/fileNetworkListener: Download failed. '" .. content_file_path .. "' , '" .. url .. "'." )
 					worona:do_action( "connection_not_available" )
-				else
-					checkContentUrls(content_type)
-					worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
+				elseif ( event.phase == "began" ) then
+					worona.log:info( "content/fileNetworkListener: download began from url = '" .. url .. "'" )
+				elseif ( event.phase == "ended" ) then
+					if event.response.filename ~= nil then
+						worona.log:info ( "content/fileNetworkListener: download ended. File name: " .. event.response.filename )
+					else
+						worona.log:info ( "content/fileNetworkListener: download ended. File name: NOT FOUND - SERVER ERROR" )
+					end
+					local read_success = worona.content:readContentFile( content_type ) --. read content file once downloaded.
+					if read_success == -1 then
+						worona.log:info("content/fileNetworkListener: reading content file '" .. content_type .. "' was not Successful.")
+						worona:do_action( "connection_not_available" )
+					else
+						checkContentUrls(content_type)
+						worona:do_action("content_file_updated", { content_file_path = content_file_path, content_type = content_type } )
+					end
 				end
 			end
+			
+			local download_options = {
+				url                      = url   , --. URL
+				target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
+				method                   = "GET"   , --. "GET" or "HEAD"
+				target_baseDirectory     = system.DocumentsDirectory  , --. system.DocumentsDirectory or system.TemporaryDirectoy
+				listenerFunction         = fileNetworkListener    --. the listener function
+			}
+			worona.file:download( download_options )
 		end
-		
-		local download_options = {
-			url                      = url   , --. URL
-			target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
-			method                   = "GET"   , --. "GET" or "HEAD"
-			target_baseDirectory     = system.DocumentsDirectory  , --. system.DocumentsDirectory or system.TemporaryDirectoy
-			listenerFunction         = fileNetworkListener    --. the listener function
-		}
-		worona.file:download( download_options )
 	end
 
 
