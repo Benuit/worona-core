@@ -18,6 +18,13 @@ $(function(){
       // get filename
       var filename = web_src.replace( /.+\//, "");
 
+      //. replace & for %3F
+      filename = filename.replace( /\?/, "%3F")
+
+      //. replace &zoom=..... for ""
+      filename = filename.replace( /&.+/, "")
+
+
       // remove http:// or https://
       var url = web_src.replace( /.+:\/\//, "");
 
