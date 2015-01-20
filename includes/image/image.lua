@@ -151,11 +151,9 @@ local function newService()
 					else
 						
 						if dummy == true then
-							img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
-							if img ~= nil then
-								img.anchorX = 0
-								img.x       = display.contentWidth * 2
-								img.anchorX = 0.5
+							local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
+							if dummy_image ~= nil then
+								dummy_image.x       = display.contentWidth * 2
 							end
 						end
 
@@ -191,19 +189,14 @@ local function newService()
 		else
 			worona.log:info("newImage: Image '" .. filename .. "' is in the phone, lets display it.")
 			
-			local img_render_times = 1
 			if dummy == true then
-				img_render_times = 2
-			end
-
-			for i = 1, img_render_times do
-				img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
-				if img ~= nil then
-					img.anchorX = 0
-					img.x       = display.contentWidth * 2
-					img.anchorX = 0.5
+				local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
+				if dummy_image ~= nil then
+					dummy_image.x       = display.contentWidth * 2
 				end
 			end
+
+			img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
 
 			img.alpha = 1
 			if img ~= nil then
