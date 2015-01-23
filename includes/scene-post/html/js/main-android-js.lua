@@ -6,12 +6,12 @@ $(function(){
         $(this).attr('href', "/?url=" + href);
         $(this).click( function(e) {
           setInterval( function() {
-            window.stop()
+            window.stop();
         }, 1 );
       });
     });
     $('img').each(function(){
-      var web_src = $(this).attr('src');
+      var web_src = $(this).attr('data-src');
       //$(this).attr('src', "sadfasdfa.jpg");
       var phone_src = "images/";
 
@@ -19,10 +19,10 @@ $(function(){
       var filename = web_src.replace( /.+\//, "");
 
       //. replace & for %3F
-      filename = filename.replace( /\?/, "%3F")
+      filename = filename.replace( /\?/, "%3F");
 
       //. replace &zoom=..... for ""
-      filename = filename.replace( /&.+/, "")
+      filename = filename.replace( /&.+/, "");
 
 
       // remove http:// or https://
@@ -58,7 +58,7 @@ $(function(){
     		check_one_time = true;
         } else {
             $(this).css({visibility: "hidden", "max-height" : "1px"});
-        }   
+        }
       });
     });
 });
