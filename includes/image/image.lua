@@ -6,17 +6,17 @@ local function newService()
 
 	--: private functions
 
-	local function getFoldersArrayFromUrl( url )
-		
+	function image:getFoldersArrayFromUrl( url )
+
 		local folder_array = {}
 
-		local replace = ".+://" 
-		local pattr   = "(.-)/" 
+		local replace = ".+://"
+		local pattr   = "(.-)/"
 
 		url = string.gsub( url, replace, "" ) --: remove http:// or https://
 
 		--: gets any string before a "/" character
-		for folder in string.gmatch( url, pattr ) do 
+		for folder in string.gmatch( url, pattr ) do
 			folder = string.gsub( folder, "[.]", "" )
 			folder_array[ #folder_array + 1 ] = folder
 		end
@@ -24,9 +24,9 @@ local function newService()
 		return folder_array
 	end
 
-	local function getFoldersStringFromUrl( url )
+	function image:getFoldersStringFromUrl( url )
 
-		local folder_array  = getFoldersArrayFromUrl( url )
+		local folder_array  = image:getFoldersArrayFromUrl( url )
 		local folder_string = ""
 
 		for i = 1, #folder_array do
@@ -36,7 +36,7 @@ local function newService()
 		return folder_string
 	end
 
-	local function getFilenameFromUrl( url )
+	function image:getFilenameFromUrl( url )
 
 		local replace = ".+/"
 		local filename = string.gsub( url, replace, "" ) --: remove everything until the final "/" character
@@ -74,45 +74,47 @@ local function newService()
 	--: public methods
 
 	function image:getImageSize( options )
-		--. calculate the scale ratio of the device to know which images should we render .--
-		local scale_ratio = display.pixelWidth / SCREENWIDTH	
-		local real_width  = options.width * scale_ratio
-		local sizes_array = {100, 200, 400, 800, 1600}
-		local image_size
-		
-		for i=1, #sizes_array do
-			if i == 1 then
-				if real_width <= sizes_array[1] then
-					image_size = sizes_array[1]
+			--. calculate the scale ratio of the device to know which images should we render .--
+			local scale_ratio = display.pixelWidth / SCREENWIDTH
+			local real_width  = options.width * scale_ratio
+			local sizes_array = {100, 200, 400, 800, 1600}
+			local image_size
+
+			for i=1, #sizes_array do
+				if i == 1 then
+					if real_width <= sizes_array[1] then
+						image_size = sizes_array[1]
+					end
+				elseif real_width <= sizes_array[i]  and real_width > sizes_array[i-1] then
+					image_size = sizes_array[i]
 				end
-			elseif real_width <= sizes_array[i]  and real_width > sizes_array[i-1] then
-				image_size = sizes_array[i]
 			end
-		end
-		
-		if image_size == nil then
-			image_size = sizes_array[#sizes_array]
-		end
-		
-		return image_size
+
+			if image_size == nil then
+				image_size = sizes_array[#sizes_array]
+			end
+
+			return image_size
 	end
-	
+
 
 	--[[ options table:
-		url: 
-		real_width: 
+		url:
+		real_width:
 		real_height:
 		width: (optional, but either width or height present)
 		height: (optional, but either width or height present)
 		x:
 		y:
 		directory: (optional, defaults to system.DocumentsDirectory)
+		dummy: ( optional - true/false, false by default ) creates a copy of the image (dummy) so that the memory texture is not erased when the image has been erased.
 		]]--
 	function image:newImage( options )
 
 		--: set defaults
 		local img
 		local parent = options.parent or display.getCurrentStage()
+		local dummy = options.dummy or false
 
 		--: calculate the final height and width
 		local final = calculateFinalDimensions( { real_width = options.real_width, real_height = options.real_height, width = options.width, height = options.height } )
@@ -122,8 +124,8 @@ local function newService()
 		container:translate( options.x, options.y )
 
 		--: get the folders and the filename, from the url
-		local folders_string = getFoldersStringFromUrl( options.url )
-		local filename       = getFilenameFromUrl( options.url )
+		local folders_string = image:getFoldersStringFromUrl( options.url )
+		local filename       = image:getFilenameFromUrl( options.url )
 
 		--: check if this image has already been downloaded, if it's not, locateFileBaseDirectory returns -1
 		local image_baseDirectory = worona.file:locateFileBaseDirectory( "content/images/" .. folders_string .. filename )
@@ -139,25 +141,33 @@ local function newService()
 
 		--: if image is not here, we have to download it
 		if image_baseDirectory == -1 then
-			
+
 			--: callback for downloader
 			local function downloadImageClosure( loading_rectangle )
 				local function callback( event )
-				
+
 					if ( event.isError ) then
-						worona.log:warning( "image:newImage: Network error - download of '" .. options.url .. "' failed." )
+						worona.log:warning( "image:newImage: Network error - download failed." )
 					else
+						
+						if dummy == true then
+							local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
+							if dummy_image ~= nil then
+								dummy_image.x       = display.contentWidth * 2
+							end
+						end
+
 						img = event.target
 
 						img.alpha = 0
 						transition.to( img, { alpha = 1.0 } )
-				
+
 						applyParameters( img )
 
 						display.remove( loading_rectangle )
 						loading_rectangle = nil
 
-						worona.log:info( "image:newImage: Success - download of '" .. event.response .. "' succeed." )
+						worona.log:info( "image:newImage: Download Success." )
 					end
 				end
 				return callback
@@ -178,10 +188,24 @@ local function newService()
 		--: if image is in the phone, let's display it
 		else
 			worona.log:info("newImage: Image '" .. filename .. "' is in the phone, lets display it.")
+			
+			if dummy == true then
+				local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
+				if dummy_image ~= nil then
+					dummy_image.x       = display.contentWidth * 2
+				end
+			end
+
 			img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
-			applyParameters( img )
+
+			img.alpha = 1
+			if img ~= nil then
+				applyParameters( img )
+			else
+				worona.log:error("newImage: the image is not in the phone, but Corona tries to load it as if it were")
+			end
 		end
-		
+
 		return container
 
 	end
