@@ -35,7 +35,6 @@ local function worona_load( blood_name )
     					
     					-- styles
     					"style-flat-ui",
-    					"style-ios7",
 
     					-- ui
     					"ui-newBasicNavBar"
