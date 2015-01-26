@@ -16,8 +16,8 @@ local function newStyle()
 	local icons_folder  = "worona-core/includes/style-flat-ui/icons"
 
 	-- colors
-	local light_blue = { 0.203125, 0.59375, 0.85546875, 1 }
-	local dark_blue  = { 0.16, 0.5, 0.72, 1 }
+	local main_color = { 0.203125, 0.59375, 0.85546875, 1 }
+	local stroke_color  = { 0.16, 0.5, 0.72, 1 }
 
 	-- common styles
 	local stroke_width     = 4
@@ -40,11 +40,11 @@ local function newStyle()
 	}
 		
 	style.navbar.background = {
-		color = light_blue
+		color = main_color
 	}
 
 	style.navbar.background.stroke = {
-		color = dark_blue,
+		color = stroke_color,
 		width = stroke_width
 	}
 
