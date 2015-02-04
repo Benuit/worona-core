@@ -59,7 +59,7 @@ local function newScene( scene_name )
 
 
 		if worona.badge ~= false then
-			local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 300, 120 )
+			local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/worona-badge.png", 185, 35 )
 			powered_img.anchorX = 0.5
 			powered_img.anchorY = 1
 			powered_img.x = display.contentWidth / 2
@@ -68,6 +68,18 @@ local function newScene( scene_name )
 
 			--: open safari with worona.org when they tap on the badge
 			powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
+		end
+
+		if worona.your_logo ~= false then
+			local your_logo = display.newImageRect( worona.your_logo_icon, worona.your_logo_width, worona.your_logo_height )
+			your_logo.anchorX = 0.5
+			your_logo.anchorY = 1
+			your_logo.x = display.contentWidth / 2
+			your_logo.y = display.contentHeight - 135
+			sceneGroup:insert(your_logo)
+
+			--: open safari with the link when they tap on the badge
+			your_logo:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( worona.your_logo_link ) end  end )
 		end
 
 		worona:do_action( "after_creating_scene" )
