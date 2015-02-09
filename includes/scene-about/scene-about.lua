@@ -59,7 +59,7 @@ local function newScene( scene_name )
 
 
 		if worona.badge ~= false then
-			local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/worona-badge.png", 185, 35 )
+			local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 185, 35 )
 			powered_img.anchorX = 0.5
 			powered_img.anchorY = 1
 			powered_img.x = display.contentWidth / 2
