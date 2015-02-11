@@ -99,6 +99,18 @@ local function newContentService()
 		return false
 	end
 
+	local function nativeAlertUpdateErrorListener( event )
+	    if "clicked" == event.action then
+	        if event.index == 1 then
+	        	worona.log:info("content/readContentFile: nativeAlertListener() - option 1 selected")
+	        elseif event.index == 2 then
+	        	worona.log:info("content/readContentFile: nativeAlertListener() - option 2 selected")
+	        	content:update( { content_type = "post", url = worona.wp_url } )
+	        else
+	        	worona.log:warning("content/update/nativeAlert2Listener() - button pushed is neither 1 nor 2.")
+	        end
+	    end
+	end
 
 	--[[	
 		readContentFile 
@@ -127,27 +139,27 @@ local function newContentService()
 			--: no errors, file exist :--
 			json_table = json.decode( json_file )
 			if json_table == nil then
-				native.showAlert(	worona.lang:get("popup_empty_content_error_title", "content"), 
-								 	worona.lang:get("popup_empty_content_error_description", "content"), 
-								 	{	
-								 		worona.lang:get("popup_empty_content_error_button_1", "content")
-								 	}, 
-								 	nativeAlertListener 
-								)
 
-				worona.log:warning("content/readContentFile: json_table = 'nil'" )
-
-				local function nativeAlertListener( event )
-				    if "clicked" == event.action then
-				        if event.index ~= nil then
-				        	worona.log:info("content/readContentFile: nativeAlertListener() - option 1 selected")
-				        end
-				    end
+				if system.getInfo( "environment" ) == "simulator" then
+					native.showAlert(	worona.lang:get("popup_simulator_empty_content_error_title", "content"), 
+									 	worona.lang:get("popup_simulator_empty_content_error_description", "content"), 
+									 	{	
+									 		worona.lang:get("popup_simulator_empty_content_error_button_1", "content")
+									 	}, 
+									 	nativeAlertUpdateErrorListener 
+									)
+				else
+					native.showAlert(	worona.lang:get("popup_device_empty_content_error_title", "content"), 
+									 	worona.lang:get("popup_device_empty_content_error_description", "content"), 
+									 	{	
+									 		worona.lang:get("popup_device_empty_content_error_button_1", "content")
+									 	}, 
+									 	nativeAlertUpdateErrorListener 
+									)
 				end
-
-				
-			
+				worona.log:warning("content/readContentFile: json_table = 'nil'" )
 			end
+
 			worona.log:info( "content/readContentFile: Successful JSON reading (`" .. content_file_path .. "`)" )
 			content_table[content_type] = json_table
 			checkContentUrls( content_type )
@@ -177,6 +189,8 @@ local function newContentService()
 	function content:update( options )
 
 		local content_type, base_url
+
+
 
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
@@ -208,25 +222,47 @@ local function newContentService()
 			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 			if internet_available == false then
 				worona.log:warning("content/update: Internet connection is not available.")
-				native.showAlert(	worona.lang:get("popup_connection_error_1_title", "content"), 	
-									worona.lang:get("popup_connection_error_1_description", "content") , 
-									{ 
-										worona.lang:get("popup_connection_error_1_button_1", "content"), 
-										worona.lang:get("popup_connection_error_1_button_2", "content") 
-									}, 
-									nativeAlertListener 
-								)
+				if system.getInfo( "environment" ) == "simulator" then
+					native.showAlert(	worona.lang:get("popup_simulator_connection_error_1_title", "content"), 	
+										worona.lang:get("popup_simulator_connection_error_1_description", "content") , 
+										{ 
+											worona.lang:get("popup_simulator_connection_error_1_button_1", "content"), 
+											worona.lang:get("popup_simulator_connection_error_1_button_2", "content") 
+										}, 
+										nativeAlertUpdateErrorListener 
+									)
+				else
+					native.showAlert(	worona.lang:get("popup_device_connection_error_1_title", "content"), 	
+										worona.lang:get("popup_device_connection_error_1_description", "content") , 
+										{ 
+											worona.lang:get("popup_device_connection_error_1_button_1", "content"), 
+											worona.lang:get("popup_device_connection_error_1_button_2", "content") 
+										}, 
+										nativeAlertUpdateErrorListener 
+									)
+				end
 			else
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 				
-				native.showAlert(	worona.lang:get("popup_connection_error_2_title", "content"), 	
-									worona.lang:get("popup_connection_error_2_description", "content") , 
-									{ 
-										worona.lang:get("popup_connection_error_2_button_1", "content"), 
-										worona.lang:get("popup_connection_error_2_button_2", "content") 
-									}, 
-									nativeAlertListener 
-								)
+				if system.getInfo( "environment" ) == "simulator" then
+					native.showAlert(	worona.lang:get("popup_simulator_connection_error_2_title", "content"), 	
+										worona.lang:get("popup_simulator_connection_error_2_description", "content") , 
+										{ 
+											worona.lang:get("popup_simulator_connection_error_2_button_1", "content"), 
+											worona.lang:get("popup_simulator_connection_error_2_button_2", "content") 
+										}, 
+										nativeAlertUpdateErrorListener 
+									)
+				else
+					native.showAlert(	worona.lang:get("popup_device_connection_error_2_title", "content"), 	
+										worona.lang:get("popup_device_connection_error_2_description", "content") , 
+										{ 
+											worona.lang:get("popup_device_connection_error_2_button_1", "content"), 
+											worona.lang:get("popup_device_connection_error_2_button_2", "content") 
+										}, 
+										nativeAlertUpdateErrorListener 
+									)
+				end
 			end
 		else
 			worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
