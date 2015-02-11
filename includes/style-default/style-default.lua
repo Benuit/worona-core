@@ -1,4 +1,5 @@
 local worona = require "worona"
+local user_config = require "worona-config.style"
 
 local function newStyle()
 	--== VARIABLES ==--
@@ -12,17 +13,8 @@ local function newStyle()
 	end
 
 	-- paths
-	local images_folder = "worona-core/includes/style-flat-ui/images"
-	local icons_folder  = "worona-core/includes/style-flat-ui/icons"
-
-	-- colors
-	local main_color = { 0.203125, 0.59375, 0.85546875, 1 }
-	local stroke_color  = { 0.16, 0.5, 0.72, 1 }
-
-	-- common styles
-	local stroke_width     = 4
-	local light_text_color = { 1, 1, 1, 1 }
-	local dark_text_color  = { 0.2, 0.2, 0.2, 1 }
+	local images_folder = "worona-core/includes/style-default/images"
+	local icons_folder  = "worona-core/includes/style-default/icons"
 
 
 	--== STYLES ==--
@@ -40,12 +32,12 @@ local function newStyle()
 	}
 		
 	style.navbar.background = {
-		color = main_color
+		color = user_config.navbar_main_color
 	}
 
 	style.navbar.background.stroke = {
-		color = stroke_color,
-		width = stroke_width
+		color = user_config.navbar_stroke_color,
+		width = user_config.navbar_stroke_width
 	}
 
 	style.navbar.left_button = {
@@ -58,7 +50,7 @@ local function newStyle()
 
 	style.navbar.text = {
 		fontSize       = 18,
-		color          = light_text_color,
+		color          = user_config.navbar_text_color,
 		vertical_align = "center"
 	}
 
@@ -318,4 +310,4 @@ local function newStyle()
 
 	return style
 end
-worona:do_action( "register_style", { style = "flat-ui", creator = newStyle } )
+worona:do_action( "register_style", { style = "default", creator = newStyle } )

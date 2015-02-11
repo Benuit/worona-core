@@ -34,7 +34,7 @@ local function worona_load( blood_name )
     					"scene-webview",
     					
     					-- styles
-    					"style-flat-ui",
+    					"style-default",
 
     					-- ui
     					"ui-newBasicNavBar"
