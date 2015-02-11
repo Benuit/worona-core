@@ -151,9 +151,11 @@ local function newService()
 					else
 						
 						if dummy == true then
-							local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
+							local dummy_image = display.newImage( "content/images/" .. folders_string .. filename, image_baseDirectory, display.contentWidth * 128, - 4096 )
 							if dummy_image ~= nil then
-								dummy_image.x       = display.contentWidth * 2
+								dummy_image.width  = 0
+								dummy_image.height = 0
+								dummy_image.alpha  = 0
 							end
 						end
 
