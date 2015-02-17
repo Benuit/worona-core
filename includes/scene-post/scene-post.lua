@@ -34,7 +34,7 @@ local function newPostScene( scene_name )
        local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
        url     = worona.scene:getCurrentSceneUrl()
-       content = worona.content:getPost( "post", url )
+       content = worona.content:getPost( worona.content_type, url )
 
        postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
 

@@ -25,7 +25,7 @@ local function newScene( scene_name )
 		
 		spinner:start()
 		spinner.alpha = 1
-		worona.content:update( { content_type = "post", url = worona.wp_url } )
+		worona.content:update( { content_type = worona.content_type, url = worona.wp_url } )
 	end
 
 	local function exitApp()
@@ -43,7 +43,7 @@ local function newScene( scene_name )
 
 		worona:do_action( "before_creating_scene" )
 
-		local content = worona.content:getPostList("post")
+		local content = worona.content:getPostList(worona.content_type)
 
 		
 
@@ -293,7 +293,7 @@ local function newScene( scene_name )
 		worona:add_action( "connection_not_available", loadSavedListData)
 
 		local function refreshTableViewContent( params )
-			content = worona.content:getPostList("post")
+			content = worona.content:getPostList(worona.content_type)
 			tableView:deleteAllRows()
 			insertContentInTableView( tableView )
 			spinner:stop()

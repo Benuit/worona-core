@@ -1,8 +1,12 @@
 local worona = require "worona"
 local json   = require "json"
 
-local content_type = "post" --. insert content type ( "customcontent" / "post" )
+--. If worona.content_type is not set in main, it sets "post" by default.
+if worona.content_type == nil then
+	worona.content_type = "post"
+end
 
+local url
 
 local function newContentService()
 
@@ -105,7 +109,7 @@ local function newContentService()
 	        	worona.log:info("content/readContentFile: nativeAlertListener() - option 1 selected")
 	        elseif event.index == 2 then
 	        	worona.log:info("content/readContentFile: nativeAlertListener() - option 2 selected")
-	        	content:update( { content_type = "post", url = worona.wp_url } )
+	        	content:update( { content_type = worona.content_type, url = worona.wp_url } )
 	        else
 	        	worona.log:warning("content/update/nativeAlert2Listener() - button pushed is neither 1 nor 2.")
 	        end
@@ -190,8 +194,6 @@ local function newContentService()
 
 		local content_type, base_url
 
-
-
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
 			content_type = options
@@ -204,8 +206,8 @@ local function newContentService()
 		if worona.app_number_of_posts == nil or type(worona.app_number_of_posts) ~= "number" then
 			worona.app_number_of_posts = 20
 		end
-
-		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "?type=" .. content_type
+		
+		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "&type=" .. content_type
 
 		--: this solves a problem with OSX cache.db
 		local platformName = system.getInfo( "platformName" )
