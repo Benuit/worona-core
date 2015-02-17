@@ -109,7 +109,7 @@ local function newService()
 
 				if args and args.render ~= nil then
 					worona.log:info( "html_server: Rendering the internal url '" .. args.render .. "'" )
-					local html_Path = system.pathForFile( "content/html/" .. args.render .. ".html", system.DocumentsDirectory )
+					local html_Path = system.pathForFile( "content/html/" .. args.render .. ".html", system.CachesDirectory )
 					local html_File = io.open( html_Path, "r" )
 					local html_Data = html_File:read( "*a" )
 					html_File:close()
@@ -123,7 +123,7 @@ local function newService()
 				  local url            = args.img
 				  local folders_string = worona.image:getFoldersStringFromUrl( url )
 				  local filename       = worona.image:getFilenameFromUrl( url )
-				  local file_path      = system.pathForFile("/content/html/images/" .. folders_string .. filename, system.DocumentsDirectory)
+				  local file_path      = system.pathForFile("/content/html/images/" .. folders_string .. filename, system.CachesDirectory)
 
                   worona.log:info( "html_server: Image petition of " .. url )
                   worona.log:info( "html_server: Looking for " .. file_path )
