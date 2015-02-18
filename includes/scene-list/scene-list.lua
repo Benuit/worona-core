@@ -7,7 +7,7 @@ local function newScene( scene_name )
 	local scene    = composer.newScene( scene_name )
 	local style    = worona.style:get("list")
 	
-	local spinner, tableView, no_posts_text
+	local spinner, scrollView, no_posts_text
 
 	local function loadAboutScene()
 		worona.log:info("scene-list - loadAboutScene()")
@@ -19,7 +19,7 @@ local function newScene( scene_name )
 
 	local function downloadContent()
 		worona.log:info("scene-list - downloadContent()")
-		tableView.alpha = 0
+		scrollView.alpha = 0
 
 		display.remove(no_posts_text)
 		
@@ -45,8 +45,6 @@ local function newScene( scene_name )
 
 		local content = worona.content:getPostList(worona.content_type)
 
-		
-
 		--. View elements
 		local sceneGroup = self.view
 
@@ -65,11 +63,37 @@ local function newScene( scene_name )
 		spinner.alpha = 0
 		sceneGroup:insert(spinner)
 
-		
-		local function createTableView( parent_group )
 
-			local table_view
-			
+		local function createScrollview( params )
+
+			local function scrollListener( event )
+				local phase = event.phase
+				local direction = event.direction
+
+				if "began" == phase then
+					--print( "Began" )
+				elseif "moved" == phase then
+					--print( "Moved" )
+				elseif "ended" == phase then
+					--print( "Ended" )
+				end
+
+				-- If the scrollView has reached it's scroll limit
+				if event.limitReached then
+					if "up" == direction then
+						-- print( "Reached Top Limit" )
+					elseif "down" == direction then
+						-- print( "Reached Bottom Limit" )
+					elseif "left" == direction then
+						-- print( "Reached Left Limit" )
+					elseif "right" == direction then
+						-- print( "Reached Right Limit" )
+					end
+				end
+				     
+				return true
+			end
+
 			local function onRowRender( event )
 
 			    -- Get reference to the row group
@@ -115,78 +139,125 @@ local function newScene( scene_name )
 				return true
 			end
 
-			local tableview_options = 
+			local scrollView_options = 
 			{
-				left = style.table_view.left,
-				top = style.table_view.top,
-				height = style.table_view.height,
-				width = style.table_view.width,
-				hideScrollBar = style.table_view.hideScrollBar,
-				onRowRender = onRowRender,
-				onRowTouch = onRowTouch,
-				listener = scrollListener,
-				bottomPadding = 50
+				y                        = display.contentHeight/2, -- CAMBIAR
+				x                        = display.contentWidth/2,
+				width                    = display.contentWidth,
+				height                   = display.contentHeight, -- CAMBIAR
+				horizontalScrollDisabled = true,
+				verticalScrollDisabled   = false,
+				topPadding               = 10,
+				bottomPadding            = 30,
+				hideBackground           = true,
+				listener                 = scrollListener
 			}
-			tableview_options = worona:do_filter( "list_tableview_options_filter", tableview_options )
 
-			local borrar = 0
+			scrollView_options = worona:do_filter( "list_scrollView_options_filter", scrollView_options )
 
-			-- Create the widget
-			table_view = widget.newTableView(tableview_options)
+			local scrollView = widget.newScrollView(scrollView_options)
 
-			if parent_group ~= nil then
-				parent_group:insert(table_view)
+			function scrollView:insertRow( params )
+				worona.log:debug("ahora inserto una fila")
+
+				local row = {}
+				row.params = params
+
+				worona:do_action( "on_list_row_render_start", { row = row } )
+
+				--. POST TITLE
+				local title_options = 
+				{	
+					parent   = scrollView,
+				    text     = row.params.params.title_options.text,    
+				    x        = row.params.params.title_options.x,   
+				    y        = row.params.params.title_options.y,       
+				    width    = row.params.params.title_options.width,   
+				    font     = row.params.params.title_options.font,    
+				    fontSize = row.params.params.title_options.fontSize
+				}
+				title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+				local row_title = display.newText( title_options )
+				row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+
+				-- Align the label left and vertically centered
+				row_title.anchorX = 0.5
+				row_title.x = display.contentWidth / 2 -- CAMBIAR
+				row_title.anchorY = 0.5
+				row_title.y = display.contentHeight / 2 -- CAMBIAR
+
+				worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
+
 			end
 
-			return table_view
+			function scrollView:deleteAllRows( )
+				worona.log:debug("ahora borro todas las filas")
+				local prueba = self
+
+				worona.log:debug("prueba.y = " .. prueba.y)
+			end
+			
+			if params.parent_group ~= nil then
+				params.parent_group:insert(scrollView)
+			end
+
+			return scrollView
 		end
-		
-		local function insertContentInTableView(table_view)
 
-			--. Create a list with posts IDs ordered by date:
-			local post_list_ordered = {}
 
-			--. Recursive function to insert a post in a list ordered by date.
-			local function insertCurrentPostInOrder( current_post, index )
-				if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
-					if index < #post_list_ordered then
-						insertCurrentPostInOrder(current_post, index + 1)
-					elseif index == #post_list_ordered then
-						post_list_ordered[index + 1] = current_post
-					else
-						worona.log:error("scene-list.lua/insertCurrentPostInOrder - Error")
-					end
-				else
-					for i=#post_list_ordered, index, -1 do
-						post_list_ordered[i+1] = post_list_ordered[i]
-					end
-					post_list_ordered[index] = current_post
-				end
-			end
+		local function insertContentInScrollView()
+	
+			local function insertContentInArrayOrderedByDate()
 
-			if content ~= nil then
-				--. Loop content to identify published posts and insert them in the array post_list_ordered.
-				for k,v in pairs(content) do	
-					v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
-					
-					if v.status == "publish" then
-						if #post_list_ordered ~= 0 then
-							insertCurrentPostInOrder(v, 1)
+				--. Create a list with posts IDs ordered by date:
+				local post_list_ordered = {}
+
+				--. Function to insert a post in its correct place of a list ordered by date.
+				local function insertCurrentPostInOrder( current_post, index )
+					if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
+						if index < #post_list_ordered then
+							insertCurrentPostInOrder(current_post, index + 1)
+						elseif index == #post_list_ordered then
+							post_list_ordered[index + 1] = current_post
 						else
-							post_list_ordered[1] = v
+							worona.log:error("scene-list.lua/insertCurrentPostInOrder - Error")
+						end
+					else
+						for i=#post_list_ordered, index, -1 do
+							post_list_ordered[i+1] = post_list_ordered[i]
+						end
+						post_list_ordered[index] = current_post
+					end
+				end
+
+				if content ~= nil then
+					--. Loop content to identify published posts and insert them in the array post_list_ordered.
+					for k,v in pairs(content) do	
+						v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
+						
+						if v.status == "publish" then
+							if #post_list_ordered ~= 0 then
+								insertCurrentPostInOrder(v, 1)
+							else
+								post_list_ordered[1] = v
+							end
 						end
 					end
+				else
+					worona.log:error("scene-list/insertContentInScrollView: content = nil")
 				end
-			else
-				worona.log:error("scene-list/insertContentInTableView: content = nil")
+
+				return post_list_ordered
 			end
 
-			
-			if content ~= nil then
-				--. Insert rows with content into table_view
-				for i = 1, #content do
+			local post_list = {}
+			post_list = insertContentInArrayOrderedByDate()
 
-					local unescaped_title = worona.string:unescape(content[i].title)
+			if post_list ~= nil then
+				--. Insert rows with post_list into scrollView
+				for i = 1, #post_list do
+
+					local unescaped_title = worona.string:unescape(post_list[i].title)
 
 					local title_options = 
 					{	
@@ -210,15 +281,15 @@ local function newScene( scene_name )
 				    	row_color    = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } },
 				    	line_color   = { 0.5, 0.5, 0.5 },
 				    	params       = {
-				    						content = content[i],
+				    						content = post_list[i],
 				    						title_options = title_options
 										}
 					}
 
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
 
-				    -- Insert a row into the tableView
-				    table_view:insertRow(
+				    --. Insert the current row into the scrollView
+				    scrollView:insertRow( -- CAMBIAR
 				        {
 				            isCategory = row_options.is_category,
 				            rowHeight  = row_options.row_height,
@@ -230,16 +301,34 @@ local function newScene( scene_name )
 				
 				end
 			else
-				worona.log:error("scene-list/insertContentInTableView: content = nil")
+				worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
 			end
 		end
-		tableView = createTableView(sceneGroup)
-		tableView.alpha = 0
 
 
-		
-		downloadContent(tableView, spinner)
+		scrollView = createScrollview(sceneGroup)
+		scrollView.alpha = 0
 
+
+		downloadContent()
+		if content ~= nil then
+			if content == -1 or #content == 0 then
+				-- no content
+			else		
+				insertContentInScrollView(scrollView)
+			end
+		else
+			worona.log:error("scene-list/create: content = nil")
+		end
+
+
+		--: load the navbar
+		local basic_navbar = worona.ui:newBasicNavBar({
+			parent            = sceneGroup,
+			text              = worona.app_title,
+			left_button_icon  = worona.style:get("icons").more,
+			right_button_icon = worona.style:get("icons").refresh
+		})
 
 		local function showNoPostsAvailable()
 			no_posts_text = display.newText( { 
@@ -251,8 +340,6 @@ local function newScene( scene_name )
 			sceneGroup:insert( no_posts_text )
 		end
 
-
-
 		--. Configure hooks to content-download-type actions
 		local function loadSavedListData()
 			spinner:stop()
@@ -263,8 +350,8 @@ local function newScene( scene_name )
 			        if event.index == 1 then
 			        	worona.log:info("scene-list - nativeAlertListener() - option 1 selected")
 			        elseif event.index == 2 then
-			        	worona.log:info("scene-list - nativeAlertListener() - option 2 selected")
-			        	tableView.alpha = 0
+						worona.log:info("scene-list - nativeAlertListener() - option 2 selected")
+			        	scrollView.alpha = 0
 			        	spinner:start()
 			        	spinner.alpha = 1
 			            timer.performWithDelay( 1000, downloadContent )
@@ -280,71 +367,43 @@ local function newScene( scene_name )
 					worona.log:error("scene-list/loadSavedListData: content = -1 or #content = 0")
 					showNoPostsAvailable()				
 				else
-					transition.to( tableView, { time=1000, alpha=1.0 } )
+					transition.to( scrollView, { time=1000, alpha=1.0 } )
 				end
 			else
 				worona.log:error("scene-list/loadSavedListData: content = nil")
 				showNoPostsAvailable()
-			end
-
-			
+			end	
 		end
-		
 		worona:add_action( "connection_not_available", loadSavedListData)
 
-		local function refreshTableViewContent( params )
+		local function refreshScrollViewContent( params )
 			content = worona.content:getPostList(worona.content_type)
-			tableView:deleteAllRows()
-			insertContentInTableView( tableView )
+			scrollView:deleteAllRows()
+			insertContentInScrollView( scrollView )
 			spinner:stop()
 			spinner.alpha = 0
 			
-			
-
 			if content ~= nil then
 				if content == -1 or #content == 0 then
 					
 					showNoPostsAvailable()
 				else
-					transition.to( tableView, { time=1000, alpha=1.0 } )
+					transition.to( scrollView, { time=1000, alpha=1.0 } )
 					
 					display.remove(no_posts_text)
 					
 					
 				end
 			else
-				worona.log:error("scene-list/refreshTableViewContent: content = nil")
+				worona.log:error("scene-list/refreshScrollViewContent: content = nil")
 				showNoPostsAvailable()
 			end
 
-			worona.log:info("scene-list - refreshTableViewContent()")
-		
+			worona.log:info("scene-list - refreshScrollViewContent()")
 		end
-		worona:add_action( "content_file_updated", refreshTableViewContent)
-
-
-		if content ~= nil then
-			if content == -1 or #content == 0 then
-				
-			else
-				
-				insertContentInTableView(tableView)
-			end
-		else
-			worona.log:error("scene-list/create: content = nil")
-		end
-
-
-		--: load the navbar
-		local basic_navbar = worona.ui:newBasicNavBar({
-			parent            = sceneGroup,
-			text              = worona.app_title,
-			left_button_icon  = worona.style:get("icons").more,
-			right_button_icon = worona.style:get("icons").refresh
-		})
+		worona:add_action( "content_file_updated", refreshScrollViewContent)
 
 		worona:do_action( "after_creating_scene" )
-
 	end
 
 	-- "scene:show()"
