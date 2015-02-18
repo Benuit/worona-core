@@ -94,41 +94,6 @@ local function newScene( scene_name )
 				return true
 			end
 
-			local function onRowRender( event )
-
-			    -- Get reference to the row group
-			    local row = event.row
-
-			    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
-			    local rowHeight = row.contentHeight
-			    local rowWidth = row.contentWidth
-
-			    worona:do_action( "on_list_row_render_start", { row = row } )
-
-			    --. POST TITLE
-			    local title_options = 
-			    {	
-			    	parent   = row,
-			        text     = row.params.title_options.text,    
-			        x        = row.params.title_options.x,   
-			        y        = row.params.title_options.y,       
-			        width    = row.params.title_options.width,   
-			        font     = row.params.title_options.font,    
-			        fontSize = row.params.title_options.fontSize
-			    }
-			    title_options = worona:do_filter( "list_row_title_options_filter", title_options )
-			    local row_title = display.newText( title_options )
-			    row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
-
-			    -- Align the label left and vertically centered
-			    row_title.anchorX = 0.5
-			    row_title.x = rowWidth / 2
-			    row_title.anchorY = 0.5
-			    row_title.y = rowHeight / 2
-
-			    worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
-			end
-
 			local function onRowTouch( event )
 				if event.phase == "release" or event.phase == "tap" then
 					local params = event.target.params
@@ -143,13 +108,14 @@ local function newScene( scene_name )
 			{
 				y                        = display.contentHeight/2, -- CAMBIAR
 				x                        = display.contentWidth/2,
-				width                    = display.contentWidth,
-				height                   = display.contentHeight, -- CAMBIAR
+				width                    = display.contentWidth - 50,
+				height                   = display.contentHeight - 50, -- CAMBIAR
 				horizontalScrollDisabled = true,
 				verticalScrollDisabled   = false,
 				topPadding               = 10,
 				bottomPadding            = 30,
-				hideBackground           = true,
+				hideBackground           = false,
+				backgroundColor = { 0.8, 0.8, 0.8 },
 				listener                 = scrollListener
 			}
 
@@ -306,7 +272,7 @@ local function newScene( scene_name )
 		end
 
 
-		scrollView = createScrollview(sceneGroup)
+		scrollView = createScrollview({ parent_group = sceneGroup })
 		scrollView.alpha = 0
 
 
