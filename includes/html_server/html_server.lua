@@ -145,7 +145,7 @@ local function newService()
 
                 if args.render ~= nil then
                     worona.log:info( "html_server: Rendering the internal url '" .. args.render .. "'" )
-                    local html_Path = system.pathForFile( "content/html/" .. args.render .. ".html", system.DocumentsDirectory )
+                    local html_Path = system.pathForFile( "content/html/" .. args.render .. ".html", system.CachesDirectory )
                     local html_File = io.open( html_Path, "r" )
                     local html_Data = html_File:read( "*a" )
                     html_File:close()

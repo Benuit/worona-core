@@ -297,7 +297,7 @@ local function newContentService()
 				url                      = url   , --. URL
 				target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
 				method                   = "GET"   , --. "GET" or "HEAD"
-				target_baseDirectory     = system.DocumentsDirectory  , --. system.DocumentsDirectory or system.TemporaryDirectoy
+				target_baseDirectory     = system.CachesDirectory  , --. system.CachesDirectory or system.TemporaryDirectoy
 				listenerFunction         = fileNetworkListener    --. the listener function
 			}
 			worona.file:download( download_options )

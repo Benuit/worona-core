@@ -106,7 +106,7 @@ local function newService()
 		height: (optional, but either width or height present)
 		x:
 		y:
-		directory: (optional, defaults to system.DocumentsDirectory)
+		directory: (optional, defaults to system.CachesDirectory)
 		dummy: ( optional - true/false, false by default ) creates a copy of the image (dummy) so that the memory texture is not erased when the image has been erased.
 		]]--
 	function image:newImage( options )

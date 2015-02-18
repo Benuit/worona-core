@@ -25,7 +25,7 @@ local function createGallery( field )
     	    image_object = field.gallery[i],
     	    image_path   = "content/images/",
     	    shape        = "square",
-    	    directory    = system.DocumentsDirectory,
+    	    directory    = system.CachesDirectory,
     	    width        = img_width,
             height       = img_width,
     	    x            = 0,

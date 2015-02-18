@@ -13,9 +13,9 @@ local function newJsonProxy()
             target_file_path = file_path
         end
 
-        worona.file:createFolder( target_file_path , system.DocumentsDirectory )
+        worona.file:createFolder( target_file_path , system.CachesDirectory )
 
-        local file = io.open( system.pathForFile( target_file_path, system.DocumentsDirectory ), "w" )
+        local file = io.open( system.pathForFile( target_file_path, system.CachesDirectory ), "w" )
 
         if file ~= nil then
             file:write( json.encode( data ) )
