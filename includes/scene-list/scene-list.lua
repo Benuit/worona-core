@@ -132,21 +132,21 @@ local function newScene( scene_name )
 				worona:do_action( "on_list_row_render_start", { row = row } )
 
 				--. POST TITLE
-				local title_options = 
-				{	
-					parent   = scrollView,
-				    text     = row.params.title_options.text,    
-				    x        = 100, -- row.params.title_options.x,   
-				    y        = 200, -- row.params.title_options.y,       
-				    width    = 200, -- row.params.title_options.width,   
-				    font     = row.params.title_options.font,    
-				    fontSize = row.params.title_options.fontSize
-				}
-				title_options = worona:do_filter( "list_row_title_options_filter", title_options )
-				local row_title = display.newText( title_options )
-				row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+				-- local title_options = 
+				-- {	
+				-- 	parent   = scrollView,
+				--     text     = row.params.title_options.text,    
+				--     x        = 100, -- row.params.title_options.x,   
+				--     y        = 200, -- row.params.title_options.y,       
+				--     width    = 200, -- row.params.title_options.width,   
+				--     font     = row.params.title_options.font,    
+				--     fontSize = row.params.title_options.fontSize
+				-- }
+				-- title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+				-- local row_title = display.newText( title_options )
+				-- row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
-				scrollView:insert(row_title)
+				scrollView:insert(row.params.row_group)
 
 				-- Align the label left and vertically centered
 				-- row_title.anchorX = 0.5
@@ -228,11 +228,11 @@ local function newScene( scene_name )
 				--. Insert rows with post_list into scrollView
 				for i = 1, #post_list do
 
+					local row_group = display.newGroup() --. All row elements must me inserted in this group.
+
 					if i == 1 then 
 						local navbar_style = worona.style:get("navbar")
 						current_y = display.topStatusBarContentHeight + navbar_style.height
-					else
-						--current_y = 
 					end
 
 					local unescaped_title = worona.string:unescape(post_list[i].title)
@@ -240,17 +240,27 @@ local function newScene( scene_name )
 					local title_options = 
 					{	
 					    text     = unescaped_title,
-					    x        = style.title.x,
-					    y        = style.title.y,
+					    x        = display.contentWidth/2, -- CAMBIAR style.title.x,
+					    y        = 40, -- CAMBIAR style.title.y,
 					    width    = style.title.width,     --required for multi-line and alignment
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
 					}
 
+					local row_text = display.newText( title_options )
+					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+
+					row_group:insert(row_text)
+
+					row_group.anchorY = 0
+					row_group.y = current_y
+					row_group.anchorY = 1
+					current_y = row_group.y
+
 					local row_options = 
 					{
 				    	content = post_list[i],
-				    	title_options = title_options
+				    	row_group = row_group
 					}
 
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
@@ -268,25 +278,7 @@ local function newScene( scene_name )
 		scrollView.alpha = 0
 
 
-		downloadContent()
-		if content ~= nil then
-			if content == -1 or #content == 0 then
-				-- no content
-			else		
-				insertContentInScrollView(scrollView)
-			end
-		else
-			worona.log:error("scene-list/create: content = nil")
-		end
-
-
-		--: load the navbar
-		local basic_navbar = worona.ui:newBasicNavBar({
-			parent            = sceneGroup,
-			text              = worona.app_title,
-			left_button_icon  = worona.style:get("icons").more,
-			right_button_icon = worona.style:get("icons").refresh
-		})
+		
 
 		local function showNoPostsAvailable()
 			no_posts_text = display.newText( { 
@@ -360,6 +352,27 @@ local function newScene( scene_name )
 			worona.log:info("scene-list - refreshScrollViewContent()")
 		end
 		worona:add_action( "content_file_updated", refreshScrollViewContent)
+
+
+		downloadContent()
+		if content ~= nil then
+			if content == -1 or #content == 0 then
+				-- no content
+			else		
+				insertContentInScrollView(scrollView)
+			end
+		else
+			worona.log:error("scene-list/create: content = nil")
+		end
+
+
+		--: load the navbar
+		local basic_navbar = worona.ui:newBasicNavBar({
+			parent            = sceneGroup,
+			text              = worona.app_title,
+			left_button_icon  = worona.style:get("icons").more,
+			right_button_icon = worona.style:get("icons").refresh
+		})
 
 		worona:do_action( "after_creating_scene" )
 	end
