@@ -71,11 +71,11 @@ local function newScene( scene_name )
 				local direction = event.direction
 
 				if "began" == phase then
-					--print( "Began" )
+					print( "Began" )
 				elseif "moved" == phase then
-					--print( "Moved" )
+					print( "Moved" )
 				elseif "ended" == phase then
-					--print( "Ended" )
+					print( "Ended" )
 				end
 
 				-- If the scrollView has reached it's scroll limit
@@ -107,15 +107,15 @@ local function newScene( scene_name )
 			local scrollView_options = 
 			{
 				y                        = display.contentHeight/2, -- CAMBIAR
-				x                        = display.contentWidth/2,
-				width                    = display.contentWidth - 50,
+				x                        = display.contentWidth/2, --CAMBIAR
+				width                    = display.contentWidth, --CAMBIAR
 				height                   = display.contentHeight - 50, -- CAMBIAR
 				horizontalScrollDisabled = true,
 				verticalScrollDisabled   = false,
 				topPadding               = 10,
 				bottomPadding            = 30,
 				hideBackground           = false,
-				backgroundColor = { 0.8, 0.8, 0.8 },
+				backgroundColor          = { 0.8, 0.8, 0.8 },
 				listener                 = scrollListener
 			}
 
@@ -136,9 +136,9 @@ local function newScene( scene_name )
 				{	
 					parent   = scrollView,
 				    text     = row.params.params.title_options.text,    
-				    x        = row.params.params.title_options.x,   
-				    y        = row.params.params.title_options.y,       
-				    width    = row.params.params.title_options.width,   
+				    x        = 100, -- row.params.params.title_options.x,   
+				    y        = 200, -- row.params.params.title_options.y,       
+				    width    = 200, -- row.params.params.title_options.width,   
 				    font     = row.params.params.title_options.font,    
 				    fontSize = row.params.params.title_options.fontSize
 				}
@@ -146,11 +146,13 @@ local function newScene( scene_name )
 				local row_title = display.newText( title_options )
 				row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
+				scrollView:insert(row_title)
+
 				-- Align the label left and vertically centered
-				row_title.anchorX = 0.5
-				row_title.x = display.contentWidth / 2 -- CAMBIAR
-				row_title.anchorY = 0.5
-				row_title.y = display.contentHeight / 2 -- CAMBIAR
+				-- row_title.anchorX = 0.5
+				-- row_title.x = display.contentWidth / 2 -- CAMBIAR
+				-- row_title.anchorY = 0.5
+				-- row_title.y = 200 -- display.contentHeight / 2 -- CAMBIAR
 
 				worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
 
@@ -220,8 +222,18 @@ local function newScene( scene_name )
 			post_list = insertContentInArrayOrderedByDate()
 
 			if post_list ~= nil then
+
+				local current_y = 0
+
 				--. Insert rows with post_list into scrollView
 				for i = 1, #post_list do
+
+					if i == 1 then 
+						local navbar_style = worona.style:get("nabvar")
+						current_y = display.topStatusBarContentHeight + nabvar_style.height
+					else
+						current_y = 
+					end
 
 					local unescaped_title = worona.string:unescape(post_list[i].title)
 
@@ -234,22 +246,11 @@ local function newScene( scene_name )
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
 					}
-					title_options = worona:do_filter( "list_row_dummy_title_options_filter", title_options )
-					local dummy_text = display.newText( title_options )
-					dummy_text.alpha = 0
-					local text_height = dummy_text.height
-					display.remove( dummy_text )
 
-					local row_options = {
-
-				    	is_category  = false,
-				    	row_height   = text_height + 30,
-				    	row_color    = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } },
-				    	line_color   = { 0.5, 0.5, 0.5 },
-				    	params       = {
-				    						content = post_list[i],
-				    						title_options = title_options
-										}
+					local row_options = 
+					{
+				    	content = post_list[i],
+				    	title_options = title_options
 					}
 
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
