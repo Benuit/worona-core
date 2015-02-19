@@ -224,6 +224,7 @@ local function newContentService()
 			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 			if internet_available == false then
 				worona.log:warning("content/update: Internet connection is not available.")
+				worona:do_action( "connection_not_available" )
 				if system.getInfo( "environment" ) == "simulator" then
 					native.showAlert(	worona.lang:get("popup_simulator_connection_error_1_title", "content"), 	
 										worona.lang:get("popup_simulator_connection_error_1_description", "content") , 
@@ -245,7 +246,7 @@ local function newContentService()
 				end
 			else
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
-				
+				worona:do_action( "connection_not_available" )
 				if system.getInfo( "environment" ) == "simulator" then
 					native.showAlert(	worona.lang:get("popup_simulator_connection_error_2_title", "content"), 	
 										worona.lang:get("popup_simulator_connection_error_2_description", "content") , 
@@ -264,7 +265,7 @@ local function newContentService()
 										}, 
 										nativeAlertUpdateErrorListener 
 									)
-				end
+				end	
 			end
 		else
 			worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
