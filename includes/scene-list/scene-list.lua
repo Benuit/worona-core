@@ -241,7 +241,7 @@ local function newScene( scene_name )
 					{	
 					    text     = unescaped_title,
 					    x        = display.contentWidth/2, -- CAMBIAR style.title.x,
-					    y        = 40, -- CAMBIAR style.title.y,
+					    y        = 20, -- CAMBIAR style.title.y,
 					    width    = style.title.width,     --required for multi-line and alignment
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
@@ -251,11 +251,9 @@ local function newScene( scene_name )
 					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
 					row_group:insert(row_text)
-
-					row_group.anchorY = 0
 					row_group.y = current_y
-					row_group.anchorY = 1
-					current_y = row_group.y
+					
+					current_y = current_y + row_text.height + title_options.y
 
 					local row_options = 
 					{
