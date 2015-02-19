@@ -127,7 +127,7 @@ local function newScene( scene_name )
 				worona.log:debug("ahora inserto una fila")
 
 				local row = {}
-				row.params = params
+				row.params = params --. Insert params in row.
 
 				worona:do_action( "on_list_row_render_start", { row = row } )
 
@@ -135,12 +135,12 @@ local function newScene( scene_name )
 				local title_options = 
 				{	
 					parent   = scrollView,
-				    text     = row.params.params.title_options.text,    
-				    x        = 100, -- row.params.params.title_options.x,   
-				    y        = 200, -- row.params.params.title_options.y,       
-				    width    = 200, -- row.params.params.title_options.width,   
-				    font     = row.params.params.title_options.font,    
-				    fontSize = row.params.params.title_options.fontSize
+				    text     = row.params.title_options.text,    
+				    x        = 100, -- row.params.title_options.x,   
+				    y        = 200, -- row.params.title_options.y,       
+				    width    = 200, -- row.params.title_options.width,   
+				    font     = row.params.title_options.font,    
+				    fontSize = row.params.title_options.fontSize
 				}
 				title_options = worona:do_filter( "list_row_title_options_filter", title_options )
 				local row_title = display.newText( title_options )
@@ -229,10 +229,10 @@ local function newScene( scene_name )
 				for i = 1, #post_list do
 
 					if i == 1 then 
-						local navbar_style = worona.style:get("nabvar")
-						current_y = display.topStatusBarContentHeight + nabvar_style.height
+						local navbar_style = worona.style:get("navbar")
+						current_y = display.topStatusBarContentHeight + navbar_style.height
 					else
-						current_y = 
+						--current_y = 
 					end
 
 					local unescaped_title = worona.string:unescape(post_list[i].title)
@@ -256,16 +256,7 @@ local function newScene( scene_name )
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
 
 				    --. Insert the current row into the scrollView
-				    scrollView:insertRow( -- CAMBIAR
-				        {
-				            isCategory = row_options.is_category,
-				            rowHeight  = row_options.row_height,
-				            rowColor   = row_options.row_color,
-				            lineColor  = row_options.line_color,
-				            params     = row_options.params
-				        }
-				    )
-				
+				    scrollView:insertRow (row_options)
 				end
 			else
 				worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
