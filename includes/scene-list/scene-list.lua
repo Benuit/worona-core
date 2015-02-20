@@ -95,21 +95,13 @@ local function newScene( scene_name )
 				return true
 			end
 
-			local function onRowTouch( event )
-				if event.phase == "release" or event.phase == "tap" then
-					local params = event.target.params
-					worona:do_action( "load_url", { url = params.content.link } )
-					return true
-				end
-
-				return true
-			end
+			
 
 			local scrollView_options = 
 			{
 				top                      = navbar_style.height + display.topStatusBarContentHeight, 
 				left                     = 0,
-				width                    = display.contentWidth, --CAMBIAR
+				width                    = display.contentWidth,
 				height                   = display.contentHeight - navbar_style.height - display.topStatusBarContentHeight, 
 				horizontalScrollDisabled = true,
 				verticalScrollDisabled   = false,
@@ -119,11 +111,6 @@ local function newScene( scene_name )
 				backgroundColor          = { 0.8, 0.8, 0.8 },
 				listener                 = scrollListener
 			}
-
-			print(display.topStatusBarContentHeight)
-			local row_line1 = display.newLine( 0, navbar_style.height + display.topStatusBarContentHeight , display.contentWidth, navbar_style.height + display.topStatusBarContentHeight  )
-			-- local row_line2 = display.newLine( 0,  , display.contentWidth,   )
-			-- local row_line3 = display.newLine( 0,  , display.contentWidth,   )
 
 			scrollView_options = worona:do_filter( "list_scrollView_options_filter", scrollView_options )
 
@@ -137,30 +124,41 @@ local function newScene( scene_name )
 
 				worona:do_action( "on_list_row_render_start", { row = row } )
 
-				--. POST TITLE
-				-- local title_options = 
-				-- {	
-				-- 	parent   = scrollView,
-				--     text     = row.params.title_options.text,    
-				--     x        = 100, -- row.params.title_options.x,   
-				--     y        = 200, -- row.params.title_options.y,       
-				--     width    = 200, -- row.params.title_options.width,   
-				--     font     = row.params.title_options.font,    
-				--     fontSize = row.params.title_options.fontSize
-				-- }
-				-- title_options = worona:do_filter( "list_row_title_options_filter", title_options )
-				-- local row_title = display.newText( title_options )
-				-- row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+				
+				local row_rect         = display.newRect( display.contentWidth/2, 0, display.contentWidth, row.params.row_height - 5 )
+				row_rect.anchorY       = 0
+				row_rect.alpha         = 0
+				
+
+
+				local function scrollableRowHandler( event )
+			        
+		            if event.phase == "moved" then
+		                local dx = math.abs( event.x - event.xStart )
+		                local dy = math.abs( event.y - event.yStart )
+
+		                print("move")
+
+		                if dx > 5 or dy > 5 then
+		                    scrollView:takeFocus( event )
+		                end
+		            elseif event.phase == "ended" then
+		                display.getCurrentStage():setFocus(nil)
+		                worona:do_action( "load_url", { url = row.params.content.link } )
+		            end
+
+		            return true
+			        
+			    end
+				row_rect:addEventListener("touch", scrollableRowHandler)
+
+
+				row.params.row_group:insert(row_rect)
 
 				scrollView:insert(row.params.row_group)
+
 				local row_line = display.newLine( 0, row.params.current_y, display.contentWidth, row.params.current_y )
 				scrollView:insert(row_line)
-
-				-- Align the label left and vertically centered
-				-- row_title.anchorX = 0.5
-				-- row_title.x = display.contentWidth / 2 -- CAMBIAR
-				-- row_title.anchorY = 0.5
-				-- row_title.y = 200 -- display.contentHeight / 2 -- CAMBIAR
 
 				worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
 
@@ -238,10 +236,6 @@ local function newScene( scene_name )
 
 					local row_group = display.newGroup() --. All row elements must me inserted in this group.
 
-					if i == 1 then 
-						current_y = display.topStatusBarContentHeight + navbar_style.height
-					end
-
 					local unescaped_title = worona.string:unescape(post_list[i].title)
 
 					local title_options = 
@@ -260,16 +254,16 @@ local function newScene( scene_name )
 					row_group:insert(row_text)
 					row_group.y = current_y
 					
-					current_y = current_y + row_text.height + 2*style.row.offset -- CAMBIAR
+					current_y = current_y + row_text.height + 2 * style.row.offset
 
 					local row_height = current_y - row_group.y
 
 					local row_options = 
 					{
 				    	row_height = row_height,
-				    	content = post_list[i],
-				    	row_group = row_group,
-				    	current_y = current_y
+				    	content    = post_list[i],
+				    	row_group  = row_group,
+				    	current_y  = current_y
 					}
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
 
