@@ -28,7 +28,7 @@ local function newStyle()
 
 	---- NAVBAR ----
 	style.navbar = {
-		height = 50
+		height = 50 + user_config.navbar_stroke_height
 	}
 		
 	style.navbar.background = {
@@ -36,8 +36,8 @@ local function newStyle()
 	}
 
 	style.navbar.background.stroke = {
-		color = user_config.navbar_stroke_color,
-		width = user_config.navbar_stroke_width
+		color  = user_config.navbar_stroke_color,
+		height = user_config.navbar_stroke_height
 	}
 
 	style.navbar.left_button = {
@@ -141,7 +141,7 @@ local function newStyle()
 	style.webview = {}
 
 	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.width
+	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.height
 
 
 	---- CUSTOMCONTENT ----
@@ -210,7 +210,7 @@ local function newStyle()
 	style.post = {}
 
 	style.post.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.post.y      = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width + style.post.height / 2
+	style.post.y      = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.height + style.post.height / 2
 
 	style.post.background = {
 		image = images_folder .. "/post/customcontentBG.png"
@@ -265,9 +265,9 @@ local function newStyle()
 	}
 
 
-	---- POST LIST ----
+	---- SCENE LIST ----
 	--style
-	style.list = {
+	style.scene_list = {
 		title = {
 			x          = 40,
 			y          = 0,
@@ -276,12 +276,9 @@ local function newStyle()
 			font_size  = 18,
 			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		},
-		table_view = {
-			left          = - 20,
-			top           = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width,
-			height        = display.contentHeight - 50,
-			width         = display.contentWidth + 40,
-			hideScrollBar = true
+		row = {
+			offset = 20
+
 		},
 		no_posts_text = {
 			x = display.contentWidth / 2,

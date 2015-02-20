@@ -10,19 +10,20 @@ local function newBasicNavBar( self, params )
 	-- Get the style
 
 	local style = worona.style:get("navbar")
+	local height_wo_stroke = style.height - style.background.stroke.height
 
-	local ios7and8_y      = ( display.topStatusBarContentHeight + style.height ) / 2
-	local ios7and8_height = style.height + display.topStatusBarContentHeight
+	local ios7and8_y      = ( display.topStatusBarContentHeight + height_wo_stroke ) / 2
+	local ios7and8_height = height_wo_stroke + display.topStatusBarContentHeight
 
 	local attributes = {
 		navbar_x                = display.contentWidth / 2,
-		navbar_y                = worona.style:getSetting( { ios7 = ios7and8_y, ios8 = ios7and8_y, default = display.topStatusBarContentHeight + style.height / 2 } ),
-		navbar_center_point     = display.topStatusBarContentHeight + style.height / 2,
-		navbar_height           = worona.style:getSetting( { ios7 = ios7and8_height, ios8 = ios7and8_height, default = style.height } ),
+		navbar_y                = worona.style:getSetting( { ios7 = ios7and8_y, ios8 = ios7and8_y, default = display.topStatusBarContentHeight + height_wo_stroke / 2 } ),
+		navbar_center_point     = display.topStatusBarContentHeight + height_wo_stroke / 2,
+		navbar_height           = worona.style:getSetting( { ios7 = ios7and8_height, ios8 = ios7and8_height, default = height_wo_stroke } ),
 		navbar_width            = style.width or display.contentWidth,
 		background_color        = style.background.color,
 		background_stroke_color = style.background.stroke.color,
-		background_stroke_width = style.background.stroke.width,
+		background_stroke_height = style.background.stroke.height,
 		text                    = "Untitled" or params.text,
 		text_size               = style.text.fontSize,
 		text_color              = style.text.color
@@ -34,7 +35,7 @@ local function newBasicNavBar( self, params )
 	background:setFillColor( attributes.background_color[1], attributes.background_color[2], attributes.background_color[3], attributes.background_color[4] )
 	navbar:insert(background)
 
-	local stroke = display.newRect( attributes.navbar_x, attributes.navbar_center_point + ( style.height + attributes.background_stroke_width ) / 2, attributes.navbar_width, attributes.background_stroke_width )
+	local stroke = display.newRect( attributes.navbar_x, attributes.navbar_center_point + ( height_wo_stroke + attributes.background_stroke_height ) / 2, attributes.navbar_width, attributes.background_stroke_height )
 	stroke:setFillColor( attributes.background_stroke_color[1], attributes.background_stroke_color[2], attributes.background_stroke_color[3], attributes.background_stroke_color[4] )
 	navbar:insert(stroke)
 
