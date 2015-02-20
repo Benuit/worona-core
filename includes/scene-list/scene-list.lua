@@ -2,10 +2,11 @@ local worona = require "worona"
 
 local function newScene( scene_name )
 
-	local composer = require "composer"
-	local widget   = require "widget" 
-	local scene    = composer.newScene( scene_name )
-	local style    = worona.style:get("list")
+	local composer     = require "composer"
+	local widget       = require "widget" 
+	local scene        = composer.newScene( scene_name )
+	local style        = worona.style:get("scene_list")
+	local navbar_style = worona.style:get("navbar")
 	
 	local spinner, scrollView, no_posts_text
 
@@ -71,11 +72,11 @@ local function newScene( scene_name )
 				local direction = event.direction
 
 				if "began" == phase then
-					print( "Began" )
+					-- print( "Began" )
 				elseif "moved" == phase then
-					print( "Moved" )
+					-- print( "Moved" )
 				elseif "ended" == phase then
-					print( "Ended" )
+					-- print( "Ended" )
 				end
 
 				-- If the scrollView has reached it's scroll limit
@@ -106,18 +107,23 @@ local function newScene( scene_name )
 
 			local scrollView_options = 
 			{
-				y                        = display.contentHeight/2, -- CAMBIAR
-				x                        = display.contentWidth/2, --CAMBIAR
+				top                      = navbar_style.height + display.topStatusBarContentHeight, 
+				left                     = 0,
 				width                    = display.contentWidth, --CAMBIAR
-				height                   = display.contentHeight - 50, -- CAMBIAR
+				height                   = display.contentHeight - navbar_style.height - display.topStatusBarContentHeight, 
 				horizontalScrollDisabled = true,
 				verticalScrollDisabled   = false,
-				topPadding               = 10,
+				topPadding               = 0,
 				bottomPadding            = 30,
 				hideBackground           = false,
 				backgroundColor          = { 0.8, 0.8, 0.8 },
 				listener                 = scrollListener
 			}
+
+			print(display.topStatusBarContentHeight)
+			local row_line1 = display.newLine( 0, navbar_style.height + display.topStatusBarContentHeight , display.contentWidth, navbar_style.height + display.topStatusBarContentHeight  )
+			-- local row_line2 = display.newLine( 0,  , display.contentWidth,   )
+			-- local row_line3 = display.newLine( 0,  , display.contentWidth,   )
 
 			scrollView_options = worona:do_filter( "list_scrollView_options_filter", scrollView_options )
 
@@ -147,6 +153,8 @@ local function newScene( scene_name )
 				-- row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
 
 				scrollView:insert(row.params.row_group)
+				local row_line = display.newLine( 0, row.params.current_y, display.contentWidth, row.params.current_y )
+				scrollView:insert(row_line)
 
 				-- Align the label left and vertically centered
 				-- row_title.anchorX = 0.5
@@ -231,7 +239,6 @@ local function newScene( scene_name )
 					local row_group = display.newGroup() --. All row elements must me inserted in this group.
 
 					if i == 1 then 
-						local navbar_style = worona.style:get("navbar")
 						current_y = display.topStatusBarContentHeight + navbar_style.height
 					end
 
@@ -241,7 +248,7 @@ local function newScene( scene_name )
 					{	
 					    text     = unescaped_title,
 					    x        = display.contentWidth/2, -- CAMBIAR style.title.x,
-					    y        = 20, -- CAMBIAR style.title.y,
+					    y        = style.row.offset, -- CAMBIAR style.title.y,
 					    width    = style.title.width,     --required for multi-line and alignment
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
@@ -249,18 +256,21 @@ local function newScene( scene_name )
 
 					local row_text = display.newText( title_options )
 					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
-
+					row_text.anchorY = 0
 					row_group:insert(row_text)
 					row_group.y = current_y
 					
-					current_y = current_y + row_text.height + title_options.y
+					current_y = current_y + row_text.height + 2*style.row.offset -- CAMBIAR
+
+					local row_height = current_y - row_group.y
 
 					local row_options = 
 					{
+				    	row_height = row_height,
 				    	content = post_list[i],
-				    	row_group = row_group
+				    	row_group = row_group,
+				    	current_y = current_y
 					}
-
 					row_options = worona:do_filter( "list_row_options_filter", row_options )
 
 				    --. Insert the current row into the scrollView
