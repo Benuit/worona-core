@@ -1,5 +1,5 @@
 local worona = require "worona"
-local user_config = require "worona-config.style"
+local user_config_style = require "worona-config.style"
 
 local function newStyle()
 	--== VARIABLES ==--
@@ -28,16 +28,16 @@ local function newStyle()
 
 	---- NAVBAR ----
 	style.navbar = {
-		height = 50 + user_config.navbar_stroke_height
+		height = 50 + user_config_style.navbar_stroke_height
 	}
 		
 	style.navbar.background = {
-		color = user_config.navbar_main_color
+		color = user_config_style.navbar_main_color
 	}
 
 	style.navbar.background.stroke = {
-		color  = user_config.navbar_stroke_color,
-		height = user_config.navbar_stroke_height
+		color  = user_config_style.navbar_stroke_color,
+		height = user_config_style.navbar_stroke_height
 	}
 
 	style.navbar.left_button = {
@@ -50,7 +50,7 @@ local function newStyle()
 
 	style.navbar.text = {
 		fontSize       = 18,
-		color          = user_config.navbar_text_color,
+		color          = user_config_style.navbar_text_color,
 		vertical_align = "center"
 	}
 
