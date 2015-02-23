@@ -133,7 +133,7 @@ local function newScene( scene_name )
 				worona:do_filter( "list_row_height_filter", row_height )
 				scrollView.row_elements[row_index].row_height = row_height
 
-				params.row_group.y = scrollView.row_elements[row_index].row_y
+				worona:do_action( "on_list_insert_row_after_set_row_height", { row = scrollView.row_elements[row_index] } )
 				
 				--. Create background rectangle to get touch events
 				local row_rect         = display.newRect( display.contentWidth/2, 0, display.contentWidth, row_height )
@@ -166,7 +166,7 @@ local function newScene( scene_name )
 				row_rect:addEventListener("touch", scrollableRowHandler)
 
 				--. Create separation line between rows
-				local row_line = display.newLine( 0, scrollView.current_y, display.contentWidth, scrollView.current_y )
+				local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 				row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 				row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
 				
@@ -174,9 +174,10 @@ local function newScene( scene_name )
 				params.row_group:insert(row_rect)
 				row_rect:toBack()
 				scrollView:insert(params.row_group)
-				scrollView:insert(row_line)
+				params.row_group:insert(row_line)
 
 				--. Update current_y
+				params.row_group.y = scrollView.row_elements[row_index].row_y
 				scrollView.current_y = scrollView.current_y + row_height
 
 				worona:do_action( "on_list_insert_row_end", { row = scrollView.row_elements[row_index], row_title = row_title, title_options = title_options } )
