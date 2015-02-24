@@ -117,6 +117,7 @@ local function newScene( scene_name )
 
 			local scrollView = widget.newScrollView(scrollView_options)
 			scrollView.current_y = 0
+			scrollView.current_y = worona:do_filter( "list_current_y_offset_filter", scrollView.current_y )
 			scrollView.row_elements = {}
 
 			function scrollView:insertRow( params )
@@ -129,8 +130,8 @@ local function newScene( scene_name )
 				worona:do_action( "on_list_insert_row_start", { row = scrollView.row_elements[row_index] } )
 
 				--. Set row height
-				local row_height = params.title_height + 2 * style.row.offset
-				worona:do_filter( "list_row_height_filter", row_height )
+				local row_height = params.row_text.height + 2 * style.row.offset
+				row_height = worona:do_filter( "list_row_height_filter", row_height )
 				scrollView.row_elements[row_index].row_height = row_height
 
 				worona:do_action( "on_list_insert_row_after_set_row_height", { row = scrollView.row_elements[row_index] } )
@@ -169,6 +170,7 @@ local function newScene( scene_name )
 				local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 				row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 				row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
+				row_line.strokeWidth = worona:do_filter( "list_row_line_width", row_line.strokeWidth)
 				
 				--. Insert all elements into the scrollView group
 				params.row_group:insert(row_rect)
@@ -269,13 +271,12 @@ local function newScene( scene_name )
 						local title_options = 
 						{	
 						    text     = unescaped_title,
-						    x        = display.contentWidth/2, -- CAMBIAR style.title.x,
-						    y        = style.row.offset, -- CAMBIAR style.title.y,
+						    x        = display.contentWidth/2, 
+						    y        = style.row.offset,
 						    width    = style.title.width,     --required for multi-line and alignment
 						    font     = style.title.font_type,
 						    fontSize = style.title.font_size
 						}
-
 						title_options = worona:do_filter( "list_row_title_options_filter", title_options )
 
 						local row_text = display.newText( title_options )
@@ -285,10 +286,10 @@ local function newScene( scene_name )
 
 						local row_options = 
 						{
-					    	title_height = row_text.height,
-					    	row_color    = user_config_style.post_list_row_color,
-					    	content      = post_list[i],
-					    	row_group    = row_group					    	
+					    	row_text  = row_text,
+					    	row_color = user_config_style.post_list_row_color,
+					    	content   = post_list[i],
+					    	row_group = row_group					    	
 						}
 						row_options = worona:do_filter( "list_row_options_filter", row_options )
 
