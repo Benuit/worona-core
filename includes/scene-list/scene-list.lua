@@ -1,13 +1,15 @@
 local worona = require "worona"
+local user_config_style = require "worona-config.style"
 
 local function newScene( scene_name )
 
-	local composer = require "composer"
-	local widget   = require "widget" 
-	local scene    = composer.newScene( scene_name )
-	local style    = worona.style:get("list")
+	local composer     = require "composer"
+	local widget       = require "widget" 
+	local scene        = composer.newScene( scene_name )
+	local style        = worona.style:get("scene_list")
+	local navbar_style = worona.style:get("navbar")
 	
-	local spinner, tableView, no_posts_text
+	local spinner, scrollView, no_posts_text
 
 	local function loadAboutScene()
 		worona.log:info("scene-list - loadAboutScene()")
@@ -19,7 +21,7 @@ local function newScene( scene_name )
 
 	local function downloadContent()
 		worona.log:info("scene-list - downloadContent()")
-		tableView.alpha = 0
+		scrollView.alpha = 0
 
 		display.remove(no_posts_text)
 		
@@ -45,8 +47,6 @@ local function newScene( scene_name )
 
 		local content = worona.content:getPostList(worona.content_type)
 
-		
-
 		--. View elements
 		local sceneGroup = self.view
 
@@ -65,88 +65,153 @@ local function newScene( scene_name )
 		spinner.alpha = 0
 		sceneGroup:insert(spinner)
 
-		
-		local function createTableView( parent_group )
 
-			local table_view
-			
-			local function onRowRender( event )
+		local function createScrollview( params )
 
-			    -- Get reference to the row group
-			    local row = event.row
+			local function scrollListener( event )
+				local phase = event.phase
+				local direction = event.direction
 
-			    -- Cache the row "contentWidth" and "contentHeight" because the row bounds can change as children objects are added
-			    local rowHeight = row.contentHeight
-			    local rowWidth = row.contentWidth
-
-			    worona:do_action( "on_list_row_render_start", { row = row } )
-
-			    --. POST TITLE
-			    local title_options = 
-			    {	
-			    	parent   = row,
-			        text     = row.params.title_options.text,    
-			        x        = row.params.title_options.x,   
-			        y        = row.params.title_options.y,       
-			        width    = row.params.title_options.width,   
-			        font     = row.params.title_options.font,    
-			        fontSize = row.params.title_options.fontSize
-			    }
-			    title_options = worona:do_filter( "list_row_title_options_filter", title_options )
-			    local row_title = display.newText( title_options )
-			    row_title:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
-
-			    -- Align the label left and vertically centered
-			    row_title.anchorX = 0.5
-			    row_title.x = rowWidth / 2
-			    row_title.anchorY = 0.5
-			    row_title.y = rowHeight / 2
-
-			    worona:do_action( "on_list_row_render_end", { row = row, row_title = row_title, title_options = title_options } )
-			end
-
-			local function onRowTouch( event )
-				if event.phase == "release" or event.phase == "tap" then
-					local params = event.target.params
-					worona:do_action( "load_url", { url = params.content.link } )
-					return true
+				if "began" == phase then
+					-- print( "Began" )
+				elseif "moved" == phase then
+					-- print( "Moved" )
+				elseif "ended" == phase then
+					-- print( "Ended" )
 				end
 
+				-- If the scrollView has reached it's scroll limit
+				if event.limitReached then
+					if "up" == direction then
+						-- print( "Reached Top Limit" )
+					elseif "down" == direction then
+						-- print( "Reached Bottom Limit" )
+					elseif "left" == direction then
+						-- print( "Reached Left Limit" )
+					elseif "right" == direction then
+						-- print( "Reached Right Limit" )
+					end
+				end
+				     
 				return true
 			end
 
-			local tableview_options = 
+			
+
+			local scrollView_options = 
 			{
-				left = style.table_view.left,
-				top = style.table_view.top,
-				height = style.table_view.height,
-				width = style.table_view.width,
-				hideScrollBar = style.table_view.hideScrollBar,
-				onRowRender = onRowRender,
-				onRowTouch = onRowTouch,
-				listener = scrollListener,
-				bottomPadding = 50
+				top                      = navbar_style.height + display.topStatusBarContentHeight, 
+				left                     = 0,
+				width                    = display.contentWidth,
+				height                   = display.contentHeight - navbar_style.height - display.topStatusBarContentHeight, 
+				horizontalScrollDisabled = true,
+				verticalScrollDisabled   = false,
+				topPadding               = 0,
+				bottomPadding            = 30,
+				hideBackground           = false,
+				backgroundColor          = user_config_style.post_list_background_color,
+				listener                 = scrollListener
 			}
-			tableview_options = worona:do_filter( "list_tableview_options_filter", tableview_options )
 
-			local borrar = 0
+			scrollView_options = worona:do_filter( "list_scrollView_options_filter", scrollView_options )
 
-			-- Create the widget
-			table_view = widget.newTableView(tableview_options)
+			local scrollView = widget.newScrollView(scrollView_options)
+			scrollView.current_y = 0
+			scrollView.current_y = worona:do_filter( "list_current_y_offset_filter", scrollView.current_y )
+			scrollView.row_elements = {}
 
-			if parent_group ~= nil then
-				parent_group:insert(table_view)
+			function scrollView:insertRow( params )
+				
+				local row_index = #scrollView.row_elements + 1
+				scrollView.row_elements[row_index]        = {}
+				scrollView.row_elements[row_index].params = params --. Insert params inside row object.
+				scrollView.row_elements[row_index].row_y  = scrollView.current_y
+
+				worona:do_action( "on_list_insert_row_start", { row = scrollView.row_elements[row_index] } )
+
+				--. Set row height
+				local row_height = params.row_text.height + 2 * style.row.offset
+				row_height = worona:do_filter( "list_row_height_filter", row_height )
+				scrollView.row_elements[row_index].row_height = row_height
+
+				worona:do_action( "on_list_insert_row_after_set_row_height", { row = scrollView.row_elements[row_index] } )
+				
+				--. Create background rectangle to get touch events
+				local row_rect         = display.newRect( display.contentWidth/2, 0, display.contentWidth, row_height )
+				row_rect.anchorY       = 0
+				row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] )
+				row_rect.isHitTestable = true
+				local function scrollableRowHandler( event )
+			        
+		            if event.phase == "began" then
+		            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+		            elseif event.phase == "moved" then
+		            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
+
+		                local dx = math.abs( event.x - event.xStart )
+		                local dy = math.abs( event.y - event.yStart )
+
+		                if dx > 5 or dy > 5 then
+		                    scrollView:takeFocus( event )
+		                end
+		            elseif event.phase == "ended" then
+		            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+		                display.getCurrentStage():setFocus(nil)
+		                worona:do_action( "load_url", { url = params.content.link } )
+		            elseif event.phase == "cancelled" then
+		            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+		            end
+
+		            return true
+			    end
+				row_rect:addEventListener("touch", scrollableRowHandler)
+
+				--. Create separation line between rows
+				local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
+				row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
+				row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
+				row_line.strokeWidth = worona:do_filter( "list_row_line_width", row_line.strokeWidth)
+				
+				--. Insert all elements into the scrollView group
+				params.row_group:insert(row_rect)
+				row_rect:toBack()
+				scrollView:insert(params.row_group)
+				params.row_group:insert(row_line)
+
+				--. Update current_y
+				params.row_group.y = scrollView.row_elements[row_index].row_y
+				scrollView.current_y = scrollView.current_y + row_height
+
+				worona:do_action( "on_list_insert_row_end", { row = scrollView.row_elements[row_index], row_title = row_title, title_options = title_options } )
+
+			end
+			
+			function scrollView:deleteAllRows( )
+				
+				local i 
+
+				for i=1,#scrollView.row_elements do
+					display.remove( scrollView.row_elements[i].params.row_group )
+					scrollView.row_elements[i] = nil
+				end
+
+				scrollView.current_y = 0
 			end
 
-			return table_view
+			if params.parent_group ~= nil then
+				params.parent_group:insert(scrollView)
+			end
+
+			return scrollView
 		end
-		
-		local function insertContentInTableView(table_view)
+
+
+		local function insertContentInArrayOrderedByDate()
 
 			--. Create a list with posts IDs ordered by date:
 			local post_list_ordered = {}
 
-			--. Recursive function to insert a post in a list ordered by date.
+			--. Function to insert a post in its correct place of a list ordered by date.
 			local function insertCurrentPostInOrder( current_post, index )
 				if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
 					if index < #post_list_ordered then
@@ -178,68 +243,67 @@ local function newScene( scene_name )
 					end
 				end
 			else
-				worona.log:error("scene-list/insertContentInTableView: content = nil")
+				worona.log:error("scene-list/insertContentInScrollView: content = nil")
 			end
 
-			
-			if content ~= nil then
-				--. Insert rows with content into table_view
-				for i = 1, #content do
+			return post_list_ordered
+		end
 
-					local unescaped_title = worona.string:unescape(content[i].title)
 
-					local title_options = 
-					{	
-					    text     = unescaped_title,
-					    x        = style.title.x,
-					    y        = style.title.y,
-					    width    = style.title.width,     --required for multi-line and alignment
-					    font     = style.title.font_type,
-					    fontSize = style.title.font_size
-					}
-					title_options = worona:do_filter( "list_row_dummy_title_options_filter", title_options )
-					local dummy_text = display.newText( title_options )
-					dummy_text.alpha = 0
-					local text_height = dummy_text.height
-					display.remove( dummy_text )
+		local function insertContentInScrollView( )
+	
+			local post_list = {}
+			post_list = insertContentInArrayOrderedByDate()
 
-					local row_options = {
+			if post_list ~= nil then
 
-				    	is_category  = false,
-				    	row_height   = text_height + 30,
-				    	row_color    = { default = { 1, 1, 1 }, over = { 1, 0.5, 0, 0.2 } },
-				    	line_color   = { 0.5, 0.5, 0.5 },
-				    	params       = {
-				    						content = content[i],
-				    						title_options = title_options
-										}
-					}
+				--. Insert rows with post_list into scrollView
+				for i = 1, #post_list do
 
-					row_options = worona:do_filter( "list_row_options_filter", row_options )
+					local insert_current_row = true
+					insert_current_row = worona:do_filter( "list_insert_current_row_filter", insert_current_row, post_list[i] )
 
-				    -- Insert a row into the tableView
-				    table_view:insertRow(
-				        {
-				            isCategory = row_options.is_category,
-				            rowHeight  = row_options.row_height,
-				            rowColor   = row_options.row_color,
-				            lineColor  = row_options.line_color,
-				            params     = row_options.params
-				        }
-				    )
-				
+					if insert_current_row == true then
+						local row_group = display.newGroup() --. All row elements must me inserted in this group.
+
+						local unescaped_title = worona.string:unescape(post_list[i].title)
+
+						local title_options = 
+						{	
+						    text     = unescaped_title,
+						    x        = display.contentWidth/2, 
+						    y        = style.row.offset,
+						    width    = style.title.width,     --required for multi-line and alignment
+						    font     = style.title.font_type,
+						    fontSize = style.title.font_size
+						}
+						title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+
+						local row_text = display.newText( title_options )
+						row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+						row_text.anchorY = 0
+						row_group:insert(row_text)
+
+						local row_options = 
+						{
+					    	row_text  = row_text,
+					    	row_color = user_config_style.post_list_row_color,
+					    	content   = post_list[i],
+					    	row_group = row_group					    	
+						}
+						row_options = worona:do_filter( "list_row_options_filter", row_options )
+
+					    --. Insert the current row into the scrollView
+					    scrollView:insertRow (row_options)
+					end
 				end
 			else
-				worona.log:error("scene-list/insertContentInTableView: content = nil")
+				worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
 			end
 		end
-		tableView = createTableView(sceneGroup)
-		tableView.alpha = 0
 
-
-		
-		downloadContent(tableView, spinner)
-
+		scrollView = createScrollview({ parent_group = sceneGroup })
+		scrollView.alpha = 0
 
 		local function showNoPostsAvailable()
 			no_posts_text = display.newText( { 
@@ -251,84 +315,59 @@ local function newScene( scene_name )
 			sceneGroup:insert( no_posts_text )
 		end
 
-
-
 		--. Configure hooks to content-download-type actions
 		local function loadSavedListData()
 			spinner:stop()
 			spinner.alpha = 0
 
-			local function nativeAlertListener( event )
-			    if "clicked" == event.action then
-			        if event.index == 1 then
-			        	worona.log:info("scene-list - nativeAlertListener() - option 1 selected")
-			        elseif event.index == 2 then
-			        	worona.log:info("scene-list - nativeAlertListener() - option 2 selected")
-			        	tableView.alpha = 0
-			        	spinner:start()
-			        	spinner.alpha = 1
-			            timer.performWithDelay( 1000, downloadContent )
-			        end
-			    end
-			end
-
 			worona.log:info("scene-list - loadSavedListData()")
 			
-			
 			if content ~= nil then
+				
 				if content == -1 or #content == 0 then
 					worona.log:error("scene-list/loadSavedListData: content = -1 or #content = 0")
 					showNoPostsAvailable()				
 				else
-					transition.to( tableView, { time=1000, alpha=1.0 } )
+					
+					transition.to( scrollView, { time=1000, alpha=1.0 } )
 				end
 			else
 				worona.log:error("scene-list/loadSavedListData: content = nil")
 				showNoPostsAvailable()
-			end
-
-			
+			end	
 		end
-		
 		worona:add_action( "connection_not_available", loadSavedListData)
 
-		local function refreshTableViewContent( params )
+		local function refreshScrollViewContent( params )
 			content = worona.content:getPostList(worona.content_type)
-			tableView:deleteAllRows()
-			insertContentInTableView( tableView )
+			scrollView:deleteAllRows()
+			insertContentInScrollView( )
 			spinner:stop()
 			spinner.alpha = 0
 			
-			
-
 			if content ~= nil then
 				if content == -1 or #content == 0 then
-					
 					showNoPostsAvailable()
 				else
-					transition.to( tableView, { time=1000, alpha=1.0 } )
-					
+					transition.to( scrollView, { time=1000, alpha=1.0 } )
 					display.remove(no_posts_text)
-					
-					
 				end
 			else
-				worona.log:error("scene-list/refreshTableViewContent: content = nil")
+				worona.log:error("scene-list/refreshScrollViewContent: content = nil")
 				showNoPostsAvailable()
 			end
 
-			worona.log:info("scene-list - refreshTableViewContent()")
-		
+			worona.log:info("scene-list - refreshScrollViewContent()")
 		end
-		worona:add_action( "content_file_updated", refreshTableViewContent)
+		worona:add_action( "content_file_updated", refreshScrollViewContent)
 
 
+		downloadContent()
 		if content ~= nil then
 			if content == -1 or #content == 0 then
-				
-			else
-				
-				insertContentInTableView(tableView)
+				-- no content
+			else		
+				insertContentInScrollView(scrollView)
 			end
 		else
 			worona.log:error("scene-list/create: content = nil")
@@ -344,7 +383,6 @@ local function newScene( scene_name )
 		})
 
 		worona:do_action( "after_creating_scene" )
-
 	end
 
 	-- "scene:show()"

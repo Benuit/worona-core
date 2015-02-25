@@ -106,15 +106,13 @@ local function newService()
 		height: (optional, but either width or height present)
 		x:
 		y:
-		directory: (optional, defaults to system.CachesDirectory)
-		dummy: ( optional - true/false, false by default ) creates a copy of the image (dummy) so that the memory texture is not erased when the image has been erased.
+		directory: (optional, defaults to system.DocumentsDirectory)
 		]]--
 	function image:newImage( options )
 
 		--: set defaults
 		local img
 		local parent = options.parent or display.getCurrentStage()
-		local dummy = options.dummy or false
 
 		--: calculate the final height and width
 		local final = calculateFinalDimensions( { real_width = options.real_width, real_height = options.real_height, width = options.width, height = options.height } )
@@ -149,15 +147,6 @@ local function newService()
 					if ( event.isError ) then
 						worona.log:warning( "image:newImage: Network error - download failed." )
 					else
-						
-						if dummy == true then
-							local dummy_image = display.newImage( "content/images/" .. folders_string .. filename, image_baseDirectory, display.contentWidth * 128, - 4096 )
-							if dummy_image ~= nil then
-								dummy_image.width  = 0
-								dummy_image.height = 0
-								dummy_image.alpha  = 0
-							end
-						end
 
 						img = event.target
 
@@ -190,13 +179,6 @@ local function newService()
 		--: if image is in the phone, let's display it
 		else
 			worona.log:info("newImage: Image '" .. filename .. "' is in the phone, lets display it.")
-			
-			if dummy == true then
-				local dummy_image = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 0, 0 )
-				if dummy_image ~= nil then
-					dummy_image.x       = display.contentWidth * 2
-				end
-			end
 
 			img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
 
