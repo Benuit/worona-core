@@ -11,9 +11,9 @@ local function newScene( scene_name )
 	
 	local spinner, scrollView, no_posts_text
 
-	local function loadAboutScene()
-		worona.log:info("scene-list - loadAboutScene()")
-		worona:do_action( "go_to_scene", { scene_type = "scene-about", effect = "slideRight", time = 200 } )
+	local function loadMenuScene()
+		worona.log:info("scene-list - loadMenuScene()")
+		worona:do_action( "go_to_scene", { scene_type = "scene-menu", effect = "slideRight", time = 200 } )
 	end
 
 
@@ -277,7 +277,7 @@ local function newScene( scene_name )
 						    font     = style.title.font_type,
 						    fontSize = style.title.font_size
 						}
-						title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+						title_options = worona:do_filter( "filter_list_row_title_options", title_options )
 
 						local row_text = display.newText( title_options )
 						row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
@@ -291,7 +291,7 @@ local function newScene( scene_name )
 					    	content   = post_list[i],
 					    	row_group = row_group					    	
 						}
-						row_options = worona:do_filter( "list_row_options_filter", row_options )
+						row_options = worona:do_filter( "filter_list_row_options", row_options )
 
 					    --. Insert the current row into the scrollView
 					    scrollView:insertRow (row_options)
@@ -375,7 +375,7 @@ local function newScene( scene_name )
 
 
 		--: load the navbar
-		local basic_navbar = worona.ui:newBasicNavBar({
+		local navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
 			text              = worona.app_title,
 			left_button_icon  = worona.style:get("icons").more,
@@ -402,7 +402,7 @@ local function newScene( scene_name )
 			-- Example: start timers, begin animation, play audio, etc.
 
 			worona:add_action("navbar_right_button_pushed", downloadContent)
-			worona:add_action("navbar_left_button_pushed", loadAboutScene)
+			worona:add_action("navbar_left_button_pushed", loadMenuScene)
 			worona:add_action("android_back_button_pushed", exitApp)	 
 		end
 	end
@@ -419,7 +419,7 @@ local function newScene( scene_name )
 			-- Example: stop timers, stop animation, stop audio, etc.
 
 			worona:remove_action("navbar_right_button_pushed", downloadContent)
-			worona:remove_action("navbar_left_button_pushed", loadAboutScene)
+			worona:remove_action("navbar_left_button_pushed", loadMenuScene)
 			worona:remove_action("android_back_button_pushed", exitApp)	 
 
 		elseif ( phase == "did" ) then
