@@ -2,8 +2,8 @@ local worona = require "worona"
 local widget = require "widget" 
 
 
-local function loadSceneList()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 200 } )
+local function loadPreviousScene()
+	worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
 end
 
 
@@ -39,7 +39,7 @@ local function newScene( scene_name )
 		local basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
 			text              = worona.app_about_title,
-			left_button_icon  = worona.style:get("icons").back
+			left_button_icon  = worona.style:get("icons").back_left
 		})
 
 		local user_text_options = 
@@ -106,8 +106,8 @@ local function newScene( scene_name )
 			-- Insert code here to make the scene come alive.
 			-- Example: start timers, begin animation, play audio, etc.
 
-			worona:add_action("navbar_left_button_pushed", loadSceneList)
-			worona:add_action( "android_back_button_pushed", loadSceneList )
+			worona:add_action("navbar_left_button_pushed", loadPreviousScene)
+			worona:add_action( "android_back_button_pushed", loadPreviousScene )
  
 		end
 	end
@@ -123,8 +123,8 @@ local function newScene( scene_name )
 			-- Insert code here to "pause" the scene.
 			-- Example: stop timers, stop animation, stop audio, etc.
 
-			worona:remove_action("navbar_left_button_pushed", loadSceneList)
-			worona:remove_action( "android_back_button_pushed", loadSceneList )
+			worona:remove_action("navbar_left_button_pushed", loadPreviousScene)
+			worona:remove_action( "android_back_button_pushed", loadPreviousScene )
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.

@@ -21,12 +21,15 @@ local function newStyle()
 
 	---- ICONS ----
 	style.icons = {
-		back    = { default = icons_folder .. "/backDefault.png", 		over = icons_folder .. "/backOver.png", 		width = 68, height = 68  },
-		refresh = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
-		more    = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  }
+		back_left   = { default = icons_folder .. "/backLeftDefault.png", 	over = icons_folder .. "/backLeftOver.png", 	width = 68, height = 68  },
+		back_right  = { default = icons_folder .. "/backRightDefault.png", 	over = icons_folder .. "/backRightOver.png", 	width = 68, height = 68  },
+		refresh     = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
+		more        = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  },
+		favorite    = { default = icons_folder .. "/favoriteDefault.png", 	over = icons_folder .. "/favoriteOver.png", 	width = 68, height = 68  },
+		is_favorite = { default = icons_folder .. "/isFavoriteDefault.png", over = icons_folder .. "/isFavoriteOver.png", 	width = 68, height = 68 }
 	}
 
-	---- NAVBAR ----
+	---- BASIC NAVBAR ----
 	style.navbar = {
 		height = 50 + user_config_style.navbar_stroke_height
 	}
@@ -54,6 +57,35 @@ local function newStyle()
 		vertical_align = "center"
 	}
 
+
+	---- TWO LINE NAVBAR ----
+	style.two_line_navbar = {
+		height = 100 + user_config_style.navbar_stroke_height,
+		line_height = 50
+	}
+		
+	style.two_line_navbar.background = {
+		color = user_config_style.navbar_main_color
+	}
+
+	style.two_line_navbar.background.stroke = {
+		color  = user_config_style.navbar_stroke_color,
+		height = user_config_style.navbar_stroke_height
+	}
+
+	style.two_line_navbar.left_button = {
+		image          = { default = images_folder .. "/basic-navbar/navBarButtonDefault.png", over = images_folder .. "/basic-navbar/navBarButtonOver.png" },
+		height         = style.navbar.height,
+		width          = style.navbar.height,
+		margin_left    = 5,
+		vertical_align = "center"
+	}
+
+	style.two_line_navbar.text = {
+		fontSize       = 18,
+		color          = user_config_style.navbar_text_color,
+		vertical_align = "center"
+	}
 
 	---- TABBAR ----
 	--style
@@ -276,13 +308,19 @@ local function newStyle()
 			font_size  = 18,
 			font_color = { r = 74/256, g = 74/256, b = 74/256 }
 		},
-		row = {
-			offset = 20
-
+		table_view = {
+			left          = - 20,
+			top           = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.height,
+			height        = display.contentHeight - 50,
+			width         = display.contentWidth + 40,
+			hideScrollBar = true
 		},
 		no_posts_text = {
 			x = display.contentWidth / 2,
 			y = style.navbar.height + 50
+		},
+		row = {
+			offset = 20
 		}
 	}
 

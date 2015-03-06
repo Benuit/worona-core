@@ -1,6 +1,6 @@
 local worona = require "worona"
 
-local function newBasicNavBar( self, params )
+local function newTwoLineNavBar( self, params )
 
 	local widget = require "widget"
 
@@ -9,20 +9,20 @@ local function newBasicNavBar( self, params )
 
 	-- Get the style
 
-	local style = worona.style:get("navbar")
+	local style = worona.style:get("two_line_navbar")
 
 	local ios7and8_y      = ( display.topStatusBarContentHeight + style.height ) / 2
 	local ios7and8_height = style.height + display.topStatusBarContentHeight
 
-	local attributes = {
+	local line1_attributes = {
 		navbar_x                 = display.contentWidth / 2,
 		navbar_y                 = worona.style:getSetting( { ios7 = ios7and8_y, ios8 = ios7and8_y, default = display.topStatusBarContentHeight + style.height / 2 } ),
 		navbar_center_point      = display.topStatusBarContentHeight + style.height / 2,
 		navbar_height            = worona.style:getSetting( { ios7 = ios7and8_height, ios8 = ios7and8_height, default = style.height } ),
 		navbar_width             = style.width or display.contentWidth,
-		background_color         = style.background.color,
-		background_stroke_color  = style.background.stroke.color,
-		background_stroke_height = style.background.stroke.height,
+		line1_background_color         = style.background.color,
+		line1_background_stroke_color  = style.background.stroke.color,
+		line1_background_stroke_height = style.background.stroke.height,
 		text                     = "Untitled" or params.text,
 		text_size                = style.text.fontSize,
 		text_color               = style.text.color
@@ -30,19 +30,19 @@ local function newBasicNavBar( self, params )
 
 	-- Start the creation
 
-	local background = display.newRect( attributes.navbar_x, attributes.navbar_y, attributes.navbar_width, attributes.navbar_height )
-	background:setFillColor( attributes.background_color[1], attributes.background_color[2], attributes.background_color[3], attributes.background_color[4] )
-	navbar:insert(background)
+	local line1_background = display.newRect( line1_attributes.navbar_x, line1_attributes.navbar_y, line1_attributes.navbar_width, line1_attributes.navbar_height )
+	line1_background:setFillColor( line1_attributes.line1_background_color[1], line1_attributes.line1_background_color[2], line1_attributes.line1_background_color[3], line1_attributes.line1_background_color[4] )
+	navbar:insert(line1_background)
 
-	local stroke = display.newRect( attributes.navbar_x, attributes.navbar_center_point + ( style.height + attributes.background_stroke_height ) / 2, attributes.navbar_width, attributes.background_stroke_height )
-	stroke:setFillColor( attributes.background_stroke_color[1], attributes.background_stroke_color[2], attributes.background_stroke_color[3], attributes.background_stroke_color[4] )
+	local stroke = display.newRect( line1_attributes.navbar_x, line1_attributes.navbar_center_point + ( style.height + line1_attributes.line1_background_stroke_height ) / 2, line1_attributes.navbar_width, line1_attributes.line1_background_stroke_height )
+	stroke:setFillColor( line1_attributes.line1_background_stroke_color[1], line1_attributes.line1_background_stroke_color[2], line1_attributes.line1_background_stroke_color[3], line1_attributes.line1_background_stroke_color[4] )
 	navbar:insert(stroke)
 
 	local left_button_width = 0
 	if params.left_button_icon ~= nil then
 		local left_button_options = {
 			x 			= params.left_button_icon.width / 2 - 15,
-			y 			= attributes.navbar_center_point,
+			y 			= line1_attributes.navbar_center_point,
 		    width       = params.left_button_icon.width,
 		    height      = params.left_button_icon.height,
 		    defaultFile = params.left_button_icon.default,
@@ -58,7 +58,7 @@ local function newBasicNavBar( self, params )
 	if params.right_button_icon ~= nil then
 		local right_button_options = {
 			x 			= display.contentWidth - ( params.right_button_icon.width / 2 ) + 15,
-			y 			= attributes.navbar_center_point,
+			y 			= line1_attributes.navbar_center_point,
 		    width       = params.right_button_icon.width,
 			height      = params.right_button_icon.height,
 		    defaultFile = params.right_button_icon.default,
@@ -74,13 +74,13 @@ local function newBasicNavBar( self, params )
 	local text_options = {
 		parent   = navbar,
 		text     = params.text or "nothing",
-		x        = attributes.navbar_x,
-		y        = attributes.navbar_center_point,
-		fontSize = attributes.text_size
+		x        = line1_attributes.navbar_x,
+		y        = line1_attributes.navbar_center_point,
+		fontSize = line1_attributes.text_size
 	}
 
 	local text = display.newText( text_options )
-	text:setFillColor( attributes.text_color[1], attributes.text_color[2], attributes.text_color[3], attributes.text_color[4] )
+	text:setFillColor( line1_attributes.text_color[1], line1_attributes.text_color[2], line1_attributes.text_color[3], line1_attributes.text_color[4] )
 
 	--. If text is too wide, cut it and add "..."
 	local nabvar_available_space = display.contentWidth - right_button_width - left_button_width - 10
@@ -105,4 +105,4 @@ local function newBasicNavBar( self, params )
 	-- Return the object
 	return navbar
 end
-worona:do_action( "extend_service", { service = "ui", creator = newBasicNavBar, name = "newBasicNavBar" } )
+worona:do_action( "extend_service", { service = "ui", creator = newTwoLineNavBar, name = "newTwoLineNavBar" } )
