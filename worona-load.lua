@@ -32,12 +32,14 @@ local function worona_load( blood_name )
     					"scene-post",
     					"scene-about",
     					"scene-webview",
+    					"scene-menu",
     					
     					-- styles
     					"style-default",
 
     					-- ui
-    					"ui-newBasicNavBar"
+    					"ui-newBasicNavBar",
+    					"ui-newTwoLineNavBar"
 					 }
 
 	--------------------------------------------------------------
