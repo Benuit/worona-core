@@ -269,7 +269,8 @@ local function newScene( scene_name )
 		--: load the navbar
 		local navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
-			text              = "Menu"
+			text              = "Menu",
+			
 		})
 
 		worona:do_action( "after_creating_scene" )

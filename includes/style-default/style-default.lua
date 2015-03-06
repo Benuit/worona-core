@@ -26,7 +26,8 @@ local function newStyle()
 		refresh     = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
 		more        = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  },
 		favorite    = { default = icons_folder .. "/favoriteDefault.png", 	over = icons_folder .. "/favoriteOver.png", 	width = 68, height = 68  },
-		is_favorite = { default = icons_folder .. "/isFavoriteDefault.png", over = icons_folder .. "/isFavoriteOver.png", 	width = 68, height = 68 }
+		is_favorite = { default = icons_folder .. "/isFavoriteDefault.png", over = icons_folder .. "/isFavoriteOver.png", 	width = 68, height = 68  },
+		menu        = { default = icons_folder .. "/menuDefault.png", 		over = icons_folder .. "/menuOver.png", 		width = 68, height = 68  }
 	}
 
 	---- BASIC NAVBAR ----
