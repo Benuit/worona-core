@@ -59,6 +59,64 @@ local function newJsonProxy()
         that:save()
     end
 
+    --. Adds a value to an array of values in the designated field, ie: "favorite_posts" = {45, 23, 87, value} .--
+    	--. RETURN: -
+    	--. ARGUMENTS: 
+    	--. 	field: name of the field in the json file.
+    	--. 	value: (number or string) value to add to the array.
+    function that:addValue ( field, value )
+
+    	local previous_values = data[field]
+    
+    	if type(value) ~= "string" and type(value) ~= "number" then
+    		worona.log:error("newJsonProxy/addValue: string or number expected, got " .. type(value))
+    		return -1
+    	else
+
+	        if previous_values == nil then
+	            data[field] = value
+	    	elseif type(previous_values) ~= "table" then
+	    		local values_array = { previous_values, value }
+	    		that:set( field, values_array )
+	    	else
+	    		previous_values[#previous_values + 1] = value
+	    		that:set( field, previous_values )
+    		end
+        end
+
+        that:save()
+    end
+
+
+    --. Adds a value to an array of values in the designated field, ie: "favorite_posts" = {45, 23, 87, value} .--
+    	--. RETURN: -
+    	--. ARGUMENTS: 
+    	--. 	field: name of the field in the json file.
+    	--. 	value: (number or string) value to add to the array.
+    function that:removeValue ( field, value )
+
+    	local previous_values = data[field]
+    
+    	if type(value) ~= "string" and type(value) ~= "number" then
+    		worona.log:error("newJsonProxy/removeValue: string or number expected, got " .. type(value))
+    		return -1
+    	else
+    		if type(previous_values) == "table" then
+		        for i=1, #previous_values do
+		         	if previous_values[i] == value then
+		         		table.remove( data[field], i )
+		         		break
+		         	end
+	        	end
+	        elseif previous_values == value then
+	        	data[field] = nil
+	        end
+        end
+
+        that:save()
+    end
+
+
     function that:append ( field, value )
 
         for k,v in pairs(value) do 
