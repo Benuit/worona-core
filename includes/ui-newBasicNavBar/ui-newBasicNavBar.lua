@@ -29,13 +29,11 @@ local function newBasicNavBar( self, params )
 
 		if new_icon ~= nil then
 			local button_options = {
-				x 			= new_icon.width / 2 - 15,
 				y 			= navbar.attributes.navbar_center_point,
 			    width       = new_icon.width,
 			    height      = new_icon.height,
 			    defaultFile = new_icon.default,
 		        overFile    = new_icon.over,
-		        onRelease   = function() worona:do_action( "navbar_left_button_pushed" ); return true end
 			}
 
 
@@ -44,22 +42,24 @@ local function newBasicNavBar( self, params )
 				display.remove( navbar.left_button )
 
 				navbar.left_button_width = new_icon.width
-				navbar.left_button = widget.newButton( button_options )
+				button_options.x         = new_icon.width / 2 - 15
+				button_options.onRelease = function() worona:do_action( "navbar_left_button_pushed" ); return true end
+				navbar.left_button       = widget.newButton( button_options )
 				navbar.display_group:insert( navbar.left_button )
 			
 			elseif side == "right" then
 
-				display.remove( navbar.left_button )
+				display.remove( navbar.right_button )
 				
 				navbar.right_button_width = new_icon.width
-				navbar.right_button = widget.newButton( button_options )
+				button_options.x          = display.contentWidth - ( params.right_button_icon.width / 2 ) + 15
+				button_options.onRelease  = function() worona:do_action( "navbar_right_button_pushed" ); return true end
+				navbar.right_button       = widget.newButton( button_options )
 				navbar.display_group:insert( navbar.right_button )
 			else
 				worona.log:error('ui-newBasicNavBar/replaceButton: "' .. side .. '" should be "left" or "right". Please change.')
 			end
-
 		end
-
 	end
 
 	-- Get the style
