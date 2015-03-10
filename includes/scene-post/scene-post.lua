@@ -6,7 +6,7 @@ local function newPostScene( scene_name )
 	local scene    = composer.newScene( scene_name )
 
 	--: private variables
-	local webview, content, url, scene_on_screen
+	local webview, content, url, scene_on_screen, basic_navbar
 	local postHtmlRender = require "worona-core.includes.scene-post.html-render"
 
 	local function androidListener( event )
@@ -25,7 +25,14 @@ local function newPostScene( scene_name )
 	end
 
 	local function rightButtonHandler()
+
 		worona.favorite:addOrRemoveFavorite( { post_id = content.ID } )
+
+		if worona.favorite:isFavorite( { post_id = content.ID } ) == true then
+			basic_navbar:replaceButton( "right", worona.style:get("icons").is_favorite )
+		else
+			basic_navbar:replaceButton( "right", worona.style:get("icons").favorite )
+		end
 	end
 
 	-- "scene:create()"
@@ -37,18 +44,20 @@ local function newPostScene( scene_name )
 
 		local background = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 
+		-- 
 		url     = worona.scene:getCurrentSceneUrl()
 		content = worona.content:getPost( worona.content_type, url )
 
 		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.worona_content.html } )
 
 		local unescaped_title = worona.string:unescape(content.title)
+		local favorite_icon   = worona:do_filter( "filter_navbar_favorite_icon", "favorite", { post_id = content.ID } )
 		--: load the navbar
-		local basic_navbar = worona.ui:newBasicNavBar({
+		basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
 			text              = unescaped_title,
 			left_button_icon  = worona.style:get("icons").back_left,
-			right_button_icon = worona:do_filter( "filter_navbar_favorite_icon", worona.style:get("icons").favorite )
+			right_button_icon = worona.style:get("icons")[favorite_icon]
 		})
 
 		worona:do_action( "after_creating_scene" )
