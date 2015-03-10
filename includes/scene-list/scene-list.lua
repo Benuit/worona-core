@@ -34,6 +34,65 @@ local function newScene( scene_name )
 		native.requestExit()
 	end
 
+
+	--. Configure hooks to content-download-type actions
+	local function loadSavedListData()
+		spinner:stop()
+		spinner.alpha = 0
+
+		worona.log:info("scene-list - loadSavedListData()")
+		
+		if content ~= nil then
+			
+			if content == -1 or #content == 0 then
+				worona.log:error("scene-list/loadSavedListData: content = -1 or #content = 0")
+				showNoPostsAvailable()				
+			else
+				
+				transition.to( scrollView, { time=1000, alpha=1.0 } )
+			end
+		else
+			worona.log:error("scene-list/loadSavedListData: content = nil")
+			showNoPostsAvailable()
+		end	
+	end
+	worona:add_action( "connection_not_available", loadSavedListData)
+
+	local function refreshScrollViewContent( params )
+		content = worona.content:getPostList(worona.content_type)
+		scrollView:deleteAllRows()
+		insertContentInScrollView()
+		spinner:stop()
+		spinner.alpha = 0
+		
+		if content ~= nil then
+			if content == -1 or #content == 0 then
+				showNoPostsAvailable()
+			else
+				transition.to( scrollView, { time=1000, alpha=1.0 } )
+				display.remove(no_posts_text)
+			end
+		else
+			worona.log:error("scene-list/refreshScrollViewContent: content = nil")
+			showNoPostsAvailable()
+		end
+
+		worona.log:info("scene-list - refreshScrollViewContent()")
+	end
+	worona:add_action( "content_file_updated", refreshScrollViewContent)
+
+
+	downloadContent()
+	if content ~= nil then
+		if content == -1 or #content == 0 then
+			-- no content
+		else		
+			insertContentInScrollView(scrollView)
+		end
+	else
+		worona.log:error("scene-list/create: content = nil")
+	end
+
 	-- -----------------------------------------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
 	-- -----------------------------------------------------------------------------------------------------------------
@@ -314,63 +373,7 @@ local function newScene( scene_name )
 			sceneGroup:insert( no_posts_text )
 		end
 
-		--. Configure hooks to content-download-type actions
-		local function loadSavedListData()
-			spinner:stop()
-			spinner.alpha = 0
-
-			worona.log:info("scene-list - loadSavedListData()")
-			
-			if content ~= nil then
-				
-				if content == -1 or #content == 0 then
-					worona.log:error("scene-list/loadSavedListData: content = -1 or #content = 0")
-					showNoPostsAvailable()				
-				else
-					
-					transition.to( scrollView, { time=1000, alpha=1.0 } )
-				end
-			else
-				worona.log:error("scene-list/loadSavedListData: content = nil")
-				showNoPostsAvailable()
-			end	
-		end
-		worona:add_action( "connection_not_available", loadSavedListData)
-
-		local function refreshScrollViewContent( params )
-			content = worona.content:getPostList(worona.content_type)
-			scrollView:deleteAllRows()
-			insertContentInScrollView()
-			spinner:stop()
-			spinner.alpha = 0
-			
-			if content ~= nil then
-				if content == -1 or #content == 0 then
-					showNoPostsAvailable()
-				else
-					transition.to( scrollView, { time=1000, alpha=1.0 } )
-					display.remove(no_posts_text)
-				end
-			else
-				worona.log:error("scene-list/refreshScrollViewContent: content = nil")
-				showNoPostsAvailable()
-			end
-
-			worona.log:info("scene-list - refreshScrollViewContent()")
-		end
-		worona:add_action( "content_file_updated", refreshScrollViewContent)
-
-
-		downloadContent()
-		if content ~= nil then
-			if content == -1 or #content == 0 then
-				-- no content
-			else		
-				insertContentInScrollView(scrollView)
-			end
-		else
-			worona.log:error("scene-list/create: content = nil")
-		end
+		
 
 
 		--: load the navbar
