@@ -243,14 +243,14 @@ local function newScene( scene_name )
 					end
 				end
 			else
-				worona.log:error("scene-list/insertContentInScrollView: content = nil")
+				worona.log:error("scene-list/insertContentInArrayOrderedByDate: content = nil")
 			end
 
 			return post_list_ordered
 		end
 
 
-		local function insertContentInScrollView( )
+		local function insertContentInScrollView()
 	
 			local post_list = {}
 			post_list = insertContentInArrayOrderedByDate()
@@ -260,8 +260,7 @@ local function newScene( scene_name )
 				--. Insert rows with post_list into scrollView
 				for i = 1, #post_list do
 
-					local insert_current_row = true
-					insert_current_row = worona:do_filter( "list_insert_current_row_filter", insert_current_row, post_list[i] )
+					local insert_current_row = worona:do_filter( "list_insert_current_row_filter", true, { post = post_list[i]} )
 
 					if insert_current_row == true then
 						local row_group = display.newGroup() --. All row elements must me inserted in this group.
@@ -341,7 +340,7 @@ local function newScene( scene_name )
 		local function refreshScrollViewContent( params )
 			content = worona.content:getPostList(worona.content_type)
 			scrollView:deleteAllRows()
-			insertContentInScrollView( )
+			insertContentInScrollView()
 			spinner:stop()
 			spinner.alpha = 0
 			
