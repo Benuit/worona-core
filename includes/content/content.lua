@@ -194,6 +194,8 @@ local function newContentService()
 
 		local content_type, base_url
 
+		worona:do_action("on_content_update_start")
+
 		--. Function arguments compatible with table (worona.content:update( {content_type = "customcontent", url = "testing.turismob.com"} ))
 		if type(options) ~= "table" then
 			content_type = options
