@@ -406,21 +406,19 @@ local function newScene( scene_name )
 		sceneGroup = self.view
 		local phase = event.phase
 
+		scrollView:deleteAllRows()
+
 		if event.params ~= nil then
-			if event.params.show_posts ~= current_posts_shown then
-				scrollView:deleteAllRows()
-
-				if event.params.show_posts == "favorite" then
-					worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
-				else
-					worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
-				end
-
-				insertContentInScrollView()
-
-				current_posts_shown = event.params.show_posts
+			if event.params.show_posts == "favorite" then
+				worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
+			else
+				worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
 			end
+
+			current_posts_shown = event.params.show_posts
 		end
+
+		insertContentInScrollView()	
 
 
 		if ( phase == "will" ) then
