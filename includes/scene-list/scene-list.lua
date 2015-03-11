@@ -9,7 +9,7 @@ local function newScene( scene_name )
 	local style        = worona.style:get("scene_list")
 	local navbar_style = worona.style:get("navbar")
 	
-	local spinner, content, sceneGroup, scrollView, no_posts_text
+	local spinner, content, sceneGroup, scrollView, no_posts_text, current_posts_shown
 
 	worona.lang:load("worona-core.includes.scene-list.lang.scene-list-lang", "scene-list")
 
@@ -111,11 +111,11 @@ local function newScene( scene_name )
 	                    scrollView:takeFocus( event )
 	                end
 	            elseif event.phase == "ended" then
-	            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
 	                display.getCurrentStage():setFocus(nil)
 	                worona:do_action( "load_url", { url = params.content.link } )
 	            elseif event.phase == "cancelled" then
-	            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
 	            end
 
 	            return true
@@ -217,6 +217,7 @@ local function newScene( scene_name )
 				local insert_current_row = worona:do_filter( "list_insert_current_row_filter", true, { post = post_list[i]} )
 
 				if insert_current_row == true then
+
 					local row_group = display.newGroup() --. All row elements must me inserted in this group.
 
 					local unescaped_title = worona.string:unescape(post_list[i].title)
@@ -328,10 +329,23 @@ local function newScene( scene_name )
 			if content == -1 or #content == 0 then
 				-- no content
 			else		
-				insertContentInScrollView(scrollView)
+				insertContentInScrollView()
 			end
 		else
 			worona.log:error("scene-list/create: content = nil")
+		end
+	end
+
+	local function refreshContent()
+
+	end
+
+	local function isThisPostFavorite( default_value, params )
+		
+		if worona.favorite:isFavorite( { post_id = params.post.ID } ) == true then
+			return true
+		else
+			return false
 		end
 	end
 
@@ -346,6 +360,7 @@ local function newScene( scene_name )
 
 		worona:do_action( "before_creating_scene" )
 
+		current_posts_shown = event.params.show_posts
 		content = worona.content:getPostList(worona.content_type)
 
 		--. View elements
@@ -388,8 +403,25 @@ local function newScene( scene_name )
 	-- "scene:show()"
 	function scene:show( event )
 
-		local show_scene_group = self.view
+		sceneGroup = self.view
 		local phase = event.phase
+
+		if event.params ~= nil then
+			if event.params.show_posts ~= current_posts_shown then
+				scrollView:deleteAllRows()
+
+				if event.params.show_posts == "favorite" then
+					worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
+				else
+					worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
+				end
+
+				insertContentInScrollView()
+
+				current_posts_shown = event.params.show_posts
+			end
+		end
+
 
 		if ( phase == "will" ) then
 			-- Called when the scene is still off screen (but is about to come on screen).
@@ -410,7 +442,7 @@ local function newScene( scene_name )
 	-- "scene:hide()"
 	function scene:hide( event )
 
-		local hide_scene_group = self.view
+		sceneGroup = self.view
 		local phase = event.phase
 
 		if ( phase == "will" ) then
@@ -430,7 +462,7 @@ local function newScene( scene_name )
 	-- "scene:destroy()"
 	function scene:destroy( event )
 
-		local destroy_scene_group = self.view
+		sceneGroup = self.view
 
 
 		-- Called prior to the removal of scene's view ("sceneGroup").
