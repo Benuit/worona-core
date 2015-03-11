@@ -9,7 +9,7 @@ local function newScene( scene_name )
 	local style        = worona.style:get("scene_list")
 	local navbar_style = worona.style:get("navbar")
 	
-	local spinner, sceneGroup, scrollView, no_posts_text
+	local spinner, content, sceneGroup, scrollView, no_posts_text
 
 	worona.lang:load("worona-core.includes.scene-list.lang.scene-list-lang", "scene-list")
 
@@ -161,8 +161,102 @@ local function newScene( scene_name )
 		return scrollView
 	end
 
+	local function insertContentInArrayOrderedByDate()
+
+		--. Create a list with posts IDs ordered by date:
+		local post_list_ordered = {}
+
+		--. Function to insert a post in its correct place of a list ordered by date.
+		local function insertCurrentPostInOrder( current_post, index )
+			if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
+				if index < #post_list_ordered then
+					insertCurrentPostInOrder(current_post, index + 1)
+				elseif index == #post_list_ordered then
+					post_list_ordered[index + 1] = current_post
+				else
+					worona.log:error("scene-list.lua/insertCurrentPostInOrder - Error")
+				end
+			else
+				for i=#post_list_ordered, index, -1 do
+					post_list_ordered[i+1] = post_list_ordered[i]
+				end
+				post_list_ordered[index] = current_post
+			end
+		end
+
+		if content ~= nil then
+			--. Loop content to identify published posts and insert them in the array post_list_ordered.
+			for k,v in pairs(content) do	
+				v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
+				
+				if v.status == "publish" then
+					if #post_list_ordered ~= 0 then
+						insertCurrentPostInOrder(v, 1)
+					else
+						post_list_ordered[1] = v
+					end
+				end
+			end
+		else
+			worona.log:error("scene-list/insertContentInArrayOrderedByDate: content = nil")
+		end
+
+		return post_list_ordered
+	end
+
+	local function insertContentInScrollView()
+	
+		local post_list = {}
+		post_list = insertContentInArrayOrderedByDate()
+
+		if post_list ~= nil then
+
+			--. Insert rows with post_list into scrollView
+			for i = 1, #post_list do
+
+				local insert_current_row = worona:do_filter( "list_insert_current_row_filter", true, { post = post_list[i]} )
+
+				if insert_current_row == true then
+					local row_group = display.newGroup() --. All row elements must me inserted in this group.
+
+					local unescaped_title = worona.string:unescape(post_list[i].title)
+
+					local title_options = 
+					{	
+					    text     = unescaped_title,
+					    x        = display.contentWidth/2, 
+					    y        = style.row.offset,
+					    width    = style.title.width,     --required for multi-line and alignment
+					    font     = style.title.font_type,
+					    fontSize = style.title.font_size
+					}
+					title_options = worona:do_filter( "filter_list_row_title_options", title_options )
+
+					local row_text = display.newText( title_options )
+					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+					row_text.anchorY = 0
+					row_group:insert(row_text)
+
+					local row_options = 
+					{
+				    	row_text  = row_text,
+				    	row_color = user_config_style.post_list_row_color,
+				    	content   = post_list[i],
+				    	row_group = row_group					    	
+					}
+					row_options = worona:do_filter( "filter_list_row_options", row_options )
+
+				    --. Insert the current row into the scrollView
+				    scrollView:insertRow (row_options)
+				end
+			end
+		else
+			worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
+		end
+	end
+
 	--. Configure hooks to content-download-type actions
-	local function showNoPostsAvailable()
+	local function showNoPostsAvailable( params )
 		no_posts_text = display.newText( { 
 			text = worona.lang:get("no_posts_available", "scene-list"), 
 			fontSize = 20,
@@ -203,7 +297,7 @@ local function newScene( scene_name )
 			showNoPostsAvailable()
 		end	
 	end
-	worona:add_action( "connection_not_available", loadSavedListData)
+	worona:add_action( "connection_not_available", loadSavedListData )
 
 	local function refreshScrollViewContent( params )
 		content = worona.content:getPostList(worona.content_type)
@@ -226,7 +320,7 @@ local function newScene( scene_name )
 
 		worona.log:info("scene-list - refreshScrollViewContent()")
 	end
-	worona:add_action( "content_file_updated", refreshScrollViewContent)
+	worona:add_action( "content_file_updated", refreshScrollViewContent )
 
 	local function downloadContent()
 		worona.content:update( { content_type = worona.content_type, url = worona.wp_url } )
@@ -252,10 +346,10 @@ local function newScene( scene_name )
 
 		worona:do_action( "before_creating_scene" )
 
-		local content = worona.content:getPostList(worona.content_type)
+		content = worona.content:getPostList(worona.content_type)
 
 		--. View elements
-		local sceneGroup = self.view
+		sceneGroup = self.view
 
 		local background = display.newRect	( 	display.contentWidth / 2, 
 												display.contentHeight / 2, 
@@ -273,106 +367,12 @@ local function newScene( scene_name )
 		sceneGroup:insert(spinner)
 
 
-		local function insertContentInArrayOrderedByDate()
-
-			--. Create a list with posts IDs ordered by date:
-			local post_list_ordered = {}
-
-			--. Function to insert a post in its correct place of a list ordered by date.
-			local function insertCurrentPostInOrder( current_post, index )
-				if current_post.date_timestamp < post_list_ordered[index].date_timestamp then
-					if index < #post_list_ordered then
-						insertCurrentPostInOrder(current_post, index + 1)
-					elseif index == #post_list_ordered then
-						post_list_ordered[index + 1] = current_post
-					else
-						worona.log:error("scene-list.lua/insertCurrentPostInOrder - Error")
-					end
-				else
-					for i=#post_list_ordered, index, -1 do
-						post_list_ordered[i+1] = post_list_ordered[i]
-					end
-					post_list_ordered[index] = current_post
-				end
-			end
-
-			if content ~= nil then
-				--. Loop content to identify published posts and insert them in the array post_list_ordered.
-				for k,v in pairs(content) do	
-					v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
-					
-					if v.status == "publish" then
-						if #post_list_ordered ~= 0 then
-							insertCurrentPostInOrder(v, 1)
-						else
-							post_list_ordered[1] = v
-						end
-					end
-				end
-			else
-				worona.log:error("scene-list/insertContentInArrayOrderedByDate: content = nil")
-			end
-
-			return post_list_ordered
-		end
-
-
-		local function insertContentInScrollView()
-	
-			local post_list = {}
-			post_list = insertContentInArrayOrderedByDate()
-
-			if post_list ~= nil then
-
-				--. Insert rows with post_list into scrollView
-				for i = 1, #post_list do
-
-					local insert_current_row = worona:do_filter( "list_insert_current_row_filter", true, { post = post_list[i]} )
-
-					if insert_current_row == true then
-						local row_group = display.newGroup() --. All row elements must me inserted in this group.
-
-						local unescaped_title = worona.string:unescape(post_list[i].title)
-
-						local title_options = 
-						{	
-						    text     = unescaped_title,
-						    x        = display.contentWidth/2, 
-						    y        = style.row.offset,
-						    width    = style.title.width,     --required for multi-line and alignment
-						    font     = style.title.font_type,
-						    fontSize = style.title.font_size
-						}
-						title_options = worona:do_filter( "filter_list_row_title_options", title_options )
-
-						local row_text = display.newText( title_options )
-						row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
-						row_text.anchorY = 0
-						row_group:insert(row_text)
-
-						local row_options = 
-						{
-					    	row_text  = row_text,
-					    	row_color = user_config_style.post_list_row_color,
-					    	content   = post_list[i],
-					    	row_group = row_group					    	
-						}
-						row_options = worona:do_filter( "filter_list_row_options", row_options )
-
-					    --. Insert the current row into the scrollView
-					    scrollView:insertRow (row_options)
-					end
-				end
-			else
-				worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
-			end
-		end
-
 		if scrollView == nil then
 			scrollView = createScrollview({ parent_group = sceneGroup })
 			scrollView.alpha = 0
 		end
 
+		downloadContent()
 		
 		--: load the navbar
 		local navbar = worona.ui:newBasicNavBar({
@@ -388,7 +388,7 @@ local function newScene( scene_name )
 	-- "scene:show()"
 	function scene:show( event )
 
-		local sceneGroup = self.view
+		local show_scene_group = self.view
 		local phase = event.phase
 
 		if ( phase == "will" ) then
@@ -410,7 +410,7 @@ local function newScene( scene_name )
 	-- "scene:hide()"
 	function scene:hide( event )
 
-		local sceneGroup = self.view
+		local hide_scene_group = self.view
 		local phase = event.phase
 
 		if ( phase == "will" ) then
@@ -430,7 +430,7 @@ local function newScene( scene_name )
 	-- "scene:destroy()"
 	function scene:destroy( event )
 
-		local sceneGroup = self.view
+		local destroy_scene_group = self.view
 
 
 		-- Called prior to the removal of scene's view ("sceneGroup").
