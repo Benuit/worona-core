@@ -86,7 +86,7 @@ local function newScene( scene_name )
 			worona:do_action( "on_list_insert_row_start", { row = scrollView.row_elements[row_index] } )
 
 			--. Set row height
-			local row_height = params.row_text.height + 2 * style.row.offset
+			local row_height = params.row_height + 2 * style.row.offset
 			row_height = worona:do_filter( "list_row_height_filter", row_height )
 			scrollView.row_elements[row_index].row_height = row_height
 
@@ -240,10 +240,11 @@ local function newScene( scene_name )
 
 					local row_options = 
 					{
-				    	row_text  = row_text,
-				    	row_color = user_config_style.post_list_row_color,
-				    	content   = post_list[i],
-				    	row_group = row_group					    	
+				    	row_text   = row_text,
+				    	row_height = row_text.height,
+				    	row_color  = user_config_style.post_list_row_color,
+				    	content    = post_list[i],
+				    	row_group  = row_group					    	
 					}
 					row_options = worona:do_filter( "filter_list_row_options", row_options )
 
