@@ -98,6 +98,7 @@ local function newScene( scene_name )
 				topPadding               = 0,
 				bottomPadding            = 30,
 				hideBackground           = false,
+				isBounceEnabled          = false,
 				backgroundColor          = user_config_style.post_list_background_color,
 				listener                 = scrollListener
 			}

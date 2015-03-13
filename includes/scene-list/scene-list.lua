@@ -65,6 +65,7 @@ local function newScene( scene_name )
 			topPadding               = 0,
 			bottomPadding            = 30,
 			hideBackground           = false,
+			isBounceEnabled          = false,
 			backgroundColor          = user_config_style.post_list_background_color,
 			listener                 = scrollListener
 		}
@@ -185,15 +186,17 @@ local function newScene( scene_name )
 		end
 
 		if content ~= nil then
-			--. Loop content to identify published posts and insert them in the array post_list_ordered.
-			for k,v in pairs(content) do	
-				v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
-				
-				if v.status == "publish" then
-					if #post_list_ordered ~= 0 then
-						insertCurrentPostInOrder(v, 1)
-					else
-						post_list_ordered[1] = v
+			if type(content) == "table" then
+				--. Loop content to identify published posts and insert them in the array post_list_ordered.
+				for k,v in pairs(content) do	
+					v.date_timestamp = worona.date:convertWpDateToTimestamp( v.date )
+					
+					if v.status == "publish" then
+						if #post_list_ordered ~= 0 then
+							insertCurrentPostInOrder(v, 1)
+						else
+							post_list_ordered[1] = v
+						end
 					end
 				end
 			end
