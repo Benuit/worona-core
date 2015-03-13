@@ -88,8 +88,7 @@ local function newTwoLineNavBar( self, params )
 		--. Calculate the width of a character:
 		text.text = "o"
 		local character_width = text.width
-		print(character_width)
-
+		
 		--. Calculate how many character can be placed in the nabvar:
 		local characters_number = math.floor(nabvar_available_space / character_width)
 
