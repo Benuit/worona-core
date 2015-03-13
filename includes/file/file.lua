@@ -24,8 +24,8 @@ local function newFileService()
 		local base_directory = base_directory or system.CachesDirectory
 		local lfs = require "lfs"
 
-		if base_directory ~= system.CachesDirectory and base_directory ~= system.TemporaryDirectory then
-			worona.log:error("utils/createFolders: base_directory should be system.CachesDirectory or system.TemporaryDirectory ")
+		if base_directory ~= system.CachesDirectory and base_directory ~= system.TemporaryDirectory and base_directory ~= system.DocumentsDirectory then
+			worona.log:error("file/createFolder: base_directory should be system.CachesDirectory or system.TemporaryDirectory ")
 			return -1
 		end
 
