@@ -145,20 +145,24 @@ local function newService()
 				local function callback( event )
 
 					if ( event.isError ) then
-						worona.log:warning( "image:newImage: Network error - download failed." )
+						worona.log:warning( "image.lua/newImage: Network error - download failed." )
 					else
 
 						img = event.target
 
-						img.alpha = 0
-						transition.to( img, { alpha = 1.0 } )
+						if img ~= nil then
+							img.alpha = 0
+							transition.to( img, { alpha = 1.0 } )
 
-						applyParameters( img )
+							applyParameters( img )
 
-						display.remove( loading_rectangle )
-						loading_rectangle = nil
+							display.remove( loading_rectangle )
+							loading_rectangle = nil
 
-						worona.log:info( "image:newImage: Download Success." )
+							worona.log:info( "image.lua/downloadImageClosure: Download Success." )
+						else
+							worona.log:error("image.lua/downloadImageClosure: the image is not in the phone, but Corona tries to load it as if it were")
+						end
 					end
 				end
 				return callback
@@ -172,22 +176,26 @@ local function newService()
 			--: create the folders
 			worona.file:createFolder( "content/images/" .. folders_string, options.directory )
 
-			worona.log:info("newImage: Starting the download of '" .. options.url .. "' in 'content/images/" .. folders_string .. filename )
+			worona.log:info("image.lua/newImage: Starting the download of '" .. options.url .. "' in 'content/images/" .. folders_string .. filename )
 			--: download image
 			display.loadRemoteImage( options.url, "GET", downloadImageClosure( loading_rectangle ), "content/images/" .. folders_string .. filename, options.directory )
 
 		--: if image is in the phone, let's display it
 		else
-			worona.log:info("newImage: Image '" .. filename .. "' is in the phone, lets display it.")
+			worona.log:info("image.lua/newImage: Image '" .. filename .. "' is in the phone, lets display it.")
 
-			img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
+			if img == nil then
+				img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
+				
+				if img ~= nil then
+					img.alpha = 1
+					applyParameters( img )	
+				else
+					worona.log:error("image.lua/newImage: the image is not in the phone, but Corona tries to load it as if it were")
+				end
 
-			img.alpha = 1
-			if img ~= nil then
-				applyParameters( img )
-			else
-				worona.log:error("newImage: the image is not in the phone, but Corona tries to load it as if it were")
 			end
+
 		end
 
 		return container
