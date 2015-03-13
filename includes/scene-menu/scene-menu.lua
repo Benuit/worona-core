@@ -159,7 +159,7 @@ local function newScene( scene_name )
 				local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 				row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 				row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
-				row_line.strokeWidth = worona:do_filter( "list_row_line_width", row_line.strokeWidth)
+				row_line.strokeWidth = worona:do_filter( "menu_list_row_line_width_filter", row_line.strokeWidth)
 				
 				--. Insert all elements into the scrollView group
 				params.row_group:insert(row_rect)
@@ -199,13 +199,7 @@ local function newScene( scene_name )
 
 			local menu_items_table = 
 			{ 
-				{ 
-					text = "ABOUT",
-					action = {
-						name   = "go_to_scene", 
-						params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
-					}
-				},
+				
 				{ 
 					text = "ALL POSTS",
 					action = {
@@ -218,6 +212,13 @@ local function newScene( scene_name )
 					action = {
 						name   = "go_to_scene", 
 						params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorite" } }
+					}
+				},
+				{ 
+					text = "ABOUT",
+					action = {
+						name   = "go_to_scene", 
+						params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
 					}
 				}
 			}
@@ -264,7 +265,7 @@ local function newScene( scene_name )
 		scrollView.alpha = 0
 
 		insertContentInScrollView()
-		transition.to( scrollView, { time=1000, alpha=1.0 } )
+		transition.to( scrollView, { time=200, alpha=1.0 } )
 
 		--: load the navbar
 		local navbar = worona.ui:newBasicNavBar({
