@@ -126,7 +126,7 @@ local function newScene( scene_name )
 			local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 			row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 			row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
-			row_line.strokeWidth = worona:do_filter( "list_row_line_width", row_line.strokeWidth)
+			row_line.strokeWidth = worona:do_filter( "scene_list_row_line_width_filter", row_line.strokeWidth)
 			
 			--. Insert all elements into the scrollView group
 			params.row_group:insert(row_rect)
@@ -231,7 +231,7 @@ local function newScene( scene_name )
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
 					}
-					title_options = worona:do_filter( "filter_list_row_title_options", title_options )
+					title_options = worona:do_filter( "list_row_title_options_filter", title_options )
 
 					local row_text = display.newText( title_options )
 					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
@@ -407,25 +407,26 @@ local function newScene( scene_name )
 		sceneGroup = self.view
 		local phase = event.phase
 
-		scrollView:deleteAllRows()
-
-		if event.params ~= nil then
-			if event.params.show_posts == "favorite" then
-				worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
-			else
-				worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
-			end
-
-			current_posts_shown = event.params.show_posts
-		end
-
-		insertContentInScrollView()	
-
-
 		if ( phase == "will" ) then
 			-- Called when the scene is still off screen (but is about to come on screen).
 
 			worona:do_action( "remove_tabbar" )
+
+			scrollView:deleteAllRows()
+
+			if event.params ~= nil then
+				if event.params.show_posts == "favorite" then
+					worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
+				else
+					worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
+				end
+
+				current_posts_shown = event.params.show_posts
+			end
+
+			insertContentInScrollView()	
+
+			scrollView:scrollTo( "top", { time = 0 } )
 
 		elseif ( phase == "did" ) then
 			-- Called when the scene is now on screen.
