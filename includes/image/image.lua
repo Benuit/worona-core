@@ -130,8 +130,8 @@ local function newService()
 
 		--: set function to apply the parameters to the image, not matter if it's in the phone or has been downloaded
 		local function applyParameters ( img )
-			-- img.x   = options.x
-			-- img.y   = options.y
+			-- img.x   = 0
+			-- img.y   = 0
 			img.width  = final.width
 			img.height = final.height
 			container:insert(img, true)
@@ -151,10 +151,14 @@ local function newService()
 						img = event.target
 
 						if img ~= nil then
-							img.alpha = 0
-							transition.to( img, { alpha = 1.0 } )
+							
+							img.alpha  = 0
+							img.width  = 1
+							img.height = 1
 
 							applyParameters( img )
+
+							transition.to( img, { alpha = 1.0 } )
 
 							display.remove( loading_rectangle )
 							loading_rectangle = nil
@@ -185,11 +189,13 @@ local function newService()
 			worona.log:info("image.lua/newImage: Image '" .. filename .. "' is in the phone, lets display it.")
 
 			if img == nil then
-				img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, final.width, final.height )
+				img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 1, 1 )
 				
 				if img ~= nil then
-					img.alpha = 1
+					img.alpha = 0
+
 					applyParameters( img )	
+					img.alpha = 1
 				else
 					worona.log:error("image.lua/newImage: the image is not in the phone, but Corona tries to load it as if it were")
 				end
