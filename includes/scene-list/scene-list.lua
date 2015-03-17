@@ -306,8 +306,10 @@ local function newScene( scene_name )
 
 	local function refreshScrollViewContent( params )
 		content = worona.content:getPostList(worona.content_type)
+		
 		scrollView:deleteAllRows()
 		insertContentInScrollView()
+		
 		spinner:stop()
 		spinner.alpha = 0
 		
@@ -331,17 +333,13 @@ local function newScene( scene_name )
 		worona.content:update( { content_type = worona.content_type, url = worona.wp_url } )
 		if content ~= nil then
 			if content == -1 or #content == 0 then
-				-- no content
-			else		
-				insertContentInScrollView()
+				worona.log:warning("scene-list/downloadContent: content has been downloaded, but it is empty.")
+			else	
+				worona.log:info("scene-list/downloadContent: content downloaded sucessfully.")
 			end
 		else
-			worona.log:error("scene-list/create: content = nil")
+			worona.log:error("scene-list/downloadContent: content = nil.")
 		end
-	end
-
-	local function refreshContent()
-
 	end
 
 	local function isThisPostFavorite( default_value, params )
@@ -428,7 +426,6 @@ local function newScene( scene_name )
 			end
 
 			insertContentInScrollView()	
-
 			scrollView:scrollTo( "top", { time = 0 } )
 
 		elseif ( phase == "did" ) then
