@@ -103,7 +103,7 @@ local function newPostScene( scene_name )
 			    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
 		        
 		    	if worona.device:getPlatformName() == "Android" then
-		      		webview:request( "content/html/" .. content.slug .. ".html", system.DocumentsDirectory )
+		      		webview:request( "content/html/" .. content.slug .. ".html", system.CachesDirectory )
 		      		webview:addEventListener( "urlRequest", androidListener )
 		    	else
 		      	webview:request( "http://localhost:1024?render=" .. content.slug )
