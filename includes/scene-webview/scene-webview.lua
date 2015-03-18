@@ -37,7 +37,7 @@ local function newScene( scene_name )
 
     local sceneGroup = self.view
 
-    worona:do_action( "before_creating_scene", params )
+    worona:do_action( "before_creating_scene_webview", params )
 
     url = worona.scene:getCurrentSceneUrl()
 
@@ -52,7 +52,7 @@ local function newScene( scene_name )
      left_button_icon  = worona.style:get("icons").back
     })
 
-    worona:do_action( "before_creating_scene", params ) 
+    worona:do_action( "after_creating_scene_webview", params ) 
   end
 
     -- "scene:show()"

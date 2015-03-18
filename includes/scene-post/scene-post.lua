@@ -38,7 +38,7 @@ local function newPostScene( scene_name )
 	-- "scene:create()"
 	function scene:create( event )
 
-		worona:do_action( "before_creating_scene" )
+		worona:do_action( "before_creating_scene_post" )
 
 		local sceneGroup = self.view
 
@@ -60,7 +60,7 @@ local function newPostScene( scene_name )
 			right_button_icon = worona.style:get("icons")[favorite_icon]
 		})
 
-		worona:do_action( "after_creating_scene" )
+		worona:do_action( "after_creating_scene_post", { sceneGroup = sceneGroup, post_url = url } )
 	end
 
 	-- "scene:show()"
@@ -70,8 +70,8 @@ local function newPostScene( scene_name )
 		local phase = event.phase
 
 		if ( phase == "will" ) then
-		  -- Called when the scene is still off screen (but is about to come on screen).
-		  
+			-- Called when the scene is still off screen (but is about to come on screen).
+		  	worona:do_action( "on_scene_post_show_will", { sceneGroup = sceneGroup } )
 
 		elseif ( phase == "did" ) then
 		  
@@ -100,8 +100,13 @@ local function newPostScene( scene_name )
 		    	} )
 		    	text:setFillColor( 1, 1, 1 )
 		  	else
-			    webview = native.newWebView( display.contentWidth / 2, style.y, display.contentWidth, style.height )
+			    local webview_height = worona:do_filter( "filter_scene_post_webview_height", style.height )
+			    local webview_y      = worona:do_filter( "filter_scene_post_webview_y", style.y )
+
+			    webview = native.newWebView( display.contentWidth / 2, webview_y, display.contentWidth, webview_height )
 		        
+		    	worona:do_action( "on_scene_post_webview_creation" )
+
 		    	if worona.device:getPlatformName() == "Android" then
 		      		webview:request( "content/html/" .. content.slug .. ".html", system.CachesDirectory )
 		      		webview:addEventListener( "urlRequest", androidListener )

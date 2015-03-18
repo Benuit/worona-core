@@ -92,5 +92,5 @@ local function insertCurrentRowFilter( current_row, params )
 	return current_row
 end
 
-worona:add_filter( "list_insert_current_row_filter", insertCurrentRowFilter )
+worona:add_filter( "filter_list_insert_current_row", insertCurrentRowFilter )
 

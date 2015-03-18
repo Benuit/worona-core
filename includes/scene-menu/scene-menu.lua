@@ -31,7 +31,7 @@ local function newScene( scene_name )
 		-- Initialize the scene here.
 		-- Example: add display objects to "sceneGroup", add touch listeners, etc.
 
-		worona:do_action( "before_creating_scene" )
+		worona:do_action( "before_creating_scene_menu" )
 
 		--. View elements
 		local sceneGroup = self.view
@@ -160,7 +160,7 @@ local function newScene( scene_name )
 				local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 				row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 				row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
-				row_line.strokeWidth = worona:do_filter( "menu_list_row_line_width_filter", row_line.strokeWidth)
+				row_line.strokeWidth = worona:do_filter( "filter_menu_list_row_line_width", row_line.strokeWidth)
 				
 				--. Insert all elements into the scrollView group
 				params.row_group:insert(row_rect)
@@ -275,7 +275,7 @@ local function newScene( scene_name )
 			
 		})
 
-		worona:do_action( "after_creating_scene" )
+		worona:do_action( "after_creating_scene_menu" )
 	end
 
 	-- "scene:show()"

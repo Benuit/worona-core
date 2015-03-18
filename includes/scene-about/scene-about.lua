@@ -23,7 +23,7 @@ local function newScene( scene_name )
 	-- "scene:create()"
 	function scene:create( event )
 
-		worona:do_action( "before_creating_scene" )
+		worona:do_action( "before_creating_scene_about" )
 
 		local sceneGroup = self.view
 
@@ -75,7 +75,7 @@ local function newScene( scene_name )
 			your_logo:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( your_logo_link ) end  end )
 		end
 
-		worona:do_action( "after_creating_scene" )
+		worona:do_action( "after_creating_scene_about" )
 
 	end
 

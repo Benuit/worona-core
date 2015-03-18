@@ -70,11 +70,11 @@ local function newScene( scene_name )
 			listener                 = scrollListener
 		}
 
-		scrollView_options = worona:do_filter( "list_scrollView_options_filter", scrollView_options )
+		scrollView_options = worona:do_filter( "filter_list_scrollView_options", scrollView_options )
 
 		local scrollView = widget.newScrollView(scrollView_options)
 		scrollView.current_y = 0
-		scrollView.current_y = worona:do_filter( "list_current_y_offset_filter", scrollView.current_y )
+		scrollView.current_y = worona:do_filter( "filter_list_current_y_offset", scrollView.current_y )
 		scrollView.row_elements = {}
 
 		function scrollView:insertRow( params )
@@ -88,7 +88,7 @@ local function newScene( scene_name )
 
 			--. Set row height
 			local row_height = params.row_height + 2 * style.row.offset
-			row_height = worona:do_filter( "list_row_height_filter", row_height )
+			row_height = worona:do_filter( "filter_list_row_height", row_height )
 			scrollView.row_elements[row_index].row_height = row_height
 
 			worona:do_action( "on_list_insert_row_after_set_row_height", { row = scrollView.row_elements[row_index] } )
@@ -127,7 +127,7 @@ local function newScene( scene_name )
 			local row_line = display.newLine( 0, row_height, display.contentWidth, row_height )
 			row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 			row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
-			row_line.strokeWidth = worona:do_filter( "scene_list_row_line_width_filter", row_line.strokeWidth)
+			row_line.strokeWidth = worona:do_filter( "filter_scene_list_row_line_width", row_line.strokeWidth)
 			
 			--. Insert all elements into the scrollView group
 			params.row_group:insert(row_rect)
@@ -217,7 +217,7 @@ local function newScene( scene_name )
 			--. Insert rows with post_list into scrollView
 			for i = 1, #post_list do
 
-				local insert_current_row = worona:do_filter( "list_insert_current_row_filter", true, { post = post_list[i]} )
+				local insert_current_row = worona:do_filter( "filter_list_insert_current_row", true, { post = post_list[i]} )
 
 				if insert_current_row == true then
 
@@ -234,7 +234,7 @@ local function newScene( scene_name )
 					    font     = style.title.font_type,
 					    fontSize = style.title.font_size
 					}
-					title_options = worona:do_filter( "list_row_title_options_filter", title_options )
+					title_options = worona:do_filter( "filter_list_row_title_options", title_options )
 
 					local row_text = display.newText( title_options )
 					row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
@@ -360,7 +360,7 @@ local function newScene( scene_name )
 		-- Initialize the scene here.
 		-- Example: add display objects to "sceneGroup", add touch listeners, etc.
 
-		worona:do_action( "before_creating_scene" )
+		worona:do_action( "before_creating_scene_list" )
 
 		current_posts_shown = event.params.show_posts
 		content = worona.content:getPostList(worona.content_type)
@@ -399,7 +399,7 @@ local function newScene( scene_name )
 			right_button_icon = worona.style:get("icons").refresh
 		})
 
-		worona:do_action( "after_creating_scene" )
+		worona:do_action( "after_creating_scene_list" )
 	end
 
 	-- "scene:show()"
@@ -417,9 +417,9 @@ local function newScene( scene_name )
 
 			if event.params ~= nil then
 				if event.params.show_posts == "favorite" then
-					worona:add_filter( "list_insert_current_row_filter", isThisPostFavorite )
+					worona:add_filter( "filter_list_insert_current_row", isThisPostFavorite )
 				else
-					worona:remove_filter( "list_insert_current_row_filter", isThisPostFavorite )
+					worona:remove_filter( "filter_list_insert_current_row", isThisPostFavorite )
 				end
 
 				current_posts_shown = event.params.show_posts
