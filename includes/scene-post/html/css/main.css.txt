@@ -91,7 +91,9 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-
+body {
+  overflow-x: hidden;
+}
 
 .container {
     padding: 15px;
