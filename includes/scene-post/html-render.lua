@@ -1,4 +1,5 @@
 local worona = require "worona"
+require "worona-core.includes.scene-post.html-filters"
 
 local htmlRender = {}
 
