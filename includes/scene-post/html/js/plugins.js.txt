@@ -22,3 +22,39 @@
 }());
 
 // Place any jQuery/helper plugins in here.
+$(function(){
+
+  // substitute youtube iframes for images with links
+  $('iframe').each(function(){
+    var src = $(this).attr('src');
+    console.log(src);
+    // check if the iframe is from youtube
+    console.log(/youtube/.test(src));
+    if ( /youtube/.test(src) ) {
+      // extract the video id
+      var youtube_id = /embed\/(.*)/.exec(src)[1];
+      console.log(youtube_id);
+      // get the thumbnail_url
+      var youtube_thumbnail_url = "http://img.youtube.com/vi/" + youtube_id + "/hqdefault.jpg";
+      console.log(youtube_thumbnail_url);
+      // prepare the link for youtube fullscren
+      var youtube_link = "http://www.youtube.com/embed/" + youtube_id;
+      console.log(youtube_link);
+      // url of the play image
+      var youtube_play = "https://s3-eu-west-1.amazonaws.com/worona/assets/youtube_play.png";
+      console.log(youtube_play);
+      var new_iframe = "<p style='position:relative;'>" +
+                        "<a style='position: absolute;" +
+                                 "display: block;" +
+                                 "background: url(\"" + youtube_play + "\");" +
+                                 "height: 85px;" +
+                                 "width: 118px;" +
+                                 "top: 137px;" +
+                                 "left: 181px;' href=\"" + youtube_link + "\"></a>" +
+                        "<img src=\"" + youtube_thumbnail_url + "\"/>" +
+                        "</p>";
+      console.log(new_iframe);
+      $(this).replaceWith(new_iframe);
+    }
+  });
+});
