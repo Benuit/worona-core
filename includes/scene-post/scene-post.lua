@@ -60,7 +60,7 @@ local function newPostScene( scene_name )
 			right_button_icon = worona.style:get("icons")[favorite_icon]
 		})
 
-		worona:do_action( "after_creating_scene_post", { sceneGroup = sceneGroup, post_url = url } )
+		worona:do_action( "after_creating_scene_post", { sceneGroup = sceneGroup, post_url = url, post_title = unescaped_title } )
 	end
 
 	-- "scene:show()"
