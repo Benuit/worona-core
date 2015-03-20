@@ -9,7 +9,7 @@ local function newScene( scene_name )
 	local style        = worona.style:get("scene_list")
 	local navbar_style = worona.style:get("navbar")
 	
-	local spinner, content, sceneGroup, scrollView, no_posts_text, current_posts_shown
+	local spinner, content, sceneGroup, scrollView, no_posts_text, current_posts_shown, navbar
 
 	worona.lang:load("worona-core.includes.scene-list.lang.scene-list-lang", "scene-list")
 
@@ -207,9 +207,20 @@ local function newScene( scene_name )
 		return post_list_ordered
 	end
 
+	local function showNoPostsAvailable( params )
+		no_posts_text = display.newText( { 
+			text = worona.lang:get("no_posts_available", "scene-list"), 
+			fontSize = 20,
+			x = style.no_posts_text.x, 
+			y = style.no_posts_text.y } )
+		no_posts_text:setFillColor( 0, 0, 0, 0.8 )
+		sceneGroup:insert( no_posts_text )
+	end
+
 	local function insertContentInScrollView()
 	
 		local post_list = {}
+		local inserted_posts_counter = 0
 		post_list = insertContentInArrayOrderedByDate()
 
 		if post_list ~= nil then
@@ -253,7 +264,12 @@ local function newScene( scene_name )
 
 				    --. Insert the current row into the scrollView
 				    scrollView:insertRow (row_options)
+				    inserted_posts_counter = inserted_posts_counter + 1
 				end
+			end
+
+			if inserted_posts_counter == 0 then
+				showNoPostsAvailable()
 			end
 		else
 			worona.log:error("scene-list/insertContentInScrollView: post_list = nil")
@@ -261,15 +277,7 @@ local function newScene( scene_name )
 	end
 
 	--. Configure hooks to content-download-type actions
-	local function showNoPostsAvailable( params )
-		no_posts_text = display.newText( { 
-			text = worona.lang:get("no_posts_available", "scene-list"), 
-			fontSize = 20,
-			x = style.no_posts_text.x, 
-			y = style.no_posts_text.y } )
-		no_posts_text:setFillColor( 0, 0, 0, 0.8 )
-		sceneGroup:insert( no_posts_text )
-	end
+	
 
 	local function onContentUpdateStart()
 		worona.log:info("scene-list - onContentUpdateStart()")
@@ -390,14 +398,7 @@ local function newScene( scene_name )
 		end
 
 		downloadContent()
-		
-		--: load the navbar
-		local navbar = worona.ui:newBasicNavBar({
-			parent            = sceneGroup,
-			text              = worona.app_title,
-			left_button_icon  = worona.style:get("icons").menu,
-			right_button_icon = worona.style:get("icons").refresh
-		})
+
 
 		worona:do_action( "after_creating_scene_list" )
 	end
@@ -413,11 +414,14 @@ local function newScene( scene_name )
 
 			worona:do_action( "remove_tabbar" )
 
+			local navbar_title = worona.app_title
+			
 			scrollView:deleteAllRows()
 
 			if event.params ~= nil then
-				if event.params.show_posts == "favorite" then
+				if event.params.show_posts == "favorites" then
 					worona:add_filter( "filter_list_insert_current_row", isThisPostFavorite )
+					navbar_title = "Favorites"
 				else
 					worona:remove_filter( "filter_list_insert_current_row", isThisPostFavorite )
 				end
@@ -427,6 +431,14 @@ local function newScene( scene_name )
 
 			insertContentInScrollView()	
 			scrollView:scrollTo( "top", { time = 0 } )
+
+			--: load the navbar
+			navbar = worona.ui:newBasicNavBar({
+				parent            = sceneGroup,
+				text              = navbar_title,
+				left_button_icon  = worona.style:get("icons").menu,
+				right_button_icon = worona.style:get("icons").refresh
+			})
 
 		elseif ( phase == "did" ) then
 			-- Called when the scene is now on screen.
@@ -456,6 +468,8 @@ local function newScene( scene_name )
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.
+			display.remove(navbar)
+			display.remove( no_posts_text )
 		end
 	end
 

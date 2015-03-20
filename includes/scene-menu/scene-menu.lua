@@ -212,7 +212,7 @@ local function newScene( scene_name )
 					text = "FAVORITE POSTS",
 					action = {
 						name   = "go_to_scene", 
-						params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorite" } }
+						params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
 					}
 				},
 				{ 
