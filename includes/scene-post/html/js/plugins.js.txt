@@ -43,16 +43,10 @@ $(function(){
       // url of the play image
       var youtube_play = "https://s3-eu-west-1.amazonaws.com/worona/assets/youtube_play.png";
       console.log(youtube_play);
-      var new_iframe = "<p style='position:relative;'>" +
-                        "<a style='position: absolute;" +
-                                 "display: block;" +
-                                 "background: url(\"" + youtube_play + "\");" +
-                                 "height: 85px;" +
-                                 "width: 118px;" +
-                                 "top: 137px;" +
-                                 "left: 181px;' href=\"" + youtube_link + "\"></a>" +
-                        "<img src=\"" + youtube_thumbnail_url + "\"/>" +
-                        "</p>";
+      var new_iframe = "<div class='youtube-div' style='background: url(\"" + youtube_thumbnail_url + "\");'>" +
+                        "<a class='youtube-link' href=\"" + youtube_link + "\">" +
+                        "<img class='youtube-play' src=\"" + youtube_play + "\" height='18' width='15' /></a>" +
+                        "</div>";
       console.log(new_iframe);
       $(this).replaceWith(new_iframe);
     }
