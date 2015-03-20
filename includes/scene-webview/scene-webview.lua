@@ -49,7 +49,7 @@ local function newScene( scene_name )
     local basic_navbar = worona.ui:newBasicNavBar({
      parent            = sceneGroup,
      text              = string.match( url, "^https?://w?w?w?%.?([a-zA-Z0-9-]+%.%a+)" ),
-     left_button_icon  = worona.style:get("icons").back
+     left_button_icon  = worona.style:get("icons").back_left
     })
 
     worona:do_action( "after_creating_scene_webview", params ) 
