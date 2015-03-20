@@ -209,10 +209,12 @@ local function newScene( scene_name )
 
 	local function showNoPostsAvailable( params )
 		no_posts_text = display.newText( { 
-			text = worona.lang:get("no_posts_available", "scene-list"), 
+			text     = worona.lang:get("no_posts_available", "scene-list"), 
 			fontSize = 20,
-			x = style.no_posts_text.x, 
-			y = style.no_posts_text.y } )
+			x        = style.no_posts_text.x, 
+			y        = style.no_posts_text.y,
+			width    = display.contentWidth - 20,
+			align    = "center" } )
 		no_posts_text:setFillColor( 0, 0, 0, 0.8 )
 		sceneGroup:insert( no_posts_text )
 	end
@@ -268,7 +270,7 @@ local function newScene( scene_name )
 				end
 			end
 
-			if inserted_posts_counter == 0 then
+			if inserted_posts_counter == 0 and spinner.alpha == 0 then
 				showNoPostsAvailable()
 			end
 		else
