@@ -88,9 +88,8 @@ local function filterFavoriteIcon( image, params )
 end
 worona:add_filter( "filter_navbar_favorite_icon", filterFavoriteIcon )
 
-local function insertCurrentRowFilter( current_row, params )
-	return current_row
-end
-
-worona:add_filter( "filter_list_insert_current_row", insertCurrentRowFilter )
+-- local function insertCurrentRowFilter( current_row, params )
+-- 	return current_row
+-- end
+-- worona:add_filter( "filter_list_insert_current_row", insertCurrentRowFilter )
 
