@@ -64,13 +64,13 @@ local function newLogService()
 		if options.file ~= nil and options.file ~= false then
 			fileEnabled = true
 
-			local folderPath = newFolder( "logs", system.pathForFile("", system.DocumentsDirectory) )
+			local folderPath = newFolder( "logs", system.pathForFile("", system.CachesDirectory) )
 			local filePath = "logs/" .. options.file .. ".json"
-			local fileSystemPath = system.pathForFile( filePath, system.DocumentsDirectory )
+			local fileSystemPath = system.pathForFile( filePath, system.CachesDirectory )
 
 			if options.previous_file ~= nil and options.previous_file ~= false then
 				local previous_filePath = "logs/" .. options.previous_file .. ".json"
-				local previous_fileSystemPath = system.pathForFile(previous_filePath,system.DocumentsDirectory)
+				local previous_fileSystemPath = system.pathForFile(previous_filePath,system.CachesDirectory)
 				
 				local removeResults, removeReason = os.remove( previous_fileSystemPath )
 

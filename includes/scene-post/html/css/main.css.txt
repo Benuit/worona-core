@@ -91,7 +91,9 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-
+body {
+  overflow-x: hidden;
+}
 
 .container {
     padding: 15px;
@@ -103,6 +105,18 @@ img {
     width: 85% !important;
     height: inherit !important;
     display: block !important;
+}
+
+.youtube-div{
+  background-size: 100% 100% !important;
+  background-origin: content-box !important;
+}
+
+img.youtube-play{
+  width: 118px !important;
+  height: 85px !important;
+  padding-top: 50px !important;
+  padding-bottom: 50px !important;
 }
 
 p {

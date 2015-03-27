@@ -16,6 +16,7 @@ local function worona_load( blood_name )
     					"image",
     					"string",
     					"html_server",
+    					"favorites",
 
     					-- proxies
     					"lang",
@@ -32,13 +33,14 @@ local function worona_load( blood_name )
     					"scene-post",
     					"scene-about",
     					"scene-webview",
+    					"scene-menu",
     					
     					-- styles
-    					"style-flat-ui",
-    					"style-ios7",
+    					"style-default",
 
     					-- ui
-    					"ui-newBasicNavBar"
+    					"ui-newBasicNavBar",
+    					"ui-newTwoLineNavBar"
 					 }
 
 	--------------------------------------------------------------

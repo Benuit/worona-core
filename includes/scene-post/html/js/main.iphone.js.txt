@@ -9,4 +9,9 @@ $(function(){
                     xobj.send(null);
 	           	});
 	     });
+	setTimeout(function(){
+		$('img').each(function(){
+			$(this).attr('src', $(this).attr('data-src'));
+		});
+	},1);
 });

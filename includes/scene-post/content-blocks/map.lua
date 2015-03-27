@@ -25,7 +25,7 @@ local function createMap ( field )
       image_object = field.image,
       image_path   = "content/images/",
       shape        = "normal",
-      directory    = system.DocumentsDirectory,
+      directory    = system.CachesDirectory,
       width        = display.contentWidth - 20,
       x            = display.contentWidth / 2,
       y            = 0

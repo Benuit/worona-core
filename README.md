@@ -1,6 +1,6 @@
-Worona App
-==========
+worona-core
+===========
 
-*Version 0.6.1*
+*Version 0.6.7*
 
 ---

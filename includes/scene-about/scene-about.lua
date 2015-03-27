@@ -2,8 +2,8 @@ local worona = require "worona"
 local widget = require "widget" 
 
 
-local function loadSceneList()
-	worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 200 } )
+local function loadPreviousScene()
+	worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
 end
 
 
@@ -23,7 +23,7 @@ local function newScene( scene_name )
 	-- "scene:create()"
 	function scene:create( event )
 
-		worona:do_action( "before_creating_scene" )
+		worona:do_action( "before_creating_scene_about" )
 
 		local sceneGroup = self.view
 
@@ -39,7 +39,7 @@ local function newScene( scene_name )
 		local basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
 			text              = worona.app_about_title,
-			left_button_icon  = worona.style:get("icons").back
+			left_button_icon  = worona.style:get("icons").menu
 		})
 
 		local user_text_options = 
@@ -57,20 +57,25 @@ local function newScene( scene_name )
 		user_text.anchorX = 0
 		user_text.anchorY = 0
 
+		if worona.your_logo ~= false then
 
-		if worona.badge ~= false then
-			local powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 300, 120 )
-			powered_img.anchorX = 0.5
-			powered_img.anchorY = 1
-			powered_img.x = display.contentWidth / 2
-			powered_img.y = display.contentHeight - 10
-			sceneGroup:insert(powered_img)
+			local your_logo_icon 	= worona.your_logo_icon 	or "your_logo.png"
+			local your_logo_width 	= worona.your_logo_width 	or 250
+			local your_logo_height 	= worona.your_logo_height 	or 100
+			local your_logo_link	= worona.your_logo_link 	or "http://www.worona.org"
 
-			--: open safari with worona.org when they tap on the badge
-			powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
+			local your_logo = display.newImageRect( your_logo_icon, your_logo_width, your_logo_height)
+			your_logo.anchorX = 0.5
+			your_logo.anchorY = 1
+			your_logo.x = display.contentWidth / 2
+			your_logo.y = display.contentHeight - 15
+			sceneGroup:insert(your_logo)
+
+			--: open safari with the link when they tap on the badge
+			your_logo:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( your_logo_link ) end  end )
 		end
 
-		worona:do_action( "after_creating_scene" )
+		worona:do_action( "after_creating_scene_about" )
 
 	end
 
@@ -88,8 +93,8 @@ local function newScene( scene_name )
 			-- Insert code here to make the scene come alive.
 			-- Example: start timers, begin animation, play audio, etc.
 
-			worona:add_action("navbar_left_button_pushed", loadSceneList)
-			worona:add_action( "android_back_button_pushed", loadSceneList )
+			worona:add_action("navbar_left_button_pushed", loadPreviousScene)
+			worona:add_action( "android_back_button_pushed", loadPreviousScene )
  
 		end
 	end
@@ -105,8 +110,8 @@ local function newScene( scene_name )
 			-- Insert code here to "pause" the scene.
 			-- Example: stop timers, stop animation, stop audio, etc.
 
-			worona:remove_action("navbar_left_button_pushed", loadSceneList)
-			worona:remove_action( "android_back_button_pushed", loadSceneList )
+			worona:remove_action("navbar_left_button_pushed", loadPreviousScene)
+			worona:remove_action( "android_back_button_pushed", loadPreviousScene )
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.

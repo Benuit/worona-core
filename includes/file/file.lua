@@ -21,11 +21,11 @@ local function newFileService()
 		--. 	base_directory = target Base Directory (Documents or Temporary)
 	function file:createFolder( folder_path, base_directory )
 
-		local base_directory = base_directory or system.DocumentsDirectory
+		local base_directory = base_directory or system.CachesDirectory
 		local lfs = require "lfs"
 
-		if base_directory ~= system.DocumentsDirectory and base_directory ~= system.TemporaryDirectory then
-			worona.log:error("utils/createFolders: base_directory should be system.DocumentsDirectory or system.TemporaryDirectory ")
+		if base_directory ~= system.CachesDirectory and base_directory ~= system.TemporaryDirectory and base_directory ~= system.DocumentsDirectory then
+			worona.log:error("file/createFolder: base_directory should be system.CachesDirectory or system.TemporaryDirectory ")
 			return -1
 		end
 
@@ -73,16 +73,16 @@ local function newFileService()
 		--. 	url                       = URL
 		--.  	target_file_name_or_path  = name of the file file will be stored.
 		--. 	method                    = "GET" or "HEAD"
-		--. 	target_baseDirectory      = system.DocumentsDirectory or system.TemporaryDirectoy
+		--. 	target_baseDirectory      = system.CachesDirectory or system.TemporaryDirectoy
 		--. 	listenerFunction          = the listener function
 	function file:download( options )
 
-		options.target_baseDirectory = options.target_baseDirectory or system.DocumentsDirectory
+		options.target_baseDirectory = options.target_baseDirectory or system.CachesDirectory
 
 		options.method = options.method or "GET"
 
-		if options.target_baseDirectory ~= system.DocumentsDirectory and options.target_baseDirectory ~= system.TemporaryDirectory then
-			worona.log:error("file:download - options.target_baseDirectory should be system.DocumentsDirectory or system.TemporaryDirectory ")
+		if options.target_baseDirectory ~= system.CachesDirectory and options.target_baseDirectory ~= system.TemporaryDirectory then
+			worona.log:error("file:download - options.target_baseDirectory should be system.CachesDirectory or system.TemporaryDirectory ")
 			return
 		end
 
@@ -147,12 +147,12 @@ local function newFileService()
 				io.close(file_exists)
 				return system.TemporaryDirectory
 
-			else  --. If the file is not there, we check in system.DocumentsDirectory
-				system_path = system.pathForFile( file_path, system.DocumentsDirectory )
+			else  --. If the file is not there, we check in system.CachesDirectory
+				system_path = system.pathForFile( file_path, system.CachesDirectory )
 				file_exists = io.open(system_path, "r")
 				if file_exists ~= nil then
 					io.close(file_exists)
-					return system.DocumentsDirectory
+					return system.CachesDirectory
 				else  --. If the file is not there, we check in system.ResourceDirectory
 					system_path = system.pathForFile( file_path, system.ResourceDirectory )
 					if system_path ~= nil then

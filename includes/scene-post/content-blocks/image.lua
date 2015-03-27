@@ -7,7 +7,7 @@ local function createImage( field )
       url         = field.url,
       real_width  = field.width,
       real_height = field.height,
-      directory   = system.DocumentsDirectory,
+      directory   = system.CachesDirectory,
       width       = display.contentWidth - 20,
       x           = display.contentWidth / 2,
       y           = 0

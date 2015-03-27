@@ -1,4 +1,5 @@
 local worona = require "worona"
+local user_config_style = require "worona-config.style"
 
 local function newStyle()
 	--== VARIABLES ==--
@@ -12,40 +13,35 @@ local function newStyle()
 	end
 
 	-- paths
-	local images_folder = "worona-core/includes/style-flat-ui/images"
-	local icons_folder  = "worona-core/includes/style-flat-ui/icons"
-
-	-- colors
-	local light_blue = { 0.203125, 0.59375, 0.85546875, 1 }
-	local dark_blue  = { 0.16, 0.5, 0.72, 1 }
-
-	-- common styles
-	local stroke_width     = 4
-	local light_text_color = { 1, 1, 1, 1 }
-	local dark_text_color  = { 0.2, 0.2, 0.2, 1 }
+	local images_folder = "worona-core/includes/style-default/images"
+	local icons_folder  = "worona-core/includes/style-default/icons"
 
 
 	--== STYLES ==--
 
 	---- ICONS ----
 	style.icons = {
-		back    = { default = icons_folder .. "/backDefault.png", 		over = icons_folder .. "/backOver.png", 		width = 68, height = 68  },
-		refresh = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
-		more    = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  }
+		back_left   = { default = icons_folder .. "/backLeftDefault.png", 	over = icons_folder .. "/backLeftOver.png", 	width = 68, height = 68  },
+		back_right  = { default = icons_folder .. "/backRightDefault.png", 	over = icons_folder .. "/backRightOver.png", 	width = 68, height = 68  },
+		refresh     = { default = icons_folder .. "/refreshDefault.png", 	over = icons_folder .. "/refreshOver.png", 		width = 68, height = 68  },
+		more        = { default = icons_folder .. "/moreDefault.png", 		over = icons_folder .. "/moreOver.png", 		width = 68, height = 68  },
+		favorite    = { default = icons_folder .. "/favoriteDefault.png", 	over = icons_folder .. "/favoriteOver.png", 	width = 68, height = 68  },
+		is_favorite = { default = icons_folder .. "/isFavoriteDefault.png", over = icons_folder .. "/isFavoriteOver.png", 	width = 68, height = 68  },
+		menu        = { default = icons_folder .. "/menuDefault.png", 		over = icons_folder .. "/menuOver.png", 		width = 68, height = 68  }
 	}
 
-	---- NAVBAR ----
+	---- BASIC NAVBAR ----
 	style.navbar = {
-		height = 50
+		height = 50 + user_config_style.navbar_stroke_height
 	}
 		
 	style.navbar.background = {
-		color = light_blue
+		color = user_config_style.navbar_main_color
 	}
 
 	style.navbar.background.stroke = {
-		color = dark_blue,
-		width = stroke_width
+		color  = user_config_style.navbar_stroke_color,
+		height = user_config_style.navbar_stroke_height
 	}
 
 	style.navbar.left_button = {
@@ -58,10 +54,39 @@ local function newStyle()
 
 	style.navbar.text = {
 		fontSize       = 18,
-		color          = light_text_color,
+		color          = user_config_style.navbar_text_color,
 		vertical_align = "center"
 	}
 
+
+	---- TWO LINE NAVBAR ----
+	style.two_line_navbar = {
+		height = 100 + user_config_style.navbar_stroke_height,
+		line_height = 50
+	}
+		
+	style.two_line_navbar.background = {
+		color = user_config_style.navbar_main_color
+	}
+
+	style.two_line_navbar.background.stroke = {
+		color  = user_config_style.navbar_stroke_color,
+		height = user_config_style.navbar_stroke_height
+	}
+
+	style.two_line_navbar.left_button = {
+		image          = { default = images_folder .. "/basic-navbar/navBarButtonDefault.png", over = images_folder .. "/basic-navbar/navBarButtonOver.png" },
+		height         = style.navbar.height,
+		width          = style.navbar.height,
+		margin_left    = 5,
+		vertical_align = "center"
+	}
+
+	style.two_line_navbar.text = {
+		fontSize       = 18,
+		color          = user_config_style.navbar_text_color,
+		vertical_align = "center"
+	}
 
 	---- TABBAR ----
 	--style
@@ -149,7 +174,7 @@ local function newStyle()
 	style.webview = {}
 
 	style.webview.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.width
+	style.webview.y      = style.navbar.height + style.webview.height / 2 + display.topStatusBarContentHeight + style.navbar.background.stroke.height
 
 
 	---- CUSTOMCONTENT ----
@@ -218,7 +243,7 @@ local function newStyle()
 	style.post = {}
 
 	style.post.height = display.contentHeight - style.tabbar.height - display.topStatusBarContentHeight - style.navbar.height
-	style.post.y      = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width + style.post.height / 2
+	style.post.y      = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.height + style.post.height / 2
 
 	style.post.background = {
 		image = images_folder .. "/post/customcontentBG.png"
@@ -273,9 +298,9 @@ local function newStyle()
 	}
 
 
-	---- POST LIST ----
+	---- SCENE LIST ----
 	--style
-	style.list = {
+	style.scene_list = {
 		title = {
 			x          = 40,
 			y          = 0,
@@ -286,7 +311,7 @@ local function newStyle()
 		},
 		table_view = {
 			left          = - 20,
-			top           = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.width,
+			top           = display.topStatusBarContentHeight + style.navbar.height + style.navbar.background.stroke.height,
 			height        = display.contentHeight - 50,
 			width         = display.contentWidth + 40,
 			hideScrollBar = true
@@ -294,6 +319,9 @@ local function newStyle()
 		no_posts_text = {
 			x = display.contentWidth / 2,
 			y = style.navbar.height + 50
+		},
+		row = {
+			offset = 20
 		}
 	}
 
@@ -318,4 +346,4 @@ local function newStyle()
 
 	return style
 end
-worona:do_action( "register_style", { style = "flat-ui", creator = newStyle } )
+worona:do_action( "register_style", { style = "default", creator = newStyle } )
