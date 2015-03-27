@@ -220,7 +220,9 @@ local function newContentService()
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
-		local wp_url_connection = checkConnection(string.gsub( worona.wp_url, "[htps]*://", "")) --. checking connection to wp_url
+		local wp_url_no_http 		= string.gsub( worona.wp_url, "[htps]*://", "") -- removing http://
+		local wp_url_no_directory 	= string.gsub( wp_url_no_http, "/.*", "")  		-- removing / and /directory at the end of the url
+		local wp_url_connection 	= checkConnection(wp_url_no_directory) 			--. checking connection to wp_url
 		
 		if wp_url_connection == false then
 			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
