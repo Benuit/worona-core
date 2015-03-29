@@ -11,31 +11,34 @@ local function newScene( scene_name )
 	
 	local scrollView, no_posts_text, powered_img
 	local scene_action = {}
-	local menu_items_table = 
-	{ 
-		
+	local menu_items_table = worona:do_filter( "filter_menu_list_items_table",
 		{ 
-			text = "ALL POSTS",
-			action = {
-				name   = "go_to_scene", 
-				params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
-			}
-		},
-		{ 
-			text = "FAVORITE POSTS",
-			action = {
-				name   = "go_to_scene", 
-				params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
-			}
-		},
-		{ 
-			text = "ABOUT",
-			action = {
-				name   = "go_to_scene", 
-				params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
+			
+			{ 
+				text = "ALL POSTS",
+				action = {
+					name   = "go_to_scene", 
+					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
+				}
+			},
+			{ 
+				text = "FAVORITE POSTS",
+				action = {
+					name   = "go_to_scene", 
+					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
+				}
+			},
+			{ 
+				text = "ABOUT",
+				action = {
+					name   = "go_to_scene", 
+					params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
+				}
 			}
 		}
-	}
+	)
+
+	
 
 	local function loadSceneList()
 		worona.log:info("scene-menu - loadSceneList()")
@@ -275,11 +278,15 @@ local function newScene( scene_name )
 		insertContentInScrollView()
 		transition.to( scrollView, { time=200, alpha=1.0 } )
 
-		--: load the navbar
-		local navbar = worona.ui:newBasicNavBar({
+
+
+		local navbar_options = worona:do_filter( "filter_menu_list_nabvar_options", {
 			parent            = sceneGroup,
-			text              = "Menu",	
+			text              = "Menu"
 		})
+
+		--: load the navbar
+		local navbar = worona.ui:newBasicNavBar( navbar_options )
 
 		worona:do_action( "after_creating_scene_menu" )
 	end
