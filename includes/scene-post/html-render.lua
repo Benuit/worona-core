@@ -73,6 +73,7 @@ function htmlRender:prepareHtmlFile( options )
 
 	--: add filter for html
 	local html = worona:do_filter("html_before_render", options.html)
+	local html = worona:do_filter("html_add_title", options.html,options.title)
 
 	--: write html
 	local htmlPath = system.pathForFile( "content/html/" .. options.name .. ".html", system.CachesDirectory )

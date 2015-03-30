@@ -48,14 +48,14 @@ local function newPostScene( scene_name )
 		url     = worona.scene:getCurrentSceneUrl()
 		content = worona.content:getPost( worona.content_type, url )
 
-		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.content } )
+		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.content, title = content.title } )
 
 		local unescaped_title = worona.string:unescape(content.title)
 		local favorite_icon   = worona:do_filter( "filter_navbar_favorite_icon", "favorite", { post_id = content.ID } )
 		--: load the navbar
 		basic_navbar = worona.ui:newBasicNavBar({
 			parent            = sceneGroup,
-			text              = unescaped_title,
+			text              = "", --unescaped_title,
 			left_button_icon  = worona.style:get("icons").back_left,
 			right_button_icon = worona.style:get("icons")[favorite_icon]
 		})
