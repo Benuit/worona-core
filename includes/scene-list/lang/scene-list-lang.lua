@@ -6,5 +6,10 @@ return {
 		en = "Sorry, no posts available.",
 		es = "Lo sentimos, no hay post disponibles.",
 		fr = "Il n'y a pas de articles disponibles."
+	}, 
+	favorites = {
+		en = "Favorites",
+		es = "Favoritos",
+		fr = "Favoris"
 	}
 }

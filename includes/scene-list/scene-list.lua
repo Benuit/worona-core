@@ -423,7 +423,7 @@ local function newScene( scene_name )
 			if event.params ~= nil then
 				if event.params.show_posts == "favorites" then
 					worona:add_filter( "filter_list_insert_current_row", isThisPostFavorite )
-					navbar_title = "Favorites"
+					navbar_title = worona.lang:get("favorites", "scene-list")
 				else
 					worona:remove_filter( "filter_list_insert_current_row", isThisPostFavorite )
 				end
