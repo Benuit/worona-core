@@ -2,8 +2,19 @@
 -- When you update the content, this file will be overwritten, so you will loose your changes.
 
 return {
-	no_posts_available = {
-		en = "Sorry, no posts available.",
-		es = "Lo sentimos, no hay post disponibles."
+	all_posts = {
+		en = "All Posts",
+		es = "Todos los Posts",
+		fr = "Tous les articles",
+	},
+	favorite_posts = {
+		en = "Favorite Posts",
+		es = "Posts Favoritos",
+		fr = "Articles Favoris",
+	},
+	about = {
+		en = "About",
+		es = "Acerca de",
+		fr = "À propos",
 	}
 }
