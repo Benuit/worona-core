@@ -6,15 +6,18 @@ return {
 		en = "All Posts",
 		es = "Todos los Posts",
 		fr = "Tous les articles",
+		pt = "Todo conteúdo"
 	},
 	favorite_posts = {
 		en = "Favorite Posts",
 		es = "Posts Favoritos",
 		fr = "Articles Favoris",
+		pt = "Favoritos"
 	},
 	about = {
 		en = "About",
 		es = "Acerca de",
 		fr = "À propos",
+		pt = "Sobre"
 	}
 }
