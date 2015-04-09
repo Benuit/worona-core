@@ -4,6 +4,14 @@
 return {
 	no_posts_available = {
 		en = "Sorry, no posts available.",
-		es = "Lo sentimos, no hay post disponibles."
+		es = "Lo sentimos, no hay post disponibles.",
+		fr = "Il n'y a pas de articles disponibles.",
+		pt = "Desculpe, nenhum conteúdo disponível."
+	}, 
+	favorites = {
+		en = "Favorites",
+		es = "Favoritos",
+		fr = "Favoris",
+		pt = "Favoritos"
 	}
 }

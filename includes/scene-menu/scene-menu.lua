@@ -11,25 +11,32 @@ local function newScene( scene_name )
 	
 	local scrollView, no_posts_text, powered_img
 	local scene_action = {}
+
+	worona.lang:load("worona-core.includes.scene-menu.lang.scene-menu-lang", "scene-menu")
+
+	local all_posts_text = worona.lang:get("all_posts", "scene-menu")
+	local favorite_posts_text = worona.lang:get("favorite_posts", "scene-menu")
+	local about_text = worona.lang:get("about", "scene-menu")
+
 	local menu_items_table = worona:do_filter( "filter_menu_list_items_table",
 		{ 
 			
 			{ 
-				text = "ALL POSTS",
+				text = all_posts_text,
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
 				}
 			},
 			{ 
-				text = "FAVORITE POSTS",
+				text = favorite_posts_text,
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
 				}
 			},
 			{ 
-				text = "ABOUT",
+				text = about_text,
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
@@ -44,8 +51,6 @@ local function newScene( scene_name )
 		worona.log:info("scene-menu - loadSceneList()")
 		worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 200 } )
 	end
-
-	worona.lang:load("worona-core.includes.scene-menu.lang.scene-menu-lang", "scene-menu")
 
 	local function exitApp()
 		native.requestExit()
