@@ -2,32 +2,43 @@ local worona = require "worona"
 
 local function newScene( scene_name )
 
-  local composer = require "composer"
-  local scene = composer.newScene( scene_name )
+	local composer = require "composer"
+	local scene = composer.newScene( scene_name )
 
-  local webview
-  local url
-  local webview_counter = 0
-  local scene_on_screen = false
+	local webview
+	local url
+	local webview_counter = 0
+	local scene_on_screen = false
 
-  local left_button_handler = function()
+	local left_button_handler = function()
 
-    if webview_counter <= 0 then
-      worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
-    else
-      worona.log:info( "scene-webview: User is going back" )
-      webview_counter = webview_counter - 1
-      webview:back()
-    end
-  end
+	if webview_counter <= 0 then
+	  worona:do_action( "load_previous_scene", { effect = "slideRight", time = 200 } )
+	else
+	  worona.log:info( "scene-webview: User is going back" )
+	  webview_counter = webview_counter - 1
+	  webview:back()
+	end
+	end
 
-  local function webListener( event )
+	local function webListener( event )
 
-      if event.url and event.type == "link" then
-        worona.log:info( "scene-webview: User has visited: " .. event.url )
-        webview_counter = webview_counter + 1
-      end
-  end
+	  if event.url and event.type == "link" then
+	    worona.log:info( "scene-webview: User has visited: " .. event.url )
+	    webview_counter = webview_counter + 1
+	  end
+	end
+
+  	local function stopWebviewOnSuspend( event )
+  		if worona.device:getPlatformName() == "Android" then
+  			if webview ~= nil then
+      			if event.type == "applicationSuspend" then  
+      				webview:request( url )
+      			end
+      		end
+      	end
+  	end
+  	Runtime:addEventListener( "system", stopWebviewOnSuspend )
 
     -- -----------------------------------------------------------------------------------------------------------------
     -- All code outside of the listener functions will only be executed ONCE unless "composer.removeScene()" is called.
