@@ -266,16 +266,19 @@ local function newScene( scene_name )
 		local bg_rect = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		bg_rect:setFillColor( user_config_style.post_list_background_color[1], user_config_style.post_list_background_color[2], user_config_style.post_list_background_color[3] )
 
-		powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 185, 35 )
-		powered_img.anchorX = 0.5
-		powered_img.anchorY = 1
-		powered_img.x = display.contentWidth / 2
-		powered_img.y = display.contentHeight - 10
-		sceneGroup:insert(powered_img)
+		if worona:do_filter( "filter_scene_menu_powered_img", true ) == true then
+			powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 185, 35 )
+			powered_img.anchorX = 0.5
+			powered_img.anchorY = 1
+			powered_img.x = display.contentWidth / 2
+			powered_img.y = display.contentHeight - 10
+			sceneGroup:insert(powered_img)
 
-		--: open safari with worona.org when they tap on the badge
-		powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
-		
+			--: open safari with worona.org when they tap on the badge
+			powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
+		else
+			powered_img = { height = 0 }
+		end		
 
 		scrollView = createScrollview({ parent_group = sceneGroup })
 		scrollView.alpha = 0
