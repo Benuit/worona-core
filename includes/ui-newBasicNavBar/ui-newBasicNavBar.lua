@@ -138,18 +138,18 @@ local function newBasicNavBar( self, params )
 	text:setFillColor( navbar.attributes.text_color[1], navbar.attributes.text_color[2], navbar.attributes.text_color[3], navbar.attributes.text_color[4] )
 
 	--. If text is too wide, cut it and add "..."
-	local navbar_available_space = display.contentWidth - navbar.right_button_width - navbar.left_button_width - 10
-	-- if text.width > navbar_available_space then
-	-- 	--. Calculate the width of a character:
-	-- 	text.text = "o"
-	-- 	local character_width = text.width
+	local navbar_available_space = display.contentWidth - navbar.right_button_width - navbar.left_button_width + 25
+	if text.width > navbar_available_space then
+		--. Calculate the width of a character:
+		text.text = "o"
+		local character_width = text.width
 
-	-- 	--. Calculate how many character can be placed in the navbar:
-	-- 	local characters_number = math.floor(navbar_available_space / character_width)
+		--. Calculate how many character can be placed in the navbar:
+		local characters_number = math.floor(navbar_available_space / character_width)
 
-	-- 	--. Insert text with new length
-	-- 	text.text = text_options.text:sub(1, characters_number - 3) .. "..."
-	-- end
+		--. Insert text with new length
+		text.text = text_options.text:sub(1, characters_number - 3) .. "..."
+	end
 
 	-- Insert navbar on the parent group
 	if params ~= nil and params.parent ~= nil then
