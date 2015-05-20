@@ -36,42 +36,34 @@ local function newScene( scene_name )
 			}
 		},
 		{
-			text = "Confcooperative",
+			text = "BCC in Calabria",
 			action = {
 				name   = "load_url", 
-				params = { url = "http://expo.confcooperativecalabria.it/confcooperative-calabria/", effect = "slideLeft", time = 200 }
+				params = { url = "http://federcasse.confcooperativecalabria.it/le-nostre-bcc/", effect = "slideLeft", time = 200 }
 			}
 
 		},
 		{
-			text = "Contatti / Contacts",
+			text = "Clienti / Clients",
 			action = {
 				name   = "load_url", 
-				params = { url = "http://expo.confcooperativecalabria.it/contatti/", effect = "slideLeft", time = 200 }
+				params = { url = "http://federcasse.confcooperativecalabria.it/clienti/", effect = "slideLeft", time = 200 }
 			}
 
 		},
 		{
-			text = "Cooperative",
+			text = "Chi Siamo / About US",
 			action = {
 				name   = "load_url", 
-				params = { url = "http://expo.confcooperativecalabria.it/le-nostre-cooperative/", effect = "slideLeft", time = 200 }
+				params = { url = "http://federcasse.confcooperativecalabria.it/le-bcc-nutrono-la-calabria/", effect = "slideLeft", time = 200 }
 			}
 
 		},
 		{
-			text = "News",
+			text = "Federcasse Calabria / Our Story",
 			action = {
 				name   = "load_url", 
-				params = { url = "http://expo.confcooperativecalabria.it/news-da-expo/", effect = "slideLeft", time = 200 }
-			}
-
-		},
-		{
-			text = "EXPO 2015",
-			action = {
-				name   = "load_url", 
-				params = { url = "http://expo.confcooperativecalabria.it/expo-2015/", effect = "slideLeft", time = 200 }
+				params = { url = "http://federcasse.confcooperativecalabria.it/federcasse-calabria/", effect = "slideLeft", time = 200 }
 			}
 
 		},
@@ -79,7 +71,7 @@ local function newScene( scene_name )
 			text = "Sito Istituzionale / Our site",
 			action = {
 				name   = "load_url", 
-				params = { url = "http://confcooperativecalabria.it/", effect = "slideLeft", time = 200 }
+				params = { url = "http://www.federcalabriabcc.it/", effect = "slideLeft", time = 200 }
 			}
 
 		}
@@ -257,7 +249,7 @@ local function newScene( scene_name )
 
 			local row_text = display.newText( title_options )
 			-- next line custom
-			row_text:setFillColor( 48/255, 99/255, 153/255 )
+			row_text:setFillColor( 1, 1, 1 )
 			row_text.anchorY = 0
 			row_group:insert(row_text)
 

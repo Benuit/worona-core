@@ -60,7 +60,7 @@ local function newScene( scene_name )
     --: load the navbar
     local basic_navbar = worona.ui:newBasicNavBar({
      parent            = sceneGroup,
-     text              = string.match( url, "^https?://w?w?w?%.?([a-zA-Z0-9-]+%.%a+)" ),
+     text              = worona.app_title,
      left_button_icon  = worona.style:get("icons").back_left
     })
 
