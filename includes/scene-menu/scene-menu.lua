@@ -11,46 +11,86 @@ local function newScene( scene_name )
 	
 	local scrollView, no_posts_text, powered_img
 	local scene_action = {}
-
-	worona.lang:load("worona-core.includes.scene-menu.lang.scene-menu-lang", "scene-menu")
-
-	local all_posts_text = worona.lang:get("all_posts", "scene-menu")
-	local favorite_posts_text = worona.lang:get("favorite_posts", "scene-menu")
-	local about_text = worona.lang:get("about", "scene-menu")
-
-	local menu_items_table = worona:do_filter( "filter_menu_list_items_table",
+	local menu_items_table = 
+	{ 
+		
 		{ 
-			
-			{ 
-				text = all_posts_text,
-				action = {
-					name   = "go_to_scene", 
-					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
-				}
-			},
-			{ 
-				text = favorite_posts_text,
-				action = {
-					name   = "go_to_scene", 
-					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
-				}
-			},
-			{ 
-				text = about_text,
-				action = {
-					name   = "go_to_scene", 
-					params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
-				}
+			text = "Tutte le news / All Posts",
+			action = {
+				name   = "go_to_scene", 
+				params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
 			}
-		}
-	)
+		},
+		{ 
+			text = "Favorite posts",
+			action = {
+				name   = "go_to_scene", 
+				params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
+			}
+		},
+		{ 
+			text = "About",
+			action = {
+				name   = "go_to_scene", 
+				params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
+			}
+		},
+		{
+			text = "Confcooperative",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://expo.confcooperativecalabria.it/confcooperative-calabria/", effect = "slideLeft", time = 200 }
+			}
 
-	
+		},
+		{
+			text = "Contatti / Contacts",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://expo.confcooperativecalabria.it/contatti/", effect = "slideLeft", time = 200 }
+			}
+
+		},
+		{
+			text = "Cooperative",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://expo.confcooperativecalabria.it/le-nostre-cooperative/", effect = "slideLeft", time = 200 }
+			}
+
+		},
+		{
+			text = "News",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://expo.confcooperativecalabria.it/news-da-expo/", effect = "slideLeft", time = 200 }
+			}
+
+		},
+		{
+			text = "EXPO 2015",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://expo.confcooperativecalabria.it/expo-2015/", effect = "slideLeft", time = 200 }
+			}
+
+		},
+		{
+			text = "Sito Istituzionale / Our site",
+			action = {
+				name   = "load_url", 
+				params = { url = "http://confcooperativecalabria.it/", effect = "slideLeft", time = 200 }
+			}
+
+		}
+	}
 
 	local function loadSceneList()
 		worona.log:info("scene-menu - loadSceneList()")
 		worona:do_action( "go_to_scene", { scene_type = "scene-list", effect = "slideLeft", time = 200 } )
 	end
+
+	worona.lang:load("worona-core.includes.scene-menu.lang.scene-menu-lang", "scene-menu")
 
 	local function exitApp()
 		native.requestExit()
@@ -216,7 +256,8 @@ local function newScene( scene_name )
 			title_options = worona:do_filter( "filter_menu_list_row_title_options", title_options )
 
 			local row_text = display.newText( title_options )
-			row_text:setFillColor( style.title.font_color.r, style.title.font_color.g, style.title.font_color.b )
+			-- next line custom
+			row_text:setFillColor( 48/255, 99/255, 153/255 )
 			row_text.anchorY = 0
 			row_group:insert(row_text)
 
@@ -266,19 +307,16 @@ local function newScene( scene_name )
 		local bg_rect = display.newRect( sceneGroup, display.contentWidth / 2, display.contentHeight / 2, display.contentWidth, display.contentHeight )
 		bg_rect:setFillColor( user_config_style.post_list_background_color[1], user_config_style.post_list_background_color[2], user_config_style.post_list_background_color[3] )
 
-		if worona:do_filter( "filter_scene_menu_powered_img", true ) == true then
-			powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 185, 35 )
-			powered_img.anchorX = 0.5
-			powered_img.anchorY = 1
-			powered_img.x = display.contentWidth / 2
-			powered_img.y = display.contentHeight - 10
-			sceneGroup:insert(powered_img)
+		powered_img = display.newImageRect( "worona-core/includes/scene-about/img/Worona-badge.png", 185, 35 )
+		powered_img.anchorX = 0.5
+		powered_img.anchorY = 1
+		powered_img.x = display.contentWidth / 2
+		powered_img.y = display.contentHeight - 5
+		sceneGroup:insert(powered_img)
 
-			--: open safari with worona.org when they tap on the badge
-			powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
-		else
-			powered_img = { height = 0 }
-		end		
+		--: open safari with worona.org when they tap on the badge
+		powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
+		
 
 		scrollView = createScrollview({ parent_group = sceneGroup })
 		scrollView.alpha = 0
@@ -286,15 +324,11 @@ local function newScene( scene_name )
 		insertContentInScrollView()
 		transition.to( scrollView, { time=200, alpha=1.0 } )
 
-
-
-		local navbar_options = worona:do_filter( "filter_menu_list_nabvar_options", {
-			parent            = sceneGroup,
-			text              = "Menu"
-		})
-
 		--: load the navbar
-		local navbar = worona.ui:newBasicNavBar( navbar_options )
+		local navbar = worona.ui:newBasicNavBar({
+			parent            = sceneGroup,
+			text              = "Menu",	
+		})
 
 		worona:do_action( "after_creating_scene_menu" )
 	end

@@ -50,7 +50,7 @@ local function newScene( scene_name )
 		    y        = style.text.y,
 		    width    = display.contentWidth - 20,     --required for multi-line and alignment
 		    -- font  = style.text.font_type,
-		    fontSize = 14
+		    fontSize = 16
 		}
 		local user_text = display.newText( user_text_options )
 		user_text:setFillColor( style.text.font_color.r, style.text.font_color.g, style.text.font_color.b )
