@@ -77,7 +77,7 @@ function htmlRender:prepareHtmlFile( options )
 	--: write html
 	local htmlPath = system.pathForFile( "content/html/" .. options.name .. ".html", system.CachesDirectory )
 	local htmlFile = io.open( htmlPath, "w" )
-	htmlFile:write( header_1_Data .. normalize_css_Data .. main_css_Data .. modernizr_js_Data .. header_2_Data .. html .. footer_1_Data .. jquery_js_Data .. plugins_js_Data .. main_js_Data .. footer_2_Data )
+	htmlFile:write( header_1_Data .. normalize_css_Data .. main_css_Data .. modernizr_js_Data .. header_2_Data .. jquery_js_Data .. plugins_js_Data .. main_js_Data .. html .. footer_1_Data .. footer_2_Data )
 	htmlFile:close()
 end
 
