@@ -22,21 +22,21 @@ local function newScene( scene_name )
 		{ 
 			
 			{ 
-				text = all_posts_text,
+				text = "Todos los post",
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
 				}
 			},
 			{ 
-				text = favorite_posts_text,
+				text = "Favoritos",
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
 				}
 			},
 			{ 
-				text = about_text,
+				text = "Sobre nosotros",
 				action = {
 					name   = "go_to_scene", 
 					params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
