@@ -48,7 +48,7 @@ local function newPostScene( scene_name )
 		url     = worona.scene:getCurrentSceneUrl()
 		content = worona.content:getPost( worona.content_type, url )
 
-		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.content } )
+		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.content, featured_image = content.featured_image } )
 
 		local unescaped_title = worona.string:unescape(content.title)
 		local favorite_icon   = worona:do_filter( "filter_navbar_favorite_icon", "favorite", { post_id = content.ID } )
@@ -74,13 +74,13 @@ local function newPostScene( scene_name )
 		  	worona:do_action( "on_scene_post_show_will", { sceneGroup = sceneGroup } )
 
 		elseif ( phase == "did" ) then
-		  
+
 		    -- Called when the scene is now on screen.
 
 		    --: personalise behavior of navbar
 			worona:add_action("navbar_right_button_pushed", rightButtonHandler)
 			worona:add_action( "navbar_left_button_pushed", leftButtonHandler )
-		  	worona:add_action( "android_back_button_pushed", leftButtonHandler )    	
+		  	worona:add_action( "android_back_button_pushed", leftButtonHandler )
 
 			local style = worona.style:get( "webview" )
 
@@ -104,7 +104,7 @@ local function newPostScene( scene_name )
 			    local webview_y      = worona:do_filter( "filter_scene_post_webview_y", style.y )
 
 			    webview = native.newWebView( display.contentWidth / 2, webview_y, display.contentWidth, webview_height )
-		        
+
 		    	worona:do_action( "on_scene_post_webview_creation" )
 
 		    	if worona.device:getPlatformName() == "Android" then
@@ -128,15 +128,15 @@ local function newPostScene( scene_name )
 		if ( phase == "will" ) then
 		  -- Called when the scene is on screen (but is about to go off screen).
 		  -- Insert code here to "pause" the scene.
-		  -- Example: stop timers, stop animation, stop audio, etc. 
+		  -- Example: stop timers, stop animation, stop audio, etc.
 
 		  --: personalise behavior of navbar
 		  worona:remove_action( "navbar_right_button_pushed", rightButtonHandler )
 		  worona:remove_action( "navbar_left_button_pushed", leftButtonHandler )
-		  worona:remove_action( "android_back_button_pushed", leftButtonHandler ) 
+		  worona:remove_action( "android_back_button_pushed", leftButtonHandler )
 
 		  --: move webview out of the screen
-		  if webview ~= nil then 
+		  if webview ~= nil then
 		      webview.x = display.contentWidth * 2
 		  end
 
@@ -144,13 +144,13 @@ local function newPostScene( scene_name )
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.
-			if webview ~= nil then 
-				webview:request( "about:blank" ) 
+			if webview ~= nil then
+				webview:request( "about:blank" )
 				webview:stop()
-				timer.performWithDelay( 1000, function() 
+				timer.performWithDelay( 1000, function()
 					if scene_on_screen ~= true then
 						display.remove( webview )
-						webview = nil 
+						webview = nil
 					end
 				end )
 			end
