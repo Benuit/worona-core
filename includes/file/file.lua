@@ -141,6 +141,11 @@ local function newFileService()
 		if file_path ~= nil then
 			--. First we check in system.TemporaryDirectory
 			system_path = system.pathForFile( file_path, system.TemporaryDirectory )
+
+			if system_path == nil then
+				native.showAlert( "Important Notice!!!!", "If you are getting a runtime error, please check that your images file names in your WordPress are no longer than 30 characters!", { "OK" } )
+			end
+
 			file_exists = io.open(system_path, "r")
 
 			if file_exists ~= nil then
