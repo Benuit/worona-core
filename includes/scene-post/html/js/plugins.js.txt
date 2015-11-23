@@ -32,7 +32,7 @@ $(function(){
     console.log(/youtube/.test(src));
     if ( /youtube/.test(src) ) {
       // extract the video id
-      var youtube_id = /embed\/(.*)/.exec(src)[1];
+      var youtube_id = /embed\/(.*)\?/.exec(src)[1];
       console.log(youtube_id);
       // get the thumbnail_url
       var youtube_thumbnail_url = "http://img.youtube.com/vi/" + youtube_id + "/hqdefault.jpg";
