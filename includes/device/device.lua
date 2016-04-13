@@ -4,12 +4,16 @@ local function newDeviceService()
 
 	device = {}
 
-	device.PLATFORM_VERSION = nil--"8.0"
+	if system.getInfo( "environment" ) == "simulator" then
+		device.PLATFORM_VERSION = "8.0"
+	else
+		device.PLATFORM_VERSION = nil
+	end
 
 	function device:getOrientation()
 		--: Return: portrait or landscape :--
 
-		if system.orientation == "portrait" 
+		if system.orientation == "portrait"
 	   	or system.orientation == "portraitUpsideDown" then
 	   		return "portrait"
 	   	else
@@ -48,7 +52,7 @@ local function newDeviceService()
 								["BNRV200"] = 6
 							}
 
-		
+
 		if platformName == "iPhone OS" then				--: it's an iphone or ipad, no matter if simulator or not :--
 
 			if model == "iPhone" or model == "iPhone Simulator" then
@@ -60,9 +64,9 @@ local function newDeviceService()
 			elseif model == "iPad" or model == "iPad Simulator" then
 				return 10
 			end
-		
+
 		elseif env == "simulator" then					--: it's an android inside the simulator :--
-			
+
 			if realInches[ model ] ~= nil then
 				return realInches[ model ]
 			else
@@ -74,7 +78,7 @@ local function newDeviceService()
 			local widthInInches  = display.pixelWidth / system.getInfo("androidDisplayXDpi")
 		    local heightInInches = display.pixelHeight / system.getInfo("androidDisplayYDpi")
 		    return math.sqrt( widthInInches * widthInInches + heightInInches * heightInInches )
-		end	
+		end
 	end
 
 	function device:getDevice()
@@ -84,7 +88,7 @@ local function newDeviceService()
 		local platformVersion = system.getInfo( "platformVersion" )
 		local model           = system.getInfo( "model" )
 		local screenInches    = device:getInches()
-		
+
 
 		if platformName == "iPhone OS" then
 			if model == "iPad" or model == "iPad Simulator" then
@@ -122,7 +126,7 @@ local function newDeviceService()
 		local platformName    = device:getPlatformName()
 		local platformVersion = device.PLATFORM_VERSION or system.getInfo( "platformVersion" )
 
-		
+
 		if platformName == "iPhone OS" and string.find( platformVersion, "8." ) == 1 then
 		    return "ios8"
 		elseif platformName == "iPhone OS" and string.find( platformVersion, "7." ) == 1 then
