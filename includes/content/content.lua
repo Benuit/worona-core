@@ -11,26 +11,26 @@ local url
 local function newContentService()
 
 	local content = {}
-	
+
 
 	--. PRIVATE VARIABLES .--
 	local content_table = {}  --. content table stores all the content from any kind of the app: content_table = { customcontent = {} , posts = [] }
 	local content_urls_table = {} --. array with the urls that are pages or posts included in content. Its intended to be a url cache, so is can be checked whether a url belongs to content or not.
 								  --. structure: { "url1" = content_type1 , "url2" = content_type2 , ... }
 	--. PRIVATE FUNCTIONS .--
-	
-	--[[	
-		checkConnection 
-		
+
+	--[[
+		checkConnection
+
 		Checks if there´s internet connection available.
-		 	
+
 		@type: type
 		@date: 06/2014 or so
 		@since: 0.6
-	
+
 		@param: -
 		@return: true if connection available, false if not
-	
+
 		@example: local connection_available = checkConnection()
 	]]--
 	local function checkConnection(website)
@@ -41,12 +41,12 @@ local function newContentService()
 		local connection_available
 
 		local socket = require("socket")
-		            
+
 		local test = socket.tcp()
 		test:settimeout( timeout )
-		            
-		local testResult = test:connect( website, 80) 
-		 
+
+		local testResult = test:connect( website, 80)
+
 		if testResult ~= nil then
 			worona.log:info("content/checkConnection: Internet access is available")
 		    connection_available = true
@@ -64,7 +64,7 @@ local function newContentService()
 
 	--. Checks a content file of content_type type, and stores the URLs of the pages in content_urls_table = {"URL" = "content_type"} .--
 		--. RETURN: -
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	content_type: "post" or "customcontent"
 	local function checkContentUrls( content_type )
 
@@ -75,26 +75,26 @@ local function newContentService()
 		else
 			worona.log:error("content/checkContentUrls: content_table[ content_type ] = nil")
 		end
-	
+
 	end
-	
+
 
 	--. PUBLIC METHODS .--
-	--[[	
-		urlCustomPostType 
-		
+	--[[
+		urlCustomPostType
+
 		Returns the type of the custom post type of a certain url
-		 	
+
 		@type: service
 		@date: 06/2014
 		@since: 0.6
-	
+
 		@param: url from which type is requested
 		@return: type of the custom post type, or false.
-	
+
 		@example: scene_type = worona.content:urlCustomPostType(url)
 	]]--
-	function content:urlCustomPostType( url ) 
+	function content:urlCustomPostType( url )
 		for k,v in pairs (content_urls_table) do
 			if k == url then
 				return v
@@ -116,19 +116,19 @@ local function newContentService()
 	    end
 	end
 
-	--[[	
-		readContentFile 
-		
+	--[[
+		readContentFile
+
 		Reads the content file from a certain content_type, and stores a table with the content of the file
 		in content_table.
-		 	
+
 		@type: service
 		@date: 06/2014
 		@since: 0.6
-	
+
 		@param: content_type ("post", "customcontent")
 		@return: true if reading went ok, -1 if error ocurred.
-	
+
 		@example: local read_ok = worona.readContentFile("post")
 	]]--
 	function content:readContentFile( content_type )
@@ -145,20 +145,20 @@ local function newContentService()
 			if json_table == nil then
 
 				if system.getInfo( "environment" ) == "simulator" then
-					native.showAlert(	worona.lang:get("popup_simulator_empty_content_error_title", "content"), 
-									 	worona.lang:get("popup_simulator_empty_content_error_description", "content"), 
-									 	{	
+					native.showAlert(	worona.lang:get("popup_simulator_empty_content_error_title", "content"),
+									 	worona.lang:get("popup_simulator_empty_content_error_description", "content"),
+									 	{
 									 		worona.lang:get("popup_simulator_empty_content_error_button_1", "content")
-									 	}, 
-									 	nativeAlertUpdateErrorListener 
+									 	},
+									 	nativeAlertUpdateErrorListener
 									)
 				else
-					native.showAlert(	worona.lang:get("popup_device_empty_content_error_title", "content"), 
-									 	worona.lang:get("popup_device_empty_content_error_description", "content"), 
-									 	{	
+					native.showAlert(	worona.lang:get("popup_device_empty_content_error_title", "content"),
+									 	worona.lang:get("popup_device_empty_content_error_description", "content"),
+									 	{
 									 		worona.lang:get("popup_device_empty_content_error_button_1", "content")
-									 	}, 
-									 	nativeAlertUpdateErrorListener 
+									 	},
+									 	nativeAlertUpdateErrorListener
 									)
 				end
 				worona.log:warning("content/readContentFile: json_table = 'nil'" )
@@ -175,19 +175,19 @@ local function newContentService()
 		end
 	end
 
-	--[[	
-		update 
-		
+	--[[
+		update
+
 		Syncronizes the content of a certain content_type from a specific url.
-		 	
+
 		@type: service
 		@date: 06/2014
 		@since: 0.6
-	
+
 		@param: options.content_type (string) : content type to be updated
 				options.url (string) : url from which the content will be downloaded.
 		@return: -
-	
+
 		@example: worona.content:update("post", "http://www.worona.org")
 	]]--
 	function content:update( options )
@@ -208,68 +208,63 @@ local function newContentService()
 		if worona.app_number_of_posts == nil or type(worona.app_number_of_posts) ~= "number" then
 			worona.app_number_of_posts = 20
 		end
-		
+
 		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "&type=" .. content_type
 
-		--: this solves a problem with OSX cache.db
-		local platformName = system.getInfo( "platformName" )
-		if platformName == "Mac OS X" or platformName == "iPhone OS" then
-			url = url .. "&rnd=" .. os.time()
-		end
-		
+		url = url .. "&rnd=" .. os.time()
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
 		local wp_url_no_http 		= string.gsub( worona.wp_url, "[htps]*://", "") -- removing http://
 		local wp_url_no_directory 	= string.gsub( wp_url_no_http, "/.*", "")  		-- removing / and /directory at the end of the url
 		local wp_url_connection 	= checkConnection(wp_url_no_directory) 			--. checking connection to wp_url
-		
+
 		if wp_url_connection == false then
 			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
 			if internet_available == false then
 				worona.log:warning("content/update: Internet connection is not available.")
 				worona:do_action( "connection_not_available" )
 				if system.getInfo( "environment" ) == "simulator" then
-					native.showAlert(	worona.lang:get("popup_simulator_connection_error_1_title", "content"), 	
-										worona.lang:get("popup_simulator_connection_error_1_description", "content") , 
-										{ 
-											worona.lang:get("popup_simulator_connection_error_1_button_1", "content"), 
-											worona.lang:get("popup_simulator_connection_error_1_button_2", "content") 
-										}, 
-										nativeAlertUpdateErrorListener 
+					native.showAlert(	worona.lang:get("popup_simulator_connection_error_1_title", "content"),
+										worona.lang:get("popup_simulator_connection_error_1_description", "content") ,
+										{
+											worona.lang:get("popup_simulator_connection_error_1_button_1", "content"),
+											worona.lang:get("popup_simulator_connection_error_1_button_2", "content")
+										},
+										nativeAlertUpdateErrorListener
 									)
 				else
-					native.showAlert(	worona.lang:get("popup_device_connection_error_1_title", "content"), 	
-										worona.lang:get("popup_device_connection_error_1_description", "content") , 
-										{ 
-											worona.lang:get("popup_device_connection_error_1_button_1", "content"), 
-											worona.lang:get("popup_device_connection_error_1_button_2", "content") 
-										}, 
-										nativeAlertUpdateErrorListener 
+					native.showAlert(	worona.lang:get("popup_device_connection_error_1_title", "content"),
+										worona.lang:get("popup_device_connection_error_1_description", "content") ,
+										{
+											worona.lang:get("popup_device_connection_error_1_button_1", "content"),
+											worona.lang:get("popup_device_connection_error_1_button_2", "content")
+										},
+										nativeAlertUpdateErrorListener
 									)
 				end
 			else
 				worona.log:warning("content/update: Internet connection is available, but cannot connect to: '" .. worona.wp_url .. "'. Please check your WordPress site configuration.")
 				worona:do_action( "connection_not_available" )
 				if system.getInfo( "environment" ) == "simulator" then
-					native.showAlert(	worona.lang:get("popup_simulator_connection_error_2_title", "content"), 	
-										worona.lang:get("popup_simulator_connection_error_2_description", "content") , 
-										{ 
-											worona.lang:get("popup_simulator_connection_error_2_button_1", "content"), 
-											worona.lang:get("popup_simulator_connection_error_2_button_2", "content") 
-										}, 
-										nativeAlertUpdateErrorListener 
+					native.showAlert(	worona.lang:get("popup_simulator_connection_error_2_title", "content"),
+										worona.lang:get("popup_simulator_connection_error_2_description", "content") ,
+										{
+											worona.lang:get("popup_simulator_connection_error_2_button_1", "content"),
+											worona.lang:get("popup_simulator_connection_error_2_button_2", "content")
+										},
+										nativeAlertUpdateErrorListener
 									)
 				else
-					native.showAlert(	worona.lang:get("popup_device_connection_error_2_title", "content"), 	
-										worona.lang:get("popup_device_connection_error_2_description", "content") , 
-										{ 
-											worona.lang:get("popup_device_connection_error_2_button_1", "content"), 
-											worona.lang:get("popup_device_connection_error_2_button_2", "content") 
-										}, 
-										nativeAlertUpdateErrorListener 
+					native.showAlert(	worona.lang:get("popup_device_connection_error_2_title", "content"),
+										worona.lang:get("popup_device_connection_error_2_description", "content") ,
+										{
+											worona.lang:get("popup_device_connection_error_2_button_1", "content"),
+											worona.lang:get("popup_device_connection_error_2_button_2", "content")
+										},
+										nativeAlertUpdateErrorListener
 									)
-				end	
+				end
 			end
 		else
 			worona.log:info("content/update: Successful connection to: '" .. worona.wp_url .. "'.")
@@ -297,7 +292,7 @@ local function newContentService()
 					end
 				end
 			end
-			
+
 			local download_options = {
 				url                      = url   , --. URL
 				target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
@@ -313,7 +308,7 @@ local function newContentService()
 
 	--. Returns array with acf values of a page_url of type content_type .--
 		--. RETURN: description
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	content_type: ex: "customcontent"
 		--. 	page_url: page url.
 	function content:getPost( content_type, page_url )
@@ -327,10 +322,10 @@ local function newContentService()
 		if content_table[ content_type ] == nil then
 			worona.content:readContentFile( content_type ) --. not sure if this is needed...
 		end
-		
+
 		for k,v in pairs( content_table[ content_type ] ) do
 			if v.link == page_url then
-				return v --. Â¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts 
+				return v --. Â¡! TO MAKE IT COMPATIBLE WITH POSTS: return v, INSTEAD OF: return v.acf  -->  now we can have: v.acf, v.posts
 			end
 		end
 
@@ -341,12 +336,12 @@ local function newContentService()
 
 	--. Returns an array with all the content from content_type json .--
 		--. RETURN: description
-		--. ARGUMENTS: 
+		--. ARGUMENTS:
 		--. 	Argument1: description
 	function content:getPostList( content_type )
 
 		local read_success
-		
+
 		--. Function arguments compatible with table (worona.content:getPostList( {content_type = "post", url = "testing.turismob.com"} ))
 		if type(content_type) == "table" then
 			content_type = content_type.content_type
