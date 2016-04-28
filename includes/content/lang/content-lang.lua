@@ -109,7 +109,7 @@ return {
 	popup_device_connection_error_2_description = {
 	   	en = "Sorry, the content is not available.",
 	   	es = "El contenido no se ha podido descargar debido a un error de conexión.",
-			pt = "Desculpa, o conteúdo não está disponível. Erro de conexão."
+			pt = "Desculpa, o conteúdo não está disponível. Erro de conexão.",
 			de = "Der Inhalt ist nicht verfügbar"
 	},
 	popup_device_connection_error_2_button_1 = {
