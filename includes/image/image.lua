@@ -1,4 +1,5 @@
 local worona = require "worona"
+local md5 = require "worona-core.includes.image.md5"
 
 local function newService()
 
@@ -33,14 +34,21 @@ local function newService()
 			folder_string = folder_string .. folder_array[ i ] .. "/"
 		end
 
-		return folder_string
+		local md5folder = md5.sumhexa(folder_string)
+
+		return md5folder .. "/"
 	end
 
 	function image:getFilenameFromUrl( url )
 
 		local replace = ".+/"
 		local filename = string.gsub( url, replace, "" ) --: remove everything until the final "/" character
-		return filename
+
+		local extension = string.gsub(filename, ".+%.", "")
+
+		local md5image = md5.sumhexa(filename)
+
+		return md5image .. "." .. extension
 	end
 
 	local function calculateFinalDimensions( options )
