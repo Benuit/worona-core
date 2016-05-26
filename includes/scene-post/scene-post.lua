@@ -1,4 +1,5 @@
 local worona = require "worona"
+local md5 = require "worona-core.includes.md5.md5"
 
 local function newPostScene( scene_name )
 
@@ -47,6 +48,8 @@ local function newPostScene( scene_name )
 		--
 		url     = worona.scene:getCurrentSceneUrl()
 		content = worona.content:getPost( worona.content_type, url )
+
+		content.slug = md5.sumhexa(content.slug) --md5 fix for long slugs
 
 		postHtmlRender:prepareHtmlFile( { name = content.slug, html = content.content, featured_image = content.featured_image } )
 

@@ -1,5 +1,5 @@
 local worona = require "worona"
-local md5 = require "worona-core.includes.image.md5"
+local md5 = require "worona-core.includes.md5.md5"
 
 local function newService()
 
@@ -150,12 +150,12 @@ local function newService()
 
 			--. Creating a table listener for display.loadRemoteImage
 			function newTableListener( loading_rectangle, img_container )	-- constructor
-					
+
 				local that = {}
 
 				that.loading_rectangle = loading_rectangle
 				that.img_container     = img_container
-				
+
 				function that:networkRequest( event )
 
 					if ( event.isError ) then
@@ -165,7 +165,7 @@ local function newService()
 						img = event.target
 
 						if img ~= nil then
-							
+
 							img.alpha  = 0
 							img.width  = 1
 							img.height = 1
@@ -183,13 +183,13 @@ local function newService()
 						end
 					end
 				end
-				
+
 				return that
 			end
 
-			
 
-			
+
+
 			--: display a rectangle where the image should be
 			local loading_rectangle = display.newRect( 0, 0, final.width, final.height )
 			loading_rectangle:setFillColor( 0.7 )
@@ -211,11 +211,11 @@ local function newService()
 
 			if img == nil then
 				img = display.newImageRect( "content/images/" .. folders_string .. filename, image_baseDirectory, 1, 1 )
-				
+
 				if img ~= nil then
 					img.alpha = 0
 
-					applyParameters( img, container )	
+					applyParameters( img, container )
 					img.alpha = 1
 				else
 					worona.log:error("image.lua/newImage: the image is not in the phone, but Corona tries to load it as if it were")
