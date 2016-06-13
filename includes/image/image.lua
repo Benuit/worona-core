@@ -57,6 +57,14 @@ local function newService()
 		local width, height           = options.width, options.height
 		local real_width, real_height = options.real_width, options.real_height
 
+		if real_width == nil then
+			real_width = width
+		end
+
+		if real_height == nil then
+			real_height = height
+		end
+
 		if width ~= nil and height == nil then
 			final_width  = width
 			final_height = real_height * width / real_width
