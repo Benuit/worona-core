@@ -209,7 +209,7 @@ local function newContentService()
 			worona.app_number_of_posts = 20
 		end
 
-		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "&type=" .. content_type
+		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts
 
 		url = url .. "&rnd=" .. os.time()
 

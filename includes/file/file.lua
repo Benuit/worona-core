@@ -119,7 +119,7 @@ local function newFileService()
 
 			local params = {}
 		    params.progress = true
-		    params.timeout = 10
+		    params.timeout = 40
 		    --params.header   = { ["Cache-Control"] = "no-cache, no-store, must-revalidate", Pragma = "no-cache", Expires = 0 }
 
 			network.download(
