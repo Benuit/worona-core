@@ -219,8 +219,11 @@ local function newContentService()
 		local wp_url_no_directory 	= string.gsub( wp_url_no_http, "/.*", "")  		-- removing / and /directory at the end of the url
 		local wp_url_connection 	= checkConnection(wp_url_no_directory) 			--. checking connection to wp_url
 
+		wp_url_connection = true -- FIX
+
 		if wp_url_connection == false then
 			local internet_available = checkConnection("www.google.com") --. test connection to a working site to check if there is internet connection.
+
 			if internet_available == false then
 				worona.log:warning("content/update: Internet connection is not available.")
 				worona:do_action( "connection_not_available" )
