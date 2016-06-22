@@ -4,11 +4,11 @@ local user_config_style = require "worona-config.style"
 local function newScene( scene_name )
 
 	local composer     = require "composer"
-	local widget       = require "widget" 
+	local widget       = require "widget"
 	local scene        = composer.newScene( scene_name )
 	local style        = worona.style:get("scene_list")
 	local navbar_style = worona.style:get("navbar")
-	
+
 	local scrollView, no_posts_text, powered_img
 	local scene_action = {}
 
@@ -19,33 +19,54 @@ local function newScene( scene_name )
 	local about_text = worona.lang:get("about", "scene-menu")
 
 	local menu_items_table = worona:do_filter( "filter_menu_list_items_table",
-		{ 
-			
-			{ 
+		{
+
+			{
 				text = all_posts_text,
 				action = {
-					name   = "go_to_scene", 
+					name   = "go_to_scene",
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "all" } }
 				}
 			},
-			{ 
+			{
 				text = favorite_posts_text,
 				action = {
-					name   = "go_to_scene", 
+					name   = "go_to_scene",
 					params = { scene_type = "scene-list", effect = "slideLeft", time = 200, params = { show_posts = "favorites" } }
 				}
 			},
-			{ 
+			{
 				text = about_text,
 				action = {
-					name   = "go_to_scene", 
+					name   = "go_to_scene",
 					params = { scene_type = "scene-about", effect = "slideLeft", time = 200 }
 				}
+			},
+			{
+					text = "移动主页",
+					action = {
+						name = "load_url",
+						params = { url = "http://www.baoqiuren.com", effect = "slideLeft", time = 200 }
+					}
+			},
+			{
+					text = "分享宝坵",
+					action = {
+						name = "load_url",
+						params = { url = "http://www.baoqiuren.com/share/", effect = "slideLeft", time = 200 }
+					}
+			},
+			{
+					text = "宝坵征文",
+					action = {
+						name = "load_url",
+						params = { url = "http://www.baoqiuren.com/category/%E5%AF%B6%E5%9D%B5%E5%BE%81%E6%96%87/", effect = "slideLeft", time = 200 }
+					}
 			}
 		}
 	)
 
-	
+
 
 	local function loadSceneList()
 		worona.log:info("scene-menu - loadSceneList()")
@@ -82,16 +103,16 @@ local function newScene( scene_name )
 					-- print( "Reached Right Limit" )
 				end
 			end
-			     
+
 			return true
 		end
 
-		local scrollView_options = 
+		local scrollView_options =
 		{
-			top                      = navbar_style.height + display.topStatusBarContentHeight, 
+			top                      = navbar_style.height + display.topStatusBarContentHeight,
 			left                     = 0,
 			width                    = display.contentWidth,
-			height                   = display.contentHeight - navbar_style.height - display.topStatusBarContentHeight - powered_img.height - 10, 
+			height                   = display.contentHeight - navbar_style.height - display.topStatusBarContentHeight - powered_img.height - 10,
 			horizontalScrollDisabled = true,
 			verticalScrollDisabled   = false,
 			topPadding               = 0,
@@ -110,7 +131,7 @@ local function newScene( scene_name )
 		scrollView.row_elements = {}
 
 		function scrollView:insertRow( params )
-			
+
 			local row_index = #scrollView.row_elements + 1
 			scrollView.row_elements[row_index]        = {}
 			scrollView.row_elements[row_index].params = params --. Insert params inside row object.
@@ -124,19 +145,19 @@ local function newScene( scene_name )
 			scrollView.row_elements[row_index].row_height = row_height
 
 			worona:do_action( "on_list_insert_menu_row_after_set_row_height", { row = scrollView.row_elements[row_index] } )
-			
+
 			--. Create background rectangle to get touch events
 			local row_rect         = display.newRect( display.contentWidth/2, 0, display.contentWidth, row_height )
 			row_rect.anchorY       = 0
 			row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] )
 			row_rect.isHitTestable = true
-			
+
 			local function scrollableRowHandler( event )
-		        
+
 	            if event.phase == "began" then
-	            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] ) 
+	            	row_rect:setFillColor( params.row_color.over[1], params.row_color.over[2], params.row_color.over[3], params.row_color.over[4] )
 	            elseif event.phase == "moved" then
-	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
+	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] )
 
 	                local dx = math.abs( event.x - event.xStart )
 	                local dy = math.abs( event.y - event.yStart )
@@ -145,14 +166,14 @@ local function newScene( scene_name )
 	                    scrollView:takeFocus( event )
 	                end
 	            elseif event.phase == "ended" then
-	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
+	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] )
 	                display.getCurrentStage():setFocus(nil)
 
 	                if scene_action.name == "show" and scene_action.phase == "did" then
 						worona:do_action( params.row_action.name, params.row_action.params )
 					end
 	            elseif event.phase == "cancelled" then
-	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] ) 
+	            	row_rect:setFillColor( params.row_color.default[1], params.row_color.default[2], params.row_color.default[3], params.row_color.default[4] )
 	            end
 
 	            return true
@@ -164,7 +185,7 @@ local function newScene( scene_name )
 			row_line:setStrokeColor( user_config_style.post_list_row_line_stroke_color[1], user_config_style.post_list_row_line_stroke_color[2], user_config_style.post_list_row_line_stroke_color[3], user_config_style.post_list_row_line_stroke_color[4] )
 			row_line.strokeWidth = user_config_style.post_list_row_line_stroke_width
 			row_line.strokeWidth = worona:do_filter( "filter_menu_list_row_line_width", row_line.strokeWidth)
-			
+
 			--. Insert all elements into the scrollView group
 			params.row_group:insert(row_rect)
 			row_rect:toBack()
@@ -178,10 +199,10 @@ local function newScene( scene_name )
 			worona:do_action( "on_list_menu_insert_row_end", { row = scrollView.row_elements[row_index], row_title = row_title, title_options = title_options } )
 
 		end
-		
+
 		function scrollView:deleteAllRows( )
-			
-			local i 
+
+			local i
 
 			for i=1,#scrollView.row_elements do
 				display.remove( scrollView.row_elements[i].params.row_group )
@@ -199,15 +220,15 @@ local function newScene( scene_name )
 	end
 
 	local function insertContentInScrollView( )
-		
+
 		for i=1,#menu_items_table do
-			
+
 			local row_group = display.newGroup() --. All row elements must me inserted in this group.
 
-			local title_options = 
-			{	
+			local title_options =
+			{
 			    text     = menu_items_table[i].text,
-			    x        = display.contentWidth/2, 
+			    x        = display.contentWidth/2,
 			    y        = style.row.offset,
 			    width    = style.title.width,     --required for multi-line and alignment
 			    font     = style.title.font_type,
@@ -220,7 +241,7 @@ local function newScene( scene_name )
 			row_text.anchorY = 0
 			row_group:insert(row_text)
 
-			local row_options = 
+			local row_options =
 			{
 		    	row_text  = row_text,
 		    	row_color = user_config_style.post_list_row_color,
@@ -228,7 +249,7 @@ local function newScene( scene_name )
 		    		name = menu_items_table[i].action.name,
 		    		params = menu_items_table[i].action.params
 		    	},
-		    	row_group = row_group					    	
+		    	row_group = row_group
 			}
 			row_options = worona:do_filter( "filter_menu_list_row_options", row_options )
 
@@ -256,10 +277,10 @@ local function newScene( scene_name )
 		--. View elements
 		local sceneGroup = self.view
 
-		local background = display.newRect	( 	display.contentWidth / 2, 
-												display.contentHeight / 2, 
-												display.contentWidth, 
-												display.contentHeight 
+		local background = display.newRect	( 	display.contentWidth / 2,
+												display.contentHeight / 2,
+												display.contentWidth,
+												display.contentHeight
 											)
 		sceneGroup:insert( background )
 
@@ -278,7 +299,7 @@ local function newScene( scene_name )
 			powered_img:addEventListener( "touch", function(e) if e.phase == "ended" then system.openURL( "http://www.worona.org" ) end  end )
 		else
 			powered_img = { height = 0 }
-		end		
+		end
 
 		scrollView = createScrollview({ parent_group = sceneGroup })
 		scrollView.alpha = 0
@@ -306,12 +327,12 @@ local function newScene( scene_name )
 		local phase = event.phase
 
 		scene_action.name = "show"
-			
+
 
 		if ( phase == "will" ) then
 			-- Called when the scene is still off screen (but is about to come on screen).
 			scene_action.phase = "will"
-			
+
 			worona:do_action( "remove_tabbar" )
 
 		elseif ( phase == "did" ) then
@@ -320,7 +341,7 @@ local function newScene( scene_name )
 			-- Example: start timers, begin animation, play audio, etc.
 			scene_action.phase = "did"
 
-			worona:add_action("android_back_button_pushed", exitApp)	 
+			worona:add_action("android_back_button_pushed", exitApp)
 		end
 	end
 
@@ -337,7 +358,7 @@ local function newScene( scene_name )
 			-- Example: stop timers, stop animation, stop audio, etc.
 			scene_action.phase = "will"
 
-			worona:remove_action("android_back_button_pushed", exitApp)	 
+			worona:remove_action("android_back_button_pushed", exitApp)
 
 		elseif ( phase == "did" ) then
 			-- Called immediately after scene goes off screen.
@@ -371,5 +392,3 @@ local function newScene( scene_name )
 	return scene
 end
 worona:do_action( "register_scene", { scene_type = "scene-menu", creator = newScene } )
-
-
