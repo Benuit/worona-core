@@ -209,9 +209,13 @@ local function newContentService()
 			worona.app_number_of_posts = 20
 		end
 
-		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts
+		url = base_url .. "/wp-json/posts?filter[posts_per_page]=" .. worona.app_number_of_posts .. "&type=" .. content_type .. "&filter[category_name]=lovestory"
 
 		url = url .. "&rnd=" .. os.time()
+
+		url = base_url .. "/wp-json/posts"
+
+		native.showAlert("URL","URL: " .. url)
 
 		local content_file_path = "content/json/".. content_type .. ".json"
 
@@ -299,7 +303,7 @@ local function newContentService()
 			local download_options = {
 				url                      = url   , --. URL
 				target_file_name_or_path = content_file_path   , --. name of the file that will be stored.
-				method                   = "GET"   , --. "GET" or "HEAD"
+				method                   = "POST"   , --. "GET" or "HEAD"
 				target_baseDirectory     = system.CachesDirectory  , --. system.CachesDirectory or system.TemporaryDirectoy
 				listenerFunction         = fileNetworkListener    --. the listener function
 			}

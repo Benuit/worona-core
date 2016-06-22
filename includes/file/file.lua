@@ -116,19 +116,39 @@ local function newFileService()
 		if folderCreated ~= -1 then
 
 			worona.log:info("file:download - download method is GET - URL = '" .. options.url .. "'")
+			--
+			-- local params = {}
+		  --   params.progress = true
+		  --   params.timeout = 40
+		  --   --params.header   = { ["Cache-Control"] = "no-cache, no-store, must-revalidate", Pragma = "no-cache", Expires = 0 }
+			--
+			-- network.download(
+			-- 	options.url,
+			-- 	options.method,
+			-- 	options.listenerFunction,
+			-- 	params,
+			-- 	targetFilePath,
+			-- 	options.target_baseDirectory )
+			--
 
-			local params = {}
-		    params.progress = true
-		    params.timeout = 40
-		    --params.header   = { ["Cache-Control"] = "no-cache, no-store, must-revalidate", Pragma = "no-cache", Expires = 0 }
+			local headers = {}
+
+			headers["Content-Type"] = "application/json"
+
+			local params_post = {}
+			  params_post.progress = true
+			  params_post.timeout = 40
+				params_post.body = "filter[posts_per_page]=20&filter[category_name]=category"
+				params_post.headers = headers
 
 			network.download(
 				options.url,
 				options.method,
 				options.listenerFunction,
-				params,
+				params_post,
 				targetFilePath,
-				options.target_baseDirectory )
+				options.target_baseDirectory
+			)
 		end
 	end
 
