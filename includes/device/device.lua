@@ -4,11 +4,7 @@ local function newDeviceService()
 
 	device = {}
 
-	if system.getInfo( "environment" ) == "simulator" then
-		device.PLATFORM_VERSION = "8.0"
-	else
-		device.PLATFORM_VERSION = nil
-	end
+	device.PLATFORM_VERSION = "8.0"
 
 	function device:getOrientation()
 		--: Return: portrait or landscape :--
