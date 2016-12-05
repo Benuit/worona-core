@@ -17,10 +17,10 @@ return {
 		zh = "喜爱文章"
 	},
 	about = {
-		en = "About",
-		es = "Acerca de",
-		fr = "À propos",
-		pt = "Sobre",
+		en = "Contact",
+		es = "Contacto",
+		fr = "Contact",
+		pt = "Contacto",
 		zh = "关于我们"
 	}
 }
