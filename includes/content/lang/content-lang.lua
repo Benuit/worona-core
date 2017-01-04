@@ -8,7 +8,8 @@ return {
 	   	en = "Error retrieving content",
 	   	es = "Error descargando el contenido",
 			pt = "Erro ao recuperar o conteúdo",
-			de = "Fehler beim Abrufen der Inhalte"
+			de = "Fehler beim Abrufen der Inhalte",
+			pl = "Błąd w pobieraniu zawartości"
 	},
 	popup_simulator_empty_content_error_description = {
 	   	en = "Sorry, the content is not available. Please check the output of:\n " .. worona.wp_url .. "/wp-json \nIt should look like http://www.worona.org/wp-json. If it doesn't check that the JSON REST API plugin is installed and activated. \n\n For more information, please visit:\n https://www.worona.org/start ",
@@ -24,19 +25,22 @@ return {
 	   	en = "Error retrieving content",
 	   	es = "Error descargando el contenido",
 			pt = "Erro ao recuperar o conteúdo",
-			de = "Fehler beim Abrufen der Inhalte"
+			de = "Fehler beim Abrufen der Inhalte",
+			pl = "Błąd w pobieraniu zawartości"
 	},
 	popup_device_empty_content_error_description = {
 	   	en = "Sorry, the content is not available.",
 	   	es = "Lo sentimos, el contenido no está disponible.",
 			pt = "Desculpa, o conteúdo não está disponível.",
-			de = "Der Inhalt ist nicht verfügbar"
+			de = "Der Inhalt ist nicht verfügbar",
+			pl = "Przepraszamy, zawartość nie jest dostępna"
 	},
 	popup_device_empty_content_error_button_1 = {
 		en = "Ok",
 		es = "Ok",
 		pt = "Ok",
-		de = "Ok"
+		de = "Ok",
+		pl = "Ok"
 	},
 
 	--. Connection error (no internet) - simulator
@@ -62,13 +66,15 @@ return {
 	   	en = "Connection Error",
 	   	es = "Error de conexión",
 			pt = "Erro de conexão",
-			de = "Verbindungsfehler"
+			de = "Verbindungsfehler",
+			pl = "Błąd połączenia"
 	},
 	popup_device_connection_error_1_description = {
 	   	en = "Sorry, the content is not available. Please check your internet connection.",
 	   	es = "El contenido no se ha podido descargar debido a un error de conexión. Por favor comprueba tu conexión a internet.",
 			pt = "Lamentamos, mas o conteúdo não está disponível. Erro de conexão",
-			de = "Der Inhalt konnte nicht geladen werden, bitte prüfe deine Internetverbindung"
+			de = "Der Inhalt konnte nicht geladen werden, bitte prüfe deine Internetverbindung",
+			pl = "Przepraszamy, zawartość niedostępna. Sprawdź proszę swoje połączenie z internetem."
 	},
 	popup_device_connection_error_1_button_1 = {
 		en = "Ok",
@@ -79,7 +85,8 @@ return {
 		en = "Try again",
 		es = "Intentar de nuevo",
 		pt = "Tente novamente",
-		de = "Wiederholen"
+		de = "Wiederholen",
+		pl = "Spróbuj ponownie"
 	},
 
 	--. Connection error (internet Ok) - simulator
@@ -104,13 +111,15 @@ return {
 	popup_device_connection_error_2_title = {
 	   	en = "Connection Error",
 	   	es = "Error de conexión",
-			pt = "Erro de conexão"
+			pt = "Erro de conexão",
+			pl = "Błąd połączenia"
 	},
 	popup_device_connection_error_2_description = {
 	   	en = "Sorry, the content is not available.",
 	   	es = "El contenido no se ha podido descargar debido a un error de conexión.",
 			pt = "Desculpa, o conteúdo não está disponível. Erro de conexão.",
-			de = "Der Inhalt ist nicht verfügbar"
+			de = "Der Inhalt ist nicht verfügbar",
+			pl = "Przepraszamy, zawartość niedostępna."
 	},
 	popup_device_connection_error_2_button_1 = {
 		en = "Ok",
@@ -122,7 +131,8 @@ return {
 		en = "Try again",
 		es = "Intentar de nuevo",
 		pt = "Tente novamente",
-		de = "Wiederholen"
+		de = "Wiederholen",
+		pl = "Spróbuj ponownie"
 	}
 
 
