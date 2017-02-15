@@ -50,13 +50,6 @@ local function newScene( scene_name )
 				}
 			},
 			{
-				text = "Portal de transparencia",
-				action = {
-					name   = "load_url",
-					params = { url = "http://cabezondepisuerga.sedelectronica.es/transparency/", effect = "slideLeft", time = 200 }
-				}
-			},
-			{
 				text = "Privacy Policy",
 				action = {
 					name   = "load_url",
